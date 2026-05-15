@@ -1,0 +1,986 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enterprise AI Ledger | Samarathunga Stores</title>
+    
+    <!-- Fonts & Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Firebase SDK Scripts -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+
+    <style>
+        /* =========================================
+           CORE UI & COLOR SYSTEM
+           ========================================= */
+        :root {
+            --bg: #050505;
+            --glass: rgba(255, 255, 255, 0.05);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --cyan: #00f0ff;
+            --purple: #c400ff;
+            --green: #00ff99;
+            --orange: #ff9f1c;
+            --red: #ff3b3b;
+            --text: #ffffff;
+            --font-main: 'Rajdhani', sans-serif;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: var(--font-main); }
+        body {
+            background-color: var(--bg); color: var(--text); overflow-x: hidden;
+            background-image: 
+                radial-gradient(circle at 15% 50%, rgba(0, 240, 255, 0.05), transparent 25%),
+                radial-gradient(circle at 85% 30%, rgba(196, 0, 255, 0.05), transparent 25%);
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: var(--bg); }
+        ::-webkit-scrollbar-thumb { background: var(--glass-border); border-radius: 4px; border: 1px solid var(--cyan); }
+        ::-webkit-scrollbar-thumb:hover { background: var(--cyan); box-shadow: 0 0 10px var(--cyan); }
+
+        /* Typography & Neons */
+        .neon-text-cyan { color: var(--cyan); text-shadow: 0 0 5px var(--cyan), 0 0 10px var(--cyan); }
+        .neon-text-purple { color: var(--purple); text-shadow: 0 0 5px var(--purple); }
+        .neon-text-green { color: var(--green); text-shadow: 0 0 5px var(--green); }
+        .neon-text-orange { color: var(--orange); text-shadow: 0 0 5px var(--orange); }
+        .neon-text-red { color: var(--red); text-shadow: 0 0 5px var(--red); }
+
+        .border-cyan { border-top: 2px solid var(--cyan); box-shadow: 0 -2px 10px rgba(0, 240, 255, 0.2); }
+        .border-green { border-top: 2px solid var(--green); box-shadow: 0 -2px 10px rgba(0, 255, 153, 0.2); }
+        .border-orange { border-top: 2px solid var(--orange); box-shadow: 0 -2px 10px rgba(255, 159, 28, 0.2); }
+        .border-red { border-top: 2px solid var(--red); box-shadow: 0 -2px 10px rgba(255, 59, 59, 0.2); }
+        .border-purple { border-top: 2px solid var(--purple); box-shadow: 0 -2px 10px rgba(196, 0, 255, 0.2); }
+
+        .bg-cyan { background: var(--cyan); box-shadow: 0 0 10px var(--cyan); }
+        .bg-green { background: var(--green); box-shadow: 0 0 10px var(--green); }
+        .bg-orange { background: var(--orange); box-shadow: 0 0 10px var(--orange); }
+        .bg-red { background: var(--red); box-shadow: 0 0 10px var(--red); }
+
+        .hidden { display: none !important; }
+        .mt-1 { margin-top: 0.75rem; }
+        .mt-2 { margin-top: 1.5rem; }
+        .p-2 { padding: 1.5rem; }
+        .flex-between { display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+        .badge { padding: 4px 8px; border-radius: 4px; font-weight: bold; font-size: 0.85rem; text-transform: uppercase; }
+        .badge-pending { background: rgba(255, 159, 28, 0.2); color: var(--orange); border: 1px solid var(--orange); }
+        .badge-cleared { background: rgba(0, 255, 153, 0.2); color: var(--green); border: 1px solid var(--green); }
+        .badge-overdue { background: rgba(255, 59, 59, 0.2); color: var(--red); border: 1px solid var(--red); }
+
+        .glass-panel, .glass-card { background: var(--glass); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid var(--glass-border); border-radius: 12px; }
+        .glass-card { padding: 1.5rem; transition: transform 0.3s ease, box-shadow 0.3s ease; }
+        .hover-float:hover { transform: translateY(-5px); }
+
+        /* LOADING SCREEN */
+        #loading-screen { position: fixed; inset: 0; background: var(--bg); z-index: 9999; display: flex; flex-direction: column; justify-content: center; align-items: center; transition: opacity 0.5s; }
+        .loader { position: relative; width: 200px; height: 200px; display: flex; justify-content: center; align-items: center; }
+        .ring { position: absolute; width: 100%; height: 100%; border-radius: 50%; border: 2px solid transparent; animation: rotate 2s linear infinite; }
+        .ring:nth-child(1) { border-top-color: var(--cyan); animation-duration: 2s; }
+        .ring:nth-child(2) { border-right-color: var(--purple); animation-duration: 2.5s; width: 80%; height: 80%; }
+        .ring:nth-child(3) { border-bottom-color: var(--green); animation-duration: 3s; width: 60%; height: 60%; }
+        @keyframes rotate { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        #loading-percent { margin-top: 20px; font-size: 1.5rem; color: var(--cyan); letter-spacing: 2px;}
+        .glitch-text { font-weight: bold; letter-spacing: 2px; color: var(--cyan); }
+
+        /* LOGIN PAGE */
+        #login-page { position: fixed; inset: 0; background: var(--bg); z-index: 9000; display: flex; justify-content: center; align-items: center; background-image: linear-gradient(45deg, rgba(0,240,255,0.05) 0%, rgba(196,0,255,0.05) 100%); }
+        .login-box { width: 100%; max-width: 400px; text-align: center; }
+        .login-box h2 { font-size: 2rem; margin-bottom: 0.5rem; letter-spacing: 2px; }
+        .input-group { position: relative; margin-top: 1.5rem; }
+        .input-group i { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); font-size: 1.2rem; }
+        .input-group .toggle-password { left: auto; right: 15px; cursor: pointer; color: var(--text); }
+        .input-group input, .cyber-input, .cyber-select { width: 100%; padding: 12px 15px 12px 45px; background: rgba(0,0,0,0.5); border: 1px solid var(--glass-border); border-radius: 6px; color: var(--text); font-size: 1.1rem; outline: none; transition: 0.3s; }
+        .cyber-input, .cyber-select { padding: 8px 12px; font-size: 1rem; width: auto; }
+        .cyber-select option { background: var(--bg); color: var(--text); }
+        .input-group input:focus, .cyber-input:focus, .cyber-select:focus { border-color: var(--cyan); box-shadow: 0 0 10px rgba(0,240,255,0.3); }
+
+        /* Cyber Buttons */
+        .cyber-btn, .cyber-btn-small { width: 100%; padding: 12px; margin-top: 2rem; background: transparent; color: var(--cyan); border: 1px solid var(--cyan); border-radius: 4px; font-size: 1.2rem; font-weight: bold; letter-spacing: 2px; cursor: pointer; position: relative; overflow: hidden; transition: 0.3s; text-transform: uppercase; }
+        .cyber-btn-small { width: auto; padding: 8px 16px; font-size: 1rem; margin-top: 0; }
+        .cyber-btn:hover, .cyber-btn-small:hover { background: rgba(0, 240, 255, 0.1); box-shadow: 0 0 15px var(--cyan) inset; }
+        .scanner { position: absolute; top: 0; left: -100%; width: 50%; height: 100%; background: linear-gradient(90deg, transparent, rgba(0,240,255,0.5), transparent); transform: skewX(-20deg); transition: 0s; }
+        .cyber-btn:hover .scanner { left: 200%; transition: 0.8s; }
+
+        /* MAIN APP LAYOUT */
+        #main-app { display: flex; height: 100vh; overflow: hidden; }
+        #sidebar { width: 260px; height: 100%; padding: 1.5rem 0; display: flex; flex-direction: column; border-right: 1px solid var(--glass-border); border-radius: 0; transition: 0.3s; }
+        .brand { display: flex; align-items: center; gap: 10px; padding: 0 1.5rem 2rem; font-size: 1.5rem; letter-spacing: 2px; }
+        .nav-links { list-style: none; overflow-y: auto; flex: 1; }
+        .nav-links li { padding: 12px 1.5rem; cursor: pointer; transition: 0.3s; border-left: 3px solid transparent; display: flex; align-items: center; gap: 15px; font-size: 1.05rem; }
+        .nav-links li:hover { background: rgba(255,255,255,0.05); }
+        .nav-links li.active { background: rgba(0,240,255,0.1); border-left-color: var(--cyan); color: var(--cyan); text-shadow: 0 0 8px var(--cyan); }
+        #content { flex: 1; display: flex; flex-direction: column; overflow-y: auto; }
+        
+        .top-nav { display: flex; justify-content: space-between; align-items: center; padding: 1rem 2rem; border-radius: 0; border-bottom: 1px solid var(--glass-border); border-bottom-color: var(--cyan); position: sticky; top: 0; z-index: 100; }
+        .nav-left, .nav-right { display: flex; align-items: center; gap: 20px; }
+        .nav-left button { background: none; border: none; color: var(--text); font-size: 1.5rem; cursor: pointer; }
+        .shop-name { font-size: 1.5rem; letter-spacing: 2px; }
+        #live-clock { font-size: 1.5rem; font-weight: bold; font-family: monospace; }
+        .profile-avatar img { width: 40px; height: 40px; border-radius: 50%; border: 2px solid var(--cyan); box-shadow: 0 0 10px var(--cyan); }
+        .icon-btn { background: none; border: none; color: var(--text); font-size: 1.2rem; cursor: pointer; }
+        .ledger-date-picker { background: rgba(0, 0, 0, 0.6); border: 1px solid var(--cyan); color: var(--cyan); font-family: monospace; font-size: 1.1rem; padding: 6px 12px; border-radius: 4px; outline: none; cursor: pointer; box-shadow: 0 0 10px rgba(0, 240, 255, 0.2); }
+
+        /* DASHBOARD TABS & GRIDS */
+        .tab-content { padding: 2rem; display: none; animation: fadeIn 0.4s ease; }
+        .tab-content.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .grid-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1.25rem; }
+        .stat-card { position: relative; overflow: hidden; padding: 1.25rem; }
+        .stat-header { font-size: 1rem; color: #aaa; margin-bottom: 0.5rem; display: flex; align-items: center; gap: 8px; }
+        .stat-value { font-size: 1.8rem; font-weight: bold; margin-bottom: 0.75rem; }
+        .progress-bar { width: 100%; height: 4px; background: rgba(255,255,255,0.1); border-radius: 2px; overflow: hidden; }
+        .progress-bar .fill { height: 100%; }
+
+        .summary-center { margin-top: 2rem; }
+        .system-log-box { font-family: monospace; line-height: 1.6; color: #8a99ad; padding: 1rem; border-radius: 6px; background: rgba(0,0,0,0.4); max-height: 200px; overflow-y: auto; }
+        .log-entry { margin-bottom: 5px; border-bottom: 1px dashed rgba(255,255,255,0.05); padding-bottom: 4px; }
+
+        /* ADVANCED TABLES & SYSTEMS */
+        .table-container { width: 100%; overflow-x: auto; background: rgba(0,0,0,0.2); border-radius: 8px; margin-bottom: 1.5rem; }
+        .cyber-table { width: 100%; border-collapse: collapse; margin-top: 0.5rem; min-width: 600px; }
+        .cyber-table th { background: rgba(255,255,255,0.03); padding: 12px; text-align: left; border-bottom: 2px solid var(--cyan); font-weight: 600; font-size: 1.05rem; letter-spacing: 1px; }
+        .cyber-table td { padding: 12px; border-bottom: 1px solid var(--glass-border); font-size: 1rem; vertical-align: middle; }
+        
+        .border-purple .cyber-table th { border-bottom-color: var(--purple); color: var(--purple); }
+        .border-orange .cyber-table th { border-bottom-color: var(--orange); color: var(--orange); }
+        .border-red .cyber-table th { border-bottom-color: var(--red); color: var(--red); }
+        .border-green .cyber-table th { border-bottom-color: var(--green); color: var(--green); }
+        .border-cyan .cyber-table th { border-bottom-color: var(--cyan); color: var(--cyan); }
+        .cyber-table tr:hover { background: rgba(255,255,255,0.02); }
+        
+        .calculator-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 2rem; }
+        .note-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; align-items: center; margin-bottom: 10px; }
+        .note-row input { background: rgba(0,0,0,0.5); border: 1px solid var(--glass-border); padding: 8px; color: var(--text); border-radius: 4px; font-size: 1.2rem; text-align: right; outline: none; }
+        .note-row input:focus { border-color: var(--green); box-shadow: 0 0 8px rgba(0,255,153,0.3); }
+        .huge-total { font-size: 3rem; font-weight: bold; margin-top: 10px; word-break: break-all; }
+
+        .report-filter-bar { display: flex; flex-wrap: wrap; gap: 15px; align-items: flex-end; background: rgba(0,0,0,0.3); padding: 1.5rem; border-radius: 8px; margin-bottom: 2rem; border: 1px solid var(--glass-border); }
+
+        #toast-container { position: fixed; bottom: 20px; right: 20px; z-index: 10000; display: flex; flex-direction: column; gap: 10px; }
+        .toast { background: rgba(0,0,0,0.8); border-left: 4px solid var(--cyan); padding: 15px 20px; border-radius: 4px; box-shadow: 0 4px 15px rgba(0,0,0,0.5); color: #fff; backdrop-filter: blur(5px); animation: slideIn 0.3s ease; display: flex; align-items: center; gap: 10px; }
+        @keyframes slideIn { from { transform: translateX(100%); } to { transform: translateX(0); } }
+
+        @media (max-width: 1024px) { .calculator-grid { grid-template-columns: 1fr; } }
+        @media (max-width: 768px) { #sidebar { position: fixed; left: -260px; z-index: 200; } #sidebar.open { left: 0; box-shadow: 5px 0 25px rgba(0,0,0,0.8); } }
+    </style>
+</head>
+<body>
+
+    <!-- LOADING SCREEN -->
+    <div id="loading-screen">
+        <div class="loader">
+            <div class="ring"></div>
+            <div class="ring"></div>
+            <div class="ring"></div>
+            <div class="glitch-text" style="position: absolute; font-size: 1.2rem;">CONNECTING FIREBASE...</div>
+        </div>
+        <div id="loading-percent">0%</div>
+    </div>
+
+    <!-- LOGIN PAGE -->
+    <div id="login-page">
+        <div class="glass-card login-box border-cyan">
+            <h2 class="neon-text-cyan">SYSTEM_ACCESS</h2>
+            <p>SAMARATHUNGA STORES - GIRIULLA</p>
+            <form id="login-form">
+                <div class="input-group">
+                    <i class="fas fa-user neon-text-cyan"></i>
+                    <input type="text" id="username" placeholder="Admin ID" required>
+                </div>
+                <div class="input-group">
+                    <i class="fas fa-lock neon-text-purple"></i>
+                    <input type="password" id="password" placeholder="Passcode" required>
+                    <i class="fas fa-eye toggle-password" style="position: absolute; right: 15px; top: 50%; transform: translateY(-50%); cursor: pointer;" onclick="togglePassword()"></i>
+                </div>
+                <button type="submit" class="cyber-btn">
+                    <span>AUTHENTICATE</span>
+                    <div class="scanner"></div>
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- MAIN APP STRUCTURE -->
+    <div id="main-app" class="hidden">
+        
+        <!-- SIDEBAR -->
+        <nav id="sidebar" class="glass-panel">
+            <div class="brand">
+                <i class="fas fa-microchip neon-text-cyan"></i>
+                <h3>AI_ERP_v3</h3>
+            </div>
+            <ul class="nav-links">
+                <li class="active" onclick="switchTab('dashboard')"><i class="fas fa-chart-line"></i> Dashboard</li>
+                <li onclick="switchTab('cash')"><i class="fas fa-wallet"></i> Cash Calculator</li>
+                <li onclick="switchTab('expenses')"><i class="fas fa-file-invoice-dollar"></i> Expenses</li>
+                <li onclick="switchTab('debits')"><i class="fas fa-hand-holding-usd"></i> Cash Debits</li>
+                <li onclick="switchTab('chequesales')"><i class="fas fa-money-check"></i> Cheque Sales</li>
+                <li onclick="switchTab('purchasing')"><i class="fas fa-shopping-cart"></i> Purchasing</li>
+                <li onclick="switchTab('credit')"><i class="fas fa-money-check-alt"></i> Credit Invoices</li>
+                <li onclick="switchTab('collections')"><i class="fas fa-coins"></i> Credit Collections</li>
+                <li onclick="switchTab('staff')"><i class="fas fa-users"></i> Staff Advances</li>
+                <li onclick="switchTab('reports')"><i class="fas fa-file-medical-alt"></i> Analytical Reports</li>
+                <li onclick="switchTab('settings')"><i class="fas fa-cog"></i> Settings</li>
+            </ul>
+        </nav>
+
+        <main id="content">
+            <!-- HEADER -->
+            <header class="glass-panel top-nav">
+                <div class="nav-left">
+                    <button id="menu-toggle"><i class="fas fa-bars"></i></button>
+                    <h2 class="shop-name neon-text-cyan">SAMARATHUNGA STORES</h2>
+                </div>
+                <div class="nav-right">
+                    <div style="display:flex; align-items:center; gap:8px;">
+                        <span style="font-size:0.9rem; color:var(--cyan); font-weight:600;"><i class="fas fa-history"></i> SHIFT DATE:</span>
+                        <input type="date" id="system-date-picker" class="ledger-date-picker" onchange="changeActiveDate()">
+                    </div>
+                    <div id="live-clock" class="neon-text-cyan">00:00:00</div>
+                    <div class="profile-avatar"><img src="https://ui-avatars.com/api/?name=Admin&background=00f0ff&color=050505" alt="Profile"></div>
+                </div>
+            </header>
+
+            <!-- TAB: DASHBOARD -->
+            <div id="tab-dashboard" class="tab-content active">
+                <!-- TOP META CARDS -->
+                <div class="grid-cards">
+                    <div class="glass-card stat-card border-cyan hover-float">
+                        <div class="stat-header">Gross Daily Sales <i class="fas fa-edit neon-text-cyan" style="margin-left:auto; cursor:pointer;" onclick="editDailySale()"></i></div>
+                        <div class="stat-value neon-text-cyan" id="stat-sales">LKR 0.00</div>
+                    </div>
+                    <div class="glass-card stat-card border-green hover-float">
+                        <div class="stat-header">Physical Cash Balance</div>
+                        <div class="stat-value neon-text-green" id="stat-cash">LKR 0.00</div>
+                    </div>
+                    <div class="glass-card stat-card border-orange hover-float">
+                        <div class="stat-header">Today Credit Generated</div>
+                        <div class="stat-value neon-text-orange" id="stat-credit">LKR 0.00</div>
+                    </div>
+                    <div class="glass-card stat-card border-red hover-float">
+                        <div class="stat-header">Store Expenses</div>
+                        <div class="stat-value neon-text-red" id="stat-expenses">LKR 0.00</div>
+                    </div>
+                </div>
+
+                <!-- BOTTOM DYNAMIC METRICS CARDS -->
+                <div class="grid-cards" style="margin-top: 1.5rem;">
+                    <div class="glass-card stat-card border-green hover-float">
+                        <div class="stat-header">Today Credit Collected <i class="fas fa-coins neon-text-green" style="margin-left:auto;"></i></div>
+                        <div class="stat-value neon-text-green" id="stat-dash-collected">LKR 0.00</div>
+                    </div>
+                    <div class="glass-card stat-card border-purple hover-float">
+                        <div class="stat-header">Today Procurement Outlay <i class="fas fa-truck neon-text-purple" style="margin-left:auto;"></i></div>
+                        <div class="stat-value neon-text-purple" id="stat-dash-purchasing">LKR 0.00</div>
+                    </div>
+                    <div class="glass-card stat-card border-cyan hover-float">
+                        <div class="stat-header">Today Staff Advances <i class="fas fa-users neon-text-cyan" style="margin-left:auto;"></i></div>
+                        <div class="stat-value neon-text-cyan" id="stat-dash-staff">LKR 0.00</div>
+                    </div>
+                    <div class="glass-card stat-card border-orange hover-float">
+                        <div class="stat-header">Today Other Cash Debits <i class="fas fa-wallet neon-text-orange" style="margin-left:auto;"></i></div>
+                        <div class="stat-value neon-text-orange" id="stat-dash-debits">LKR 0.00</div>
+                    </div>
+                </div>
+
+                <div class="glass-card summary-center border-purple">
+                    <h3 class="neon-text-purple" style="margin-bottom: 1rem;"><i class="fas fa-terminal"></i> Global Operational Log Engine</h3>
+                    <div class="system-log-box" id="system-log-terminal"></div>
+                </div>
+            </div>
+
+            <!-- TAB: CASH CALCULATOR -->
+            <div id="tab-cash" class="tab-content">
+                <div class="glass-card border-green">
+                    <h2 class="neon-text-green"><i class="fas fa-calculator"></i> Cash Note Denomination Matrix</h2>
+                    <div class="calculator-grid mt-2">
+                        <div id="note-inputs"></div>
+                        <div class="total-panel p-2">
+                            <h3>TOTAL CASH BALANCE</h3>
+                            <div class="huge-total neon-text-green" id="grand-total-notes">LKR 0.00</div>
+                            <button class="cyber-btn mt-2" onclick="saveCashData()">COMMIT BALANCES</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB: EXPENSES -->
+            <div id="tab-expenses" class="tab-content">
+                <div class="glass-card border-red">
+                    <div class="flex-between">
+                        <h2 class="neon-text-red"><i class="fas fa-file-invoice-dollar"></i> Expense Registry</h2>
+                        <button class="cyber-btn-small" onclick="addExpense()">+ RECORD NEW EXPENSE</button>
+                    </div>
+                    <div class="table-container mt-2">
+                        <table class="cyber-table">
+                            <thead><tr><th>Category</th><th>Description</th><th>Amount (LKR)</th><th>Action</th></tr></thead>
+                            <tbody id="expense-tbody"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB: CASH DEBITS -->
+            <div id="tab-debits" class="tab-content">
+                <div class="glass-card border-orange">
+                    <div class="flex-between">
+                        <h2 class="neon-text-orange"><i class="fas fa-hand-holding-usd"></i> Other Cash Debits (Non-Overhead Outflows)</h2>
+                        <button class="cyber-btn-small" onclick="addDebit()">+ LOG NEW CASH DEBIT</button>
+                    </div>
+                    <div class="table-container mt-2">
+                        <table class="cyber-table">
+                            <thead><tr><th>Reference Profile</th><th>Transaction Details</th><th>Value (LKR)</th><th>Action</th></tr></thead>
+                            <tbody id="debits-tbody"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB: CHEQUE SALES -->
+            <div id="tab-chequesales" class="tab-content">
+                <div class="glass-card border-cyan">
+                    <div class="flex-between">
+                        <h2 class="neon-text-cyan"><i class="fas fa-money-check"></i> Cheque Sales Log System</h2>
+                        <button class="cyber-btn-small" onclick="addChequeSale()">+ LOG CHEQUE TRANSACTION</button>
+                    </div>
+                    <div class="table-container mt-2">
+                        <table class="cyber-table">
+                            <thead><tr><th>Customer Reference</th><th>Invoice Reference No</th><th>Cheque Asset ID No</th><th>Face Value Amount</th><th>Action</th></tr></thead>
+                            <tbody id="cheque-tbody"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB: PURCHASING -->
+            <div id="tab-purchasing" class="tab-content">
+                <div class="glass-card border-purple">
+                    <div class="flex-between">
+                        <h2 class="neon-text-purple"><i class="fas fa-shopping-cart"></i> Procurement Ledgers</h2>
+                        <button class="cyber-btn-small" onclick="addPurchaseRow()">+ LOG PROCUREMENT RECORD</button>
+                    </div>
+                    <div class="table-container mt-2">
+                        <table class="cyber-table">
+                            <thead><tr><th>Vendor Company Name</th><th>Cheque Allocation</th><th>Credit Extension</th><th>Immediate Cash Outlay</th><th>Action</th></tr></thead>
+                            <tbody id="purchasing-tbody"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB: CREDIT BILLS -->
+            <div id="tab-credit" class="tab-content">
+                <div class="glass-card border-orange">
+                    <div class="flex-between" style="margin-bottom:15px;">
+                        <h2 class="neon-text-orange"><i class="fas fa-money-check-alt"></i> Credit Invoices Engine</h2>
+                        <button class="cyber-btn-small" onclick="addCreditBill()">+ INSTANTIATE CREDIT BILL</button>
+                    </div>
+                    
+                    <h3 class="neon-text-cyan" style="font-size:1.1rem; margin-top:1rem;"><i class="fas fa-bolt"></i> Today's Issued Credit Bills</h3>
+                    <div class="table-container mt-1">
+                        <table class="cyber-table">
+                            <thead><tr><th>Customer Name</th><th>Invoice Index Reference</th><th>Total Amount</th><th>Maturity Date</th><th>Status</th><th>Action</th></tr></thead>
+                            <tbody id="credit-today-tbody"></tbody>
+                        </table>
+                    </div>
+
+                    <h3 class="neon-text-purple" style="font-size:1.1rem; margin-top:1.5rem;"><i class="fas fa-layer-group"></i> All Historical Credit Balance Trackers</h3>
+                    <div class="table-container mt-1">
+                        <table class="cyber-table">
+                            <thead><tr><th>Issue Date</th><th>Customer Name</th><th>Invoice Index Reference</th><th>Total Amount</th><th>Maturity Date</th><th>Status</th><th>Action</th></tr></thead>
+                            <tbody id="credit-all-tbody"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB: CREDIT COLLECTIONS -->
+            <div id="tab-collections" class="tab-content">
+                <div class="glass-card border-green">
+                    <h2 class="neon-text-green"><i class="fas fa-coins"></i> Credit Bill Settlement Clearing Hub</h2>
+                    <p style="color:#aaa; margin-bottom:15px;">Process partial or absolute invoice balance collections below:</p>
+                    <div class="table-container">
+                        <table class="cyber-table">
+                            <thead><tr><th>Original Date</th><th>Customer Name</th><th>Invoice No</th><th>Outstanding Due</th><th>Status</th><th>Process Settlement Action</th></tr></thead>
+                            <tbody id="collections-tbody"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB: STAFF MANAGEMENT -->
+            <div id="tab-staff" class="tab-content">
+                <div class="glass-card border-cyan">
+                    <div class="flex-between">
+                        <h2 class="neon-text-cyan"><i class="fas fa-users"></i> Staff Wage Adjustments & Advances</h2>
+                        <button class="cyber-btn-small" onclick="addStaffAdvance()">+ LOG SALARY DISBURSEMENT</button>
+                    </div>
+                    <div class="table-container mt-2">
+                        <table class="cyber-table">
+                            <thead><tr><th>Operator Employee ID Name</th><th>Reference Comments</th><th>Advance Allocation</th><th>Timestamp</th><th>Action</th></tr></thead>
+                            <tbody id="staff-tbody"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB: REPORTS -->
+            <div id="tab-reports" class="tab-content">
+                <div class="glass-card border-purple">
+                    <h2 class="neon-text-purple"><i class="fas fa-file-invoice"></i> Date-Range Query Report Matrix Engine</h2>
+                    <div class="report-filter-bar mt-2">
+                        <div>
+                            <label style="display:block; margin-bottom:5px;">Filter Start Date</label>
+                            <input type="date" id="report-start-date" class="cyber-input">
+                        </div>
+                        <div>
+                            <label style="display:block; margin-bottom:5px;">Filter End Date</label>
+                            <input type="date" id="report-end-date" class="cyber-input">
+                        </div>
+                        <button class="cyber-btn-small" style="border-color:var(--purple); color:var(--purple);" onclick="generateRangeReport()">EXECUTE SYSTEM INQUIRY</button>
+                    </div>
+
+                    <div class="grid-cards">
+                        <div class="glass-card border-cyan"><h4>Total Computed Gross Sales</h4><p style="font-size:1.8rem; font-weight:bold;" class="neon-text-cyan" id="rep-sales">LKR 0.00</p></div>
+                        <div class="glass-card border-orange"><h4>Total Account Credit Extensions</h4><p style="font-size:1.8rem; font-weight:bold;" class="neon-text-orange" id="rep-credits">LKR 0.00</p></div>
+                        <div class="glass-card border-green"><h4>Total Credit Cash Collections</h4><p style="font-size:1.8rem; font-weight:bold;" class="neon-text-green" id="rep-collections">LKR 0.00</p></div>
+                        <div class="glass-card border-red"><h4>Total System Store Expenses</h4><p style="font-size:1.8rem; font-weight:bold;" class="neon-text-red" id="rep-expenses">LKR 0.00</p></div>
+                        <div class="glass-card border-purple"><h4>Total Staff Wage Disbursements</h4><p style="font-size:1.8rem; font-weight:bold;" class="neon-text-purple" id="rep-staff">LKR 0.00</p></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB: SETTINGS -->
+            <div id="tab-settings" class="tab-content">
+                <div class="glass-card border-cyan">
+                    <h2 class="neon-text-cyan"><i class="fas fa-cog"></i> Master System Adjustments</h2>
+                    <div class="settings-grid mt-2" style="display:grid; grid-template-columns:1fr 1fr; gap:20px;">
+                        <div class="glass-card">
+                            <h3>Aesthetic Themes</h3>
+                            <div style="display:flex; gap:10px; margin-top:10px;">
+                                <div style="width:30px; height:30px; background:#00f0ff; border-radius:50%; cursor:pointer;" onclick="changeAccent('#00f0ff')"></div>
+                                <div style="width:30px; height:30px; background:#c400ff; border-radius:50%; cursor:pointer;" onclick="changeAccent('#c400ff')"></div>
+                                <div style="width:30px; height:30px; background:#00ff99; border-radius:50%; cursor:pointer;" onclick="changeAccent('#00ff99')"></div>
+                            </div>
+                        </div>
+                        <div class="glass-card">
+                            <h3>Infrastructure Commands</h3>
+                            <button class="cyber-btn-small" style="width:100%; margin-top:10px; border-color:var(--red); color:var(--red);" onclick="factoryResetDatabase()">WIPE DATABASE PERMANENTLY</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <div id="toast-container"></div>
+
+    <script>
+        /* =========================================
+           FIREBASE INFRASTRUCTURE INITIALIZATION
+           ========================================= */
+        const firebaseConfig = {
+            apiKey: "AIzaSyB56NzB2-Zy2h_g8-AEnyngih65urc78GA",
+            authDomain: "dailysamara.firebaseapp.com",
+            databaseURL: "https://dailysamara-default-rtdb.asia-southeast1.firebasedatabase.app",
+            projectId: "dailysamara",
+            storageBucket: "dailysamara.firebasestorage.app",
+            messagingSenderId: "814365696580",
+            appId: "1:814365696580:web:1c5c0811adea3b2c161211"
+        };
+        
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
+
+        let activeDate = new Date().toISOString().split('T')[0];
+        const SECURITY_PIN = "2345";
+        
+        // Comprehensive Local Cache Mirroring Architecture
+        let masterTimeline = {};
+        let appData = {};
+
+        document.addEventListener("DOMContentLoaded", () => {
+            document.getElementById('system-date-picker').value = activeDate;
+            setupClock();
+            initializeDatabaseStream();
+        });
+
+        function setupClock() {
+            setInterval(() => {
+                document.getElementById('live-clock').innerText = new Date().toLocaleTimeString('en-US', { hour12: false });
+            }, 1000);
+        }
+
+        /* =========================================
+           CENTRAL DISTRIBUTED DATA FLOW PIPELINE
+           ========================================= */
+        function initializeDatabaseStream() {
+            let percentage = 0;
+            const progress = setInterval(() => {
+                percentage += Math.floor(Math.random() * 25) + 10;
+                if(percentage > 90) clearInterval(progress);
+                document.getElementById('loading-percent').innerText = `${Math.min(percentage, 95)}%`;
+            }, 100);
+
+            db.ref("timeline_ledger").on("value", snapshot => {
+                clearInterval(progress);
+                document.getElementById('loading-percent').innerText = `100%`;
+                
+                masterTimeline = snapshot.val() || {};
+                parseCurrentDateState();
+                
+                setTimeout(() => {
+                    document.getElementById('loading-screen').style.opacity = '0';
+                    setTimeout(() => document.getElementById('loading-screen').style.display = 'none', 500);
+                }, 400);
+            }, error => {
+                showToast("Data Sync Error", "red", "fa-wifi");
+            });
+        }
+
+        function parseCurrentDateState() {
+            if(!masterTimeline[activeDate]) {
+                masterTimeline[activeDate] = generateEmptyDateTemplate();
+            }
+            appData = masterTimeline[activeDate];
+            
+            initCashCalculatorUI();
+            calculateOperationalDashboardAggregates();
+            renderAllDynamicModules();
+        }
+
+        function generateEmptyDateTemplate() {
+            return {
+                expenses: [], debits: [], chequeSales: [], purchasing: [], creditBills: [], staffAdvances: [],
+                notesValues: { "5000": 0, "2000": 0, "1000": 0, "500": 0, "100": 0, "50": 0, "20": 0 },
+                dashboard: { sales: 0, cash: 0, credit: 0, expenses: 0 }
+            };
+        }
+
+        function pushDataStateToCloud() {
+            masterTimeline[activeDate] = appData;
+            db.ref("timeline_ledger").set(masterTimeline);
+        }
+
+        function changeActiveDate() {
+            activeDate = document.getElementById('system-date-picker').value;
+            if(activeDate) {
+                parseCurrentDateState();
+                showToast(`Shift timeline target: ${activeDate}`, "cyan", "fa-calendar-day");
+            }
+        }
+
+        const fmtLKR = val => new Intl.NumberFormat('en-LK', { style: 'currency', currency: 'LKR' }).format(val || 0);
+
+        /* =========================================
+           DASHBOARD REALTIME CALCULATORS
+           ========================================= */
+        function calculateOperationalDashboardAggregates() {
+            // Expenses Calculation
+            let totalExpenses = 0;
+            if(appData.expenses) appData.expenses.forEach(e => totalExpenses += parseFloat(e.amount || 0));
+            appData.dashboard.expenses = totalExpenses;
+
+            // Credits Issued Calculation
+            let totalCredits = 0;
+            if(appData.creditBills) appData.creditBills.forEach(c => totalCredits += parseFloat(c.amount || 0));
+            appData.dashboard.credit = totalCredits;
+
+            // Direct UI Field Updates
+            document.getElementById('stat-sales').innerText = fmtLKR(appData.dashboard.sales);
+            document.getElementById('stat-cash').innerText = fmtLKR(appData.dashboard.cash);
+            document.getElementById('stat-credit').innerText = fmtLKR(appData.dashboard.credit);
+            document.getElementById('stat-expenses').innerText = fmtLKR(appData.dashboard.expenses);
+
+            // Compute Sub-Metrics Arrays across specific segments
+            let todayCollections = 0;
+            Object.keys(masterTimeline).forEach(dt => {
+                const day = masterTimeline[dt];
+                if(day.creditBills) {
+                    day.creditBills.forEach(bill => {
+                        if(bill.status === 'cleared' && bill.clearedOnDate === activeDate) {
+                            todayCollections += parseFloat(bill.amount || 0);
+                        }
+                    });
+                }
+            });
+            document.getElementById('stat-dash-collected').innerText = fmtLKR(todayCollections);
+
+            let todayProcurement = 0;
+            if(appData.purchasing) appData.purchasing.forEach(p => todayProcurement += (parseFloat(p.cash || 0) + parseFloat(p.cheque || 0)));
+            document.getElementById('stat-dash-purchasing').innerText = fmtLKR(todayProcurement);
+
+            let todayStaff = 0;
+            if(appData.staffAdvances) appData.staffAdvances.forEach(s => todayStaff += parseFloat(s.amount || 0));
+            document.getElementById('stat-dash-staff').innerText = fmtLKR(todayStaff);
+
+            let todayDebits = 0;
+            if(appData.debits) appData.debits.forEach(d => todayDebits += parseFloat(d.amount || 0));
+            document.getElementById('stat-dash-debits').innerText = fmtLKR(todayDebits);
+        }
+
+        function editDailySale() {
+            const val = prompt("Update Daily Cash/Gross Sales Target Matrix:", appData.dashboard.sales);
+            if(val === null || isNaN(val)) return;
+            appData.dashboard.sales = parseFloat(val) || 0;
+            pushDataStateToCloud();
+            logToTerminal("SALES", `Shift baseline updated manually to ${fmtLKR(val)}`, "var(--cyan)");
+        }
+
+        /* =========================================
+           SECURITY ENFORCED MODULE CONTROLLERS
+           ========================================= */
+        function verifySecurityOverride() {
+            const code = prompt("INPUT SECURITY DELETION PIN:");
+            if(code === SECURITY_PIN) return true;
+            showToast("ACCESS DENIED. INVALID PIN CODE.", "red", "fa-shield-alt");
+            return false;
+        }
+
+        // EXPENSE COMPONENT
+        function renderExpenses() {
+            const tbody = document.getElementById('expense-tbody'); tbody.innerHTML = '';
+            if(appData.expenses) {
+                appData.expenses.forEach((e, index) => {
+                    tbody.innerHTML += `<tr><td><span class="neon-text-red">${e.category}</span></td><td>${e.desc}</td><td>${fmtLKR(e.amount)}</td><td><button class="icon-btn" onclick="deleteExpense(${index})"><i class="fas fa-trash neon-text-red"></i></button></td></tr>`;
+                });
+            }
+        }
+        function addExpense() {
+            const cat = prompt("Category (e.g., Utilities, Food, Fuel):"); if(!cat) return;
+            const desc = prompt("Operational description tag:");
+            const amount = parseFloat(prompt("Transaction Outflow Amount (LKR):") || 0);
+            if(!amount) return;
+            if(!appData.expenses) appData.expenses = [];
+            appData.expenses.push({ category: cat, desc, amount });
+            pushDataStateToCloud(); logToTerminal("EXPENSE", `Captured overhead outtake: ${cat} -> ${fmtLKR(amount)}`, "var(--red)");
+        }
+        function deleteExpense(index) {
+            if(!verifySecurityOverride()) return;
+            appData.expenses.splice(index, 1);
+            pushDataStateToCloud();
+        }
+
+        // OTHER CASH DEBITS COMPONENT
+        function renderDebits() {
+            const tbody = document.getElementById('debits-tbody'); tbody.innerHTML = '';
+            if(appData.debits) {
+                appData.debits.forEach((d, index) => {
+                    tbody.innerHTML += `<tr><td><strong>${d.profile}</strong></td><td>${d.details}</td><td>${fmtLKR(d.amount)}</td><td><button class="icon-btn" onclick="deleteDebit(${index})"><i class="fas fa-trash neon-text-red"></i></button></td></tr>`;
+                });
+            }
+        }
+        function addDebit() {
+            const profile = prompt("Recipient / Reference Profile Name:"); if(!profile) return;
+            const details = prompt("Statement Note / Reason:");
+            const amount = parseFloat(prompt("Cash outflow absolute amount (LKR):") || 0);
+            if(!amount) return;
+            if(!appData.debits) appData.debits = [];
+            appData.debits.push({ profile, details, amount });
+            pushDataStateToCloud(); logToTerminal("DEBIT", `Non-overhead transaction registered to ${profile}`, "var(--orange)");
+        }
+        function deleteDebit(index) {
+            if(!verifySecurityOverride()) return;
+            appData.debits.splice(index, 1);
+            pushDataStateToCloud();
+        }
+
+        // CHEQUE SALES LOG COMPONENT
+        function renderChequeSales() {
+            const tbody = document.getElementById('cheque-tbody'); tbody.innerHTML = '';
+            if(appData.chequeSales) {
+                appData.chequeSales.forEach((c, index) => {
+                    tbody.innerHTML += `<tr><td>${c.customer}</td><td>${c.invoice}</td><td style="font-family:monospace;">${c.chequeNo}</td><td class="neon-text-cyan">${fmtLKR(c.amount)}</td><td><button class="icon-btn" onclick="deleteChequeSale(${index})"><i class="fas fa-trash neon-text-red"></i></button></td></tr>`;
+                });
+            }
+        }
+        function addChequeSale() {
+            const customer = prompt("Client Account Entity Name:"); if(!customer) return;
+            const invoice = prompt("Invoice Tracking Index Number:");
+            const chequeNo = prompt("Banking Cheque Registry ID Number:");
+            const amount = parseFloat(prompt("Instrument Face Value (LKR):") || 0);
+            if(!amount) return;
+            if(!appData.chequeSales) appData.chequeSales = [];
+            appData.chequeSales.push({ customer, invoice, chequeNo, amount });
+            pushDataStateToCloud(); logToTerminal("CHEQUE", `Captured trade cheque asset ${chequeNo} worth ${fmtLKR(amount)}`, "var(--cyan)");
+        }
+        function deleteChequeSale(index) {
+            if(!verifySecurityOverride()) return;
+            appData.chequeSales.splice(index, 1);
+            pushDataStateToCloud();
+        }
+
+        // PROCUREMENT PURCHASING COMPONENT
+        function renderPurchasing() {
+            const tbody = document.getElementById('purchasing-tbody'); tbody.innerHTML = '';
+            if(appData.purchasing) {
+                appData.purchasing.forEach((p, index) => {
+                    tbody.innerHTML += `<tr><td><span class="neon-text-purple">${p.company}</span></td><td>${fmtLKR(p.cheque)}</td><td>${fmtLKR(p.credit)}</td><td>${fmtLKR(p.cash)}</td><td><button class="icon-btn" onclick="deletePurchase(${index})"><i class="fas fa-trash neon-text-red"></i></button></td></tr>`;
+                });
+            }
+        }
+        function addPurchaseRow() {
+            const company = prompt("Wholesale Vendor Entity Label:"); if(!company) return;
+            const cheque = parseFloat(prompt("Cheque collateral component value:") || 0);
+            const credit = parseFloat(prompt("Credited balance deferment component value:") || 0);
+            const cash = parseFloat(prompt("Immediate cash disbursement allocation:") || 0);
+            if(!appData.purchasing) appData.purchasing = [];
+            appData.purchasing.push({ company, cheque, credit, cash });
+            pushDataStateToCloud(); logToTerminal("PROCURE", `Committed trade payload configuration for ${company}`, "var(--purple)");
+        }
+        function deletePurchase(index) {
+            if(!verifySecurityOverride()) return;
+            appData.purchasing.splice(index, 1);
+            pushDataStateToCloud();
+        }
+
+        // CREDIT CONTROL DATA MANAGEMENT PIPELINE
+        function renderCreditInvoicesAndCollections() {
+            const todayBody = document.getElementById('credit-today-tbody'); todayBody.innerHTML = '';
+            const allBody = document.getElementById('credit-all-tbody'); allBody.innerHTML = '';
+            const clearingHubBody = document.getElementById('collections-tbody'); clearingHubBody.innerHTML = '';
+
+            // Map and organize through the database records array structure
+            Object.keys(masterTimeline).forEach(dateKey => {
+                const dateGroup = masterTimeline[dateKey];
+                if(dateGroup.creditBills) {
+                    dateGroup.creditBills.forEach((bill, itemIndex) => {
+                        const tableRowString = `
+                            <tr>
+                                ${dateKey !== activeDate ? `<td>${dateKey}</td>` : ''}
+                                <td><strong>${bill.customer}</strong></td>
+                                <td style="font-family:monospace;">${bill.billNo}</td>
+                                <td class="neon-text-orange">${fmtLKR(bill.amount)}</td>
+                                <td>${bill.dueDate}</td>
+                                <td><span class="badge badge-${bill.status}">${bill.status}</span></td>
+                                <td>
+                                    <button class="icon-btn" onclick="deleteCreditBill('${dateKey}', ${itemIndex})"><i class="fas fa-trash neon-text-red"></i></button>
+                                </td>
+                            </tr>`;
+                        
+                        // Segregate display into specific table views
+                        if(dateKey === activeDate) todayBody.innerHTML += tableRowString;
+                        allBody.innerHTML += tableRowString;
+
+                        // Display active pending accounts within the Clearing Hub
+                        if(bill.status !== 'cleared') {
+                            clearingHubBody.innerHTML += `
+                                <tr>
+                                    <td>${dateKey}</td>
+                                    <td><strong>${bill.customer}</strong></td>
+                                    <td>${bill.billNo}</td>
+                                    <td class="neon-text-red">${fmtLKR(bill.amount)}</td>
+                                    <td><span class="badge badge-${bill.status}">${bill.status}</span></td>
+                                    <td>
+                                        <button class="cyber-btn-small" style="border-color:var(--green); color:var(--green);" onclick="processSettlementPipeline('${dateKey}', ${itemIndex})">CLEAR TRANS</button>
+                                    </td>
+                                </tr>`;
+                        }
+                    });
+                }
+            });
+        }
+        function addCreditBill() {
+            const customer = prompt("Debtor Client Profile Name:"); if(!customer) return;
+            const amount = parseFloat(prompt("Total Invoice Credit Allocation Value (LKR):") || 0); if(!amount) return;
+            const billNo = "SS-CR-" + Math.floor(Math.random() * 9000 + 1000);
+            const terms = parseInt(prompt("Credit lifespan limit terms (Days):") || "30");
+            const dueDate = new Date(Date.now() + terms * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+            
+            if(!appData.creditBills) appData.creditBills = [];
+            appData.creditBills.push({ customer, billNo, amount, dueDate, status: 'pending' });
+            pushDataStateToCloud(); logToTerminal("CREDIT", `Spawned asset invoice record ${billNo} to ${customer}`, "var(--orange)");
+        }
+        function processSettlementPipeline(dateKey, itemIndex) {
+            const mechanism = prompt("Define Transaction Settlement Mode (Type 'Cash' or 'Cheq'):");
+            if(!mechanism) return;
+            const normalType = mechanism.toLowerCase().trim();
+            if(normalType !== 'cash' && normalType !== 'cheq') return showToast("Unsupported Transaction Route", "red", "fa-times");
+            
+            const clearingDate = prompt("Input settlement recognition date (YYYY-MM-DD):", activeDate);
+            if(!clearingDate) return;
+
+            // Target historical structural node path manually across object tree references
+            masterTimeline[dateKey].creditBills[itemIndex].status = "cleared";
+            masterTimeline[dateKey].creditBills[itemIndex].clearedOnDate = clearingDate;
+            masterTimeline[dateKey].creditBills[itemIndex].paymentType = normalType === 'cash' ? 'Cash Settlement' : 'Cheque Asset Clearing';
+
+            db.ref("timeline_ledger").set(masterTimeline);
+            showToast("Settlement Cleared Successfully", "green", "fa-check");
+            logToTerminal("COLLECT", `Invoice balance on ${masterTimeline[dateKey].creditBills[itemIndex].billNo} successfully cleared via ${normalType.toUpperCase()}`, "var(--green)");
+        }
+        function deleteCreditBill(dateKey, index) {
+            if(!verifySecurityOverride()) return;
+            masterTimeline[dateKey].creditBills.splice(index, 1);
+            db.ref("timeline_ledger").set(masterTimeline);
+        }
+
+        // STAFF MANAGEMENT COMPONENT
+        function renderStaffAdvances() {
+            const tbody = document.getElementById('staff-tbody'); tbody.innerHTML = '';
+            if(appData.staffAdvances) {
+                appData.staffAdvances.forEach((s, index) => {
+                    tbody.innerHTML += `<tr><td><span class="neon-text-cyan">${s.name}</span></td><td>${s.remark}</td><td class="neon-text-cyan">${fmtLKR(s.amount)}</td><td>${s.date}</td><td><button class="icon-btn" onclick="deleteStaffAdvance(${index})"><i class="fas fa-trash neon-text-red"></i></button></td></tr>`;
+                });
+            }
+        }
+        function addStaffAdvance() {
+            const name = prompt("Employee Reference Identifier Name:"); if(!name) return;
+            const amount = parseFloat(prompt("Advance payload disbursement value (LKR):") || 0); if(!amount) return;
+            const remark = prompt("Internal compliance tracking note:");
+            if(!appData.staffAdvances) appData.staffAdvances = [];
+            appData.staffAdvances.push({ name, amount, remark, date: activeDate });
+            pushDataStateToCloud(); logToTerminal("STAFF", `Disbursed outtake wage shift advance to ${name}`, "var(--cyan)");
+        }
+        function deleteStaffAdvance(index) {
+            if(!verifySecurityOverride()) return;
+            appData.staffAdvances.splice(index, 1);
+            pushDataStateToCloud();
+        }
+
+        /* =========================================
+           CASH NOTE CALCULATION MATRIX ENGINE
+           ========================================= */
+        const notes = [5000, 2000, 1000, 500, 100, 50, 20];
+        function initCashCalculatorUI() {
+            const container = document.getElementById('note-inputs'); container.innerHTML = '';
+            notes.forEach(n => {
+                const currentQty = (appData.notesValues && appData.notesValues[n]) ? appData.notesValues[n] : 0;
+                container.innerHTML += `
+                    <div class="note-row">
+                        <div class="neon-text-green" style="font-size:1.2rem;">LKR ${n}</div>
+                        <div>X</div>
+                        <input type="number" min="0" data-note="${n}" value="${currentQty}" oninput="executeDynamicNotesSummation()">
+                    </div>`;
+            });
+            executeDynamicNotesSummation(false);
+        }
+        function executeDynamicNotesSummation(triggerSave = true) {
+            let runningSumTotal = 0;
+            if(!appData.notesValues) appData.notesValues = {};
+            
+            document.querySelectorAll('#note-inputs input').forEach(input => {
+                const currentDenomination = input.getAttribute('data-note');
+                const elementQuantity = parseInt(input.value) || 0;
+                appData.notesValues[currentDenomination] = elementQuantity;
+                runningSumTotal += (parseInt(currentDenomination) * elementQuantity);
+            });
+
+            document.getElementById('grand-total-notes').innerText = fmtLKR(runningSumTotal);
+            appData.dashboard.cash = runningSumTotal;
+            document.getElementById('stat-cash').innerText = fmtLKR(runningSumTotal);
+            if(triggerSave) pushDataStateToCloud();
+        }
+        function saveCashData() {
+            showToast("Physical cash balances committed securely.", "green", "fa-shield-alt");
+        }
+
+        /* =========================================
+           RANGE MULTI-DATE QUERY REPORT MATRIX ENGINE
+           ========================================= */
+        function generateRangeReport() {
+            const start = document.getElementById('report-start-date').value;
+            const end = document.getElementById('report-end-date').value;
+            if(!start || !end) return showToast("Select Query Constraints First", "orange", "fa-calendar");
+
+            let computedSales = 0, computedCredits = 0, computedCollections = 0, computedExpenses = 0, computedStaff = 0;
+
+            Object.keys(masterTimeline).forEach(dateKey => {
+                if(dateKey >= start && dateKey <= end) {
+                    const node = masterTimeline[dateKey];
+                    if(node.dashboard && node.dashboard.sales) computedSales += parseFloat(node.dashboard.sales || 0);
+                    if(node.expenses) node.expenses.forEach(e => computedExpenses += parseFloat(e.amount || 0));
+                    if(node.staffAdvances) node.staffAdvances.forEach(s => computedStaff += parseFloat(s.amount || 0));
+                    
+                    if(node.creditBills) {
+                        node.creditBills.forEach(b => {
+                            computedCredits += parseFloat(b.amount || 0);
+                        });
+                    }
+                    
+                    // Cross reference multi-node clearing paths over data records
+                    Object.keys(masterTimeline).forEach(innerKey => {
+                        const innerNode = masterTimeline[innerKey];
+                        if(innerNode.creditBills) {
+                            innerNode.creditBills.forEach(bill => {
+                                if(bill.status === 'cleared' && bill.clearedOnDate === dateKey) {
+                                    computedCollections += parseFloat(bill.amount || 0);
+                                }
+                            });
+                        }
+                    });
+                }
+            });
+
+            document.getElementById('rep-sales').innerText = fmtLKR(computedSales);
+            document.getElementById('rep-credits').innerText = fmtLKR(computedCredits);
+            document.getElementById('rep-collections').innerText = fmtLKR(computedCollections);
+            document.getElementById('rep-expenses').innerText = fmtLKR(computedExpenses);
+            document.getElementById('rep-staff').innerText = fmtLKR(computedStaff);
+            
+            showToast("Data-Range Matrix Queries Computed", "purple", "fa-analytics");
+        }
+
+        /* =========================================
+           SYSTEM NAVIGATION & ADMINISTRATIVE TOOLING
+           ========================================= */
+        document.getElementById('login-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const id = document.getElementById('username').value;
+            const pass = document.getElementById('password').value;
+            
+            if(id === "admin" && pass === "123") {
+                document.getElementById('login-page').style.display = 'none';
+                document.getElementById('main-app').classList.remove('hidden');
+                showToast("System Access Authorized.", "green", "fa-user-shield");
+            } else {
+                showToast("Invalid System Operator Credentials.", "red", "fa-lock");
+            }
+        });
+
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.nav-links li').forEach(l => l.classList.remove('active'));
+            document.getElementById(`tab-${tabId}`).classList.add('active');
+            event.currentTarget.classList.add('active');
+        }
+
+        document.getElementById('menu-toggle').addEventListener('click', () => {
+            document.getElementById('sidebar').classList.toggle('open');
+        });
+
+        function togglePassword() {
+            const el = document.getElementById('password');
+            el.type = el.type === 'password' ? 'text' : 'password';
+        }
+
+        function renderAllDynamicModules() {
+            renderExpenses(); renderDebits(); renderChequeSales();
+            renderPurchasing(); renderCreditInvoicesAndCollections(); renderStaffAdvances();
+        }
+
+        function logToTerminal(tag, msg, color) {
+            const terminal = document.getElementById('system-log-terminal'); if(!terminal) return;
+            terminal.innerHTML += `<div class="log-entry"><span style="color:${color}">[${tag}]</span> [${new Date().toLocaleTimeString()}] ${msg}</div>`;
+            terminal.scrollTop = terminal.scrollHeight;
+        }
+
+        function changeAccent(color) { document.documentElement.style.setProperty('--cyan', color); }
+        function factoryResetDatabase() { if(confirm("PERMANENTLY DESTROY GLOBAL DISTRIBUTED DATABASE?")) { if(prompt("INPUT MASTER PASSWORD OVERRIDE CODE:") === SECURITY_PIN) { db.ref("/").remove(); location.reload(); } } }
+
+        function showToast(msg, colorClass, icon) {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div'); toast.className = `toast border-${colorClass}`;
+            let colorHex = colorClass === 'green' ? '#00ff99' : colorClass === 'red' ? '#ff3b3b' : colorClass === 'orange' ? '#ff9f1c' : colorClass === 'purple' ? '#c400ff' : '#00f0ff';
+            toast.innerHTML = `<i class="fas ${icon}" style="color:${colorHex}"></i><div>${msg}</div>`;
+            container.appendChild(toast);
+            setTimeout(() => { toast.remove(); }, 3000);
+        }
+    </script>
+</body>
+</html>
