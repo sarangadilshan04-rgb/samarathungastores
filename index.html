@@ -107,14 +107,15 @@
         .cyber-btn:hover .scanner { left: 200%; transition: 0.8s; }
 
         /* MAIN APP LAYOUT */
-        #main-app { display: flex; height: 100vh; overflow: hidden; }
+        #main-app { display: flex; height: 100vh; flex-direction: column; overflow: hidden; }
+        .app-container-inner { display: flex; flex: 1; overflow: hidden; }
         #sidebar { width: 260px; height: 100%; padding: 1.5rem 0; display: flex; flex-direction: column; border-right: 1px solid var(--glass-border); border-radius: 0; transition: 0.3s; }
         .brand { display: flex; align-items: center; gap: 10px; padding: 0 1.5rem 2rem; font-size: 1.5rem; letter-spacing: 2px; }
         .nav-links { list-style: none; overflow-y: auto; flex: 1; }
         .nav-links li { padding: 12px 1.5rem; cursor: pointer; transition: 0.3s; border-left: 3px solid transparent; display: flex; align-items: center; gap: 15px; font-size: 1.05rem; }
         .nav-links li:hover { background: rgba(255,255,255,0.05); }
         .nav-links li.active { background: rgba(0,240,255,0.1); border-left-color: var(--cyan); color: var(--cyan); text-shadow: 0 0 8px var(--cyan); }
-        #content { flex: 1; display: flex; flex-direction: column; overflow-y: auto; }
+        #content { flex: 1; display: flex; flex-direction: column; overflow-y: auto; padding-bottom: 40px; }
         
         .top-nav { display: flex; justify-content: space-between; align-items: center; padding: 1rem 2rem; border-radius: 0; border-bottom: 1px solid var(--glass-border); border-bottom-color: var(--cyan); position: sticky; top: 0; z-index: 100; }
         .nav-left, .nav-right { display: flex; align-items: center; gap: 20px; }
@@ -165,6 +166,23 @@
         .toast { background: rgba(0,0,0,0.8); border-left: 4px solid var(--cyan); padding: 15px 20px; border-radius: 4px; box-shadow: 0 4px 15px rgba(0,0,0,0.5); color: #fff; backdrop-filter: blur(5px); animation: slideIn 0.3s ease; display: flex; align-items: center; gap: 10px; }
         @keyframes slideIn { from { transform: translateX(100%); } to { transform: translateX(0); } }
 
+        /* MODAL DIALOGS SYSTEM */
+        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); z-index: 9500; display: flex; justify-content: center; align-items: center; opacity: 0; pointer-events: none; transition: opacity 0.3s ease; }
+        .modal-overlay.active { opacity: 1; pointer-events: auto; }
+        .cyber-modal { width: 100%; max-width: 500px; max-height: 90vh; overflow-y: auto; position: relative; }
+        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; }
+        .modal-close { background: none; border: none; color: var(--text); font-size: 1.5rem; cursor: pointer; transition: 0.3s; }
+        .modal-close:hover { color: var(--red); }
+        .form-group { margin-bottom: 1.25rem; }
+        .form-group label { display: block; margin-bottom: 0.5rem; font-size: 1.1rem; letter-spacing: 1px; color: #aaa; }
+        .form-group input, .form-group select { width: 100%; padding: 10px 12px; background: rgba(0,0,0,0.6); border: 1px solid var(--glass-border); border-radius: 6px; color: var(--text); font-size: 1.1rem; outline: none; }
+        .form-group input:focus, .form-group select:focus { border-color: var(--cyan); box-shadow: 0 0 10px rgba(0,240,255,0.2); }
+        .modal-footer-btns { display: flex; justify-content: flex-end; gap: 10px; margin-top: 1.5rem; }
+
+        /* FOOTER SYSTEM */
+        .cyber-footer { background: rgba(0, 0, 0, 0.85); text-align: center; padding: 10px; font-size: 0.9rem; color: #777; border-top: 1px solid var(--glass-border); font-family: monospace; letter-spacing: 1px; width: 100%; z-index: 10; position: fixed; bottom: 0; left: 0; }
+        .cyber-footer span { color: var(--cyan); font-weight: bold; text-shadow: 0 0 5px var(--cyan); }
+
         @media (max-width: 1024px) { .calculator-grid { grid-template-columns: 1fr; } }
         @media (max-width: 768px) { #sidebar { position: fixed; left: -260px; z-index: 200; } #sidebar.open { left: 0; box-shadow: 5px 0 25px rgba(0,0,0,0.8); } }
     </style>
@@ -207,275 +225,526 @@
 
     <!-- MAIN APP STRUCTURE -->
     <div id="main-app" class="hidden">
-        
-        <!-- SIDEBAR -->
-        <nav id="sidebar" class="glass-panel">
-            <div class="brand">
-                <i class="fas fa-microchip neon-text-cyan"></i>
-                <h3>AI_ERP_v3</h3>
+        <!-- HEADER -->
+        <header class="glass-panel top-nav">
+            <div class="nav-left">
+                <button id="menu-toggle"><i class="fas fa-bars"></i></button>
+                <h2 class="shop-name neon-text-cyan">SAMARATHUNGA STORES</h2>
             </div>
-            <ul class="nav-links">
-                <li class="active" onclick="switchTab('dashboard')"><i class="fas fa-chart-line"></i> Dashboard</li>
-                <li onclick="switchTab('cash')"><i class="fas fa-wallet"></i> Cash Calculator</li>
-                <li onclick="switchTab('expenses')"><i class="fas fa-file-invoice-dollar"></i> Expenses</li>
-                <li onclick="switchTab('debits')"><i class="fas fa-hand-holding-usd"></i> Cash Debits</li>
-                <li onclick="switchTab('chequesales')"><i class="fas fa-money-check"></i> Cheque Sales</li>
-                <li onclick="switchTab('purchasing')"><i class="fas fa-shopping-cart"></i> Purchasing</li>
-                <li onclick="switchTab('credit')"><i class="fas fa-money-check-alt"></i> Credit Invoices</li>
-                <li onclick="switchTab('collections')"><i class="fas fa-coins"></i> Credit Collections</li>
-                <li onclick="switchTab('staff')"><i class="fas fa-users"></i> Staff Advances</li>
-                <li onclick="switchTab('reports')"><i class="fas fa-file-medical-alt"></i> Analytical Reports</li>
-                <li onclick="switchTab('settings')"><i class="fas fa-cog"></i> Settings</li>
-            </ul>
-        </nav>
-
-        <main id="content">
-            <!-- HEADER -->
-            <header class="glass-panel top-nav">
-                <div class="nav-left">
-                    <button id="menu-toggle"><i class="fas fa-bars"></i></button>
-                    <h2 class="shop-name neon-text-cyan">SAMARATHUNGA STORES</h2>
+            <div class="nav-right">
+                <div style="display:flex; align-items:center; gap:8px;">
+                    <span style="font-size:0.9rem; color:var(--cyan); font-weight:600;"><i class="fas fa-history"></i> SHIFT DATE:</span>
+                    <input type="date" id="system-date-picker" class="ledger-date-picker" onchange="changeActiveDateWithAuth()">
                 </div>
-                <div class="nav-right">
-                    <div style="display:flex; align-items:center; gap:8px;">
-                        <span style="font-size:0.9rem; color:var(--cyan); font-weight:600;"><i class="fas fa-history"></i> SHIFT DATE:</span>
-                        <input type="date" id="system-date-picker" class="ledger-date-picker" onchange="changeActiveDate()">
-                    </div>
-                    <div id="live-clock" class="neon-text-cyan">00:00:00</div>
-                    <div class="profile-avatar"><img src="https://ui-avatars.com/api/?name=Admin&background=00f0ff&color=050505" alt="Profile"></div>
-                </div>
-            </header>
-
-            <!-- TAB: DASHBOARD -->
-            <div id="tab-dashboard" class="tab-content active">
-                <!-- TOP META CARDS -->
-                <div class="grid-cards">
-                    <div class="glass-card stat-card border-cyan hover-float">
-                        <div class="stat-header">Gross Daily Sales <i class="fas fa-edit neon-text-cyan" style="margin-left:auto; cursor:pointer;" onclick="editDailySale()"></i></div>
-                        <div class="stat-value neon-text-cyan" id="stat-sales">LKR 0.00</div>
-                    </div>
-                    <div class="glass-card stat-card border-green hover-float">
-                        <div class="stat-header">Physical Cash Balance</div>
-                        <div class="stat-value neon-text-green" id="stat-cash">LKR 0.00</div>
-                    </div>
-                    <div class="glass-card stat-card border-orange hover-float">
-                        <div class="stat-header">Today Credit Generated</div>
-                        <div class="stat-value neon-text-orange" id="stat-credit">LKR 0.00</div>
-                    </div>
-                    <div class="glass-card stat-card border-red hover-float">
-                        <div class="stat-header">Store Expenses</div>
-                        <div class="stat-value neon-text-red" id="stat-expenses">LKR 0.00</div>
-                    </div>
-                </div>
-
-                <!-- BOTTOM DYNAMIC METRICS CARDS -->
-                <div class="grid-cards" style="margin-top: 1.5rem;">
-                    <div class="glass-card stat-card border-green hover-float">
-                        <div class="stat-header">Today Credit Collected <i class="fas fa-coins neon-text-green" style="margin-left:auto;"></i></div>
-                        <div class="stat-value neon-text-green" id="stat-dash-collected">LKR 0.00</div>
-                    </div>
-                    <div class="glass-card stat-card border-purple hover-float">
-                        <div class="stat-header">Today Procurement Outlay <i class="fas fa-truck neon-text-purple" style="margin-left:auto;"></i></div>
-                        <div class="stat-value neon-text-purple" id="stat-dash-purchasing">LKR 0.00</div>
-                    </div>
-                    <div class="glass-card stat-card border-cyan hover-float">
-                        <div class="stat-header">Today Staff Advances <i class="fas fa-users neon-text-cyan" style="margin-left:auto;"></i></div>
-                        <div class="stat-value neon-text-cyan" id="stat-dash-staff">LKR 0.00</div>
-                    </div>
-                    <div class="glass-card stat-card border-orange hover-float">
-                        <div class="stat-header">Today Other Cash Debits <i class="fas fa-wallet neon-text-orange" style="margin-left:auto;"></i></div>
-                        <div class="stat-value neon-text-orange" id="stat-dash-debits">LKR 0.00</div>
-                    </div>
-                </div>
-
-                <div class="glass-card summary-center border-purple">
-                    <h3 class="neon-text-purple" style="margin-bottom: 1rem;"><i class="fas fa-terminal"></i> Global Operational Log Engine</h3>
-                    <div class="system-log-box" id="system-log-terminal"></div>
-                </div>
+                <div id="live-clock" class="neon-text-cyan">00:00:00</div>
+                <div class="profile-avatar"><img src="https://ui-avatars.com/api/?name=Admin&background=00f0ff&color=050505" alt="Profile"></div>
             </div>
+        </header>
 
-            <!-- TAB: CASH CALCULATOR -->
-            <div id="tab-cash" class="tab-content">
-                <div class="glass-card border-green">
-                    <h2 class="neon-text-green"><i class="fas fa-calculator"></i> Cash Note Denomination Matrix</h2>
-                    <div class="calculator-grid mt-2">
-                        <div id="note-inputs"></div>
-                        <div class="total-panel p-2">
-                            <h3>TOTAL CASH BALANCE</h3>
-                            <div class="huge-total neon-text-green" id="grand-total-notes">LKR 0.00</div>
-                            <button class="cyber-btn mt-2" onclick="saveCashData()">COMMIT BALANCES</button>
+        <div class="app-container-inner">
+            <!-- SIDEBAR -->
+            <nav id="sidebar" class="glass-panel">
+                <div class="brand">
+                    <i class="fas fa-microchip neon-text-cyan"></i>
+                    <h3>AI_ERP_v3</h3>
+                </div>
+                <ul class="nav-links">
+                    <li class="active" onclick="switchTab('dashboard')"><i class="fas fa-chart-line"></i> Dashboard</li>
+                    <li onclick="switchTab('cash')"><i class="fas fa-wallet"></i> Cash Calculator</li>
+                    <li onclick="switchTab('expenses')"><i class="fas fa-file-invoice-dollar"></i> Expenses</li>
+                    <li onclick="switchTab('debits')"><i class="fas fa-hand-holding-usd"></i> Cash Debits</li>
+                    <li onclick="switchTab('chequesales')"><i class="fas fa-money-check"></i> Cheque Sales</li>
+                    <li onclick="switchTab('purchasing')"><i class="fas fa-shopping-cart"></i> Purchasing</li>
+                    <li onclick="switchTab('credit')"><i class="fas fa-money-check-alt"></i> Credit Invoices</li>
+                    <li onclick="switchTab('collections')"><i class="fas fa-coins"></i> Credit Collections</li>
+                    <li onclick="switchTab('staff')"><i class="fas fa-users"></i> Staff Advances</li>
+                    <li onclick="switchTab('reports')"><i class="fas fa-file-medical-alt"></i> Analytical Reports</li>
+                    <li onclick="switchTab('settings')"><i class="fas fa-cog"></i> Settings</li>
+                </ul>
+            </nav>
+
+            <main id="content">
+                <!-- TAB: DASHBOARD -->
+                <div id="tab-dashboard" class="tab-content active">
+                    <div class="grid-cards">
+                        <div class="glass-card stat-card border-cyan hover-float">
+                            <div class="stat-header">Gross Daily Sales <i class="fas fa-edit neon-text-cyan" style="margin-left:auto; cursor:pointer;" onclick="openSalesModal()"></i></div>
+                            <div class="stat-value neon-text-cyan" id="stat-sales">LKR 0.00</div>
+                        </div>
+                        <div class="glass-card stat-card border-green hover-float">
+                            <div class="stat-header">Physical Cash Balance</div>
+                            <div class="stat-value neon-text-green" id="stat-cash">LKR 0.00</div>
+                        </div>
+                        <div class="glass-card stat-card border-orange hover-float">
+                            <div class="stat-header">Today Credit Generated</div>
+                            <div class="stat-value neon-text-orange" id="stat-credit">LKR 0.00</div>
+                        </div>
+                        <div class="glass-card stat-card border-red hover-float">
+                            <div class="stat-header">Store Expenses</div>
+                            <div class="stat-value neon-text-red" id="stat-expenses">LKR 0.00</div>
                         </div>
                     </div>
-                </div>
-            </div>
 
-            <!-- TAB: EXPENSES -->
-            <div id="tab-expenses" class="tab-content">
-                <div class="glass-card border-red">
-                    <div class="flex-between">
-                        <h2 class="neon-text-red"><i class="fas fa-file-invoice-dollar"></i> Expense Registry</h2>
-                        <button class="cyber-btn-small" onclick="addExpense()">+ RECORD NEW EXPENSE</button>
-                    </div>
-                    <div class="table-container mt-2">
-                        <table class="cyber-table">
-                            <thead><tr><th>Category</th><th>Description</th><th>Amount (LKR)</th><th>Action</th></tr></thead>
-                            <tbody id="expense-tbody"></tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-
-            <!-- TAB: CASH DEBITS -->
-            <div id="tab-debits" class="tab-content">
-                <div class="glass-card border-orange">
-                    <div class="flex-between">
-                        <h2 class="neon-text-orange"><i class="fas fa-hand-holding-usd"></i> Other Cash Debits (Non-Overhead Outflows)</h2>
-                        <button class="cyber-btn-small" onclick="addDebit()">+ LOG NEW CASH DEBIT</button>
-                    </div>
-                    <div class="table-container mt-2">
-                        <table class="cyber-table">
-                            <thead><tr><th>Reference Profile</th><th>Transaction Details</th><th>Value (LKR)</th><th>Action</th></tr></thead>
-                            <tbody id="debits-tbody"></tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-
-            <!-- TAB: CHEQUE SALES -->
-            <div id="tab-chequesales" class="tab-content">
-                <div class="glass-card border-cyan">
-                    <div class="flex-between">
-                        <h2 class="neon-text-cyan"><i class="fas fa-money-check"></i> Cheque Sales Log System</h2>
-                        <button class="cyber-btn-small" onclick="addChequeSale()">+ LOG CHEQUE TRANSACTION</button>
-                    </div>
-                    <div class="table-container mt-2">
-                        <table class="cyber-table">
-                            <thead><tr><th>Customer Reference</th><th>Invoice Reference No</th><th>Cheque Asset ID No</th><th>Face Value Amount</th><th>Action</th></tr></thead>
-                            <tbody id="cheque-tbody"></tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-
-            <!-- TAB: PURCHASING -->
-            <div id="tab-purchasing" class="tab-content">
-                <div class="glass-card border-purple">
-                    <div class="flex-between">
-                        <h2 class="neon-text-purple"><i class="fas fa-shopping-cart"></i> Procurement Ledgers</h2>
-                        <button class="cyber-btn-small" onclick="addPurchaseRow()">+ LOG PROCUREMENT RECORD</button>
-                    </div>
-                    <div class="table-container mt-2">
-                        <table class="cyber-table">
-                            <thead><tr><th>Vendor Company Name</th><th>Cheque Allocation</th><th>Credit Extension</th><th>Immediate Cash Outlay</th><th>Action</th></tr></thead>
-                            <tbody id="purchasing-tbody"></tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-
-            <!-- TAB: CREDIT BILLS -->
-            <div id="tab-credit" class="tab-content">
-                <div class="glass-card border-orange">
-                    <div class="flex-between" style="margin-bottom:15px;">
-                        <h2 class="neon-text-orange"><i class="fas fa-money-check-alt"></i> Credit Invoices Engine</h2>
-                        <button class="cyber-btn-small" onclick="addCreditBill()">+ INSTANTIATE CREDIT BILL</button>
+                    <div class="grid-cards" style="margin-top: 1.5rem;">
+                        <div class="glass-card stat-card border-green hover-float">
+                            <div class="stat-header">Today Credit Collected <i class="fas fa-coins neon-text-green" style="margin-left:auto;"></i></div>
+                            <div class="stat-value neon-text-green" id="stat-dash-collected">LKR 0.00</div>
+                        </div>
+                        <div class="glass-card stat-card border-cyan hover-float">
+                            <div class="stat-header">Today Cheque Sales <i class="fas fa-money-check neon-text-cyan" style="margin-left:auto;"></i></div>
+                            <div class="stat-value neon-text-cyan" id="stat-dash-cheqsales">LKR 0.00</div>
+                        </div>
+                        <div class="glass-card stat-card border-purple hover-float">
+                            <div class="stat-header">Today Procurement Outlay <i class="fas fa-truck neon-text-purple" style="margin-left:auto;"></i></div>
+                            <div class="stat-value neon-text-purple" id="stat-dash-purchasing">LKR 0.00</div>
+                        </div>
+                        <div class="glass-card stat-card border-cyan hover-float">
+                            <div class="stat-header">Today Staff Advances <i class="fas fa-users neon-text-cyan" style="margin-left:auto;"></i></div>
+                            <div class="stat-value neon-text-cyan" id="stat-dash-staff">LKR 0.00</div>
+                        </div>
                     </div>
                     
-                    <h3 class="neon-text-cyan" style="font-size:1.1rem; margin-top:1rem;"><i class="fas fa-bolt"></i> Today's Issued Credit Bills</h3>
-                    <div class="table-container mt-1">
-                        <table class="cyber-table">
-                            <thead><tr><th>Customer Name</th><th>Invoice Index Reference</th><th>Total Amount</th><th>Maturity Date</th><th>Status</th><th>Action</th></tr></thead>
-                            <tbody id="credit-today-tbody"></tbody>
-                        </table>
-                    </div>
-
-                    <h3 class="neon-text-purple" style="font-size:1.1rem; margin-top:1.5rem;"><i class="fas fa-layer-group"></i> All Historical Credit Balance Trackers</h3>
-                    <div class="table-container mt-1">
-                        <table class="cyber-table">
-                            <thead><tr><th>Issue Date</th><th>Customer Name</th><th>Invoice Index Reference</th><th>Total Amount</th><th>Maturity Date</th><th>Status</th><th>Action</th></tr></thead>
-                            <tbody id="credit-all-tbody"></tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-
-            <!-- TAB: CREDIT COLLECTIONS -->
-            <div id="tab-collections" class="tab-content">
-                <div class="glass-card border-green">
-                    <h2 class="neon-text-green"><i class="fas fa-coins"></i> Credit Bill Settlement Clearing Hub</h2>
-                    <p style="color:#aaa; margin-bottom:15px;">Process partial or absolute invoice balance collections below:</p>
-                    <div class="table-container">
-                        <table class="cyber-table">
-                            <thead><tr><th>Original Date</th><th>Customer Name</th><th>Invoice No</th><th>Outstanding Due</th><th>Status</th><th>Process Settlement Action</th></tr></thead>
-                            <tbody id="collections-tbody"></tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-
-            <!-- TAB: STAFF MANAGEMENT -->
-            <div id="tab-staff" class="tab-content">
-                <div class="glass-card border-cyan">
-                    <div class="flex-between">
-                        <h2 class="neon-text-cyan"><i class="fas fa-users"></i> Staff Wage Adjustments & Advances</h2>
-                        <button class="cyber-btn-small" onclick="addStaffAdvance()">+ LOG SALARY DISBURSEMENT</button>
-                    </div>
-                    <div class="table-container mt-2">
-                        <table class="cyber-table">
-                            <thead><tr><th>Operator Employee ID Name</th><th>Reference Comments</th><th>Advance Allocation</th><th>Timestamp</th><th>Action</th></tr></thead>
-                            <tbody id="staff-tbody"></tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-
-            <!-- TAB: REPORTS -->
-            <div id="tab-reports" class="tab-content">
-                <div class="glass-card border-purple">
-                    <h2 class="neon-text-purple"><i class="fas fa-file-invoice"></i> Date-Range Query Report Matrix Engine</h2>
-                    <div class="report-filter-bar mt-2">
-                        <div>
-                            <label style="display:block; margin-bottom:5px;">Filter Start Date</label>
-                            <input type="date" id="report-start-date" class="cyber-input">
+                    <div class="grid-cards" style="margin-top: 1.5rem;">
+                        <div class="glass-card stat-card border-orange hover-float" style="grid-column: span 1;">
+                            <div class="stat-header">Today Other Cash Debits <i class="fas fa-wallet neon-text-orange" style="margin-left:auto;"></i></div>
+                            <div class="stat-value neon-text-orange" id="stat-dash-debits">LKR 0.00</div>
                         </div>
-                        <div>
-                            <label style="display:block; margin-bottom:5px;">Filter End Date</label>
-                            <input type="date" id="report-end-date" class="cyber-input">
-                        </div>
-                        <button class="cyber-btn-small" style="border-color:var(--purple); color:var(--purple);" onclick="generateRangeReport()">EXECUTE SYSTEM INQUIRY</button>
                     </div>
 
-                    <div class="grid-cards">
-                        <div class="glass-card border-cyan"><h4>Total Computed Gross Sales</h4><p style="font-size:1.8rem; font-weight:bold;" class="neon-text-cyan" id="rep-sales">LKR 0.00</p></div>
-                        <div class="glass-card border-orange"><h4>Total Account Credit Extensions</h4><p style="font-size:1.8rem; font-weight:bold;" class="neon-text-orange" id="rep-credits">LKR 0.00</p></div>
-                        <div class="glass-card border-green"><h4>Total Credit Cash Collections</h4><p style="font-size:1.8rem; font-weight:bold;" class="neon-text-green" id="rep-collections">LKR 0.00</p></div>
-                        <div class="glass-card border-red"><h4>Total System Store Expenses</h4><p style="font-size:1.8rem; font-weight:bold;" class="neon-text-red" id="rep-expenses">LKR 0.00</p></div>
-                        <div class="glass-card border-purple"><h4>Total Staff Wage Disbursements</h4><p style="font-size:1.8rem; font-weight:bold;" class="neon-text-purple" id="rep-staff">LKR 0.00</p></div>
+                    <div class="glass-card summary-center border-purple">
+                        <h3 class="neon-text-purple" style="margin-bottom: 1rem;"><i class="fas fa-terminal"></i> Global Operational Log Engine</h3>
+                        <div class="system-log-box" id="system-log-terminal"></div>
                     </div>
                 </div>
-            </div>
 
-            <!-- TAB: SETTINGS -->
-            <div id="tab-settings" class="tab-content">
-                <div class="glass-card border-cyan">
-                    <h2 class="neon-text-cyan"><i class="fas fa-cog"></i> Master System Adjustments</h2>
-                    <div class="settings-grid mt-2" style="display:grid; grid-template-columns:1fr 1fr; gap:20px;">
-                        <div class="glass-card">
-                            <h3>Aesthetic Themes</h3>
-                            <div style="display:flex; gap:10px; margin-top:10px;">
-                                <div style="width:30px; height:30px; background:#00f0ff; border-radius:50%; cursor:pointer;" onclick="changeAccent('#00f0ff')"></div>
-                                <div style="width:30px; height:30px; background:#c400ff; border-radius:50%; cursor:pointer;" onclick="changeAccent('#c400ff')"></div>
-                                <div style="width:30px; height:30px; background:#00ff99; border-radius:50%; cursor:pointer;" onclick="changeAccent('#00ff99')"></div>
+                <!-- TAB: CASH CALCULATOR -->
+                <div id="tab-cash" class="tab-content">
+                    <div class="glass-card border-green">
+                        <h2 class="neon-text-green"><i class="fas fa-calculator"></i> Cash Note Denomination Matrix</h2>
+                        <div class="calculator-grid mt-2">
+                            <div id="note-inputs"></div>
+                            <div class="total-panel p-2">
+                                <h3>TOTAL CASH BALANCE</h3>
+                                <div class="huge-total neon-text-green" id="grand-total-notes">LKR 0.00</div>
+                                <button class="cyber-btn mt-2" onclick="saveCashData()">COMMIT BALANCES</button>
                             </div>
                         </div>
-                        <div class="glass-card">
-                            <h3>Infrastructure Commands</h3>
-                            <button class="cyber-btn-small" style="width:100%; margin-top:10px; border-color:var(--red); color:var(--red);" onclick="factoryResetDatabase()">WIPE DATABASE PERMANENTLY</button>
+                    </div>
+                </div>
+
+                <!-- TAB: EXPENSES -->
+                <div id="tab-expenses" class="tab-content">
+                    <div class="glass-card border-red">
+                        <div class="flex-between">
+                            <h2 class="neon-text-red"><i class="fas fa-file-invoice-dollar"></i> Expense Registry</h2>
+                            <button class="cyber-btn-small" onclick="openModal('modal-expense')">+ RECORD NEW EXPENSE</button>
+                        </div>
+                        <div class="table-container mt-2">
+                            <table class="cyber-table">
+                                <thead><tr><th>Category</th><th>Description</th><th>Amount (LKR)</th><th>Action</th></tr></thead>
+                                <tbody id="expense-tbody"></tbody>
+                            </table>
                         </div>
                     </div>
                 </div>
+
+                <!-- TAB: CASH DEBITS -->
+                <div id="tab-debits" class="tab-content">
+                    <div class="glass-card border-orange">
+                        <div class="flex-between">
+                            <h2 class="neon-text-orange"><i class="fas fa-hand-holding-usd"></i> Other Cash Debits (Non-Overhead Outflows)</h2>
+                            <button class="cyber-btn-small" onclick="openModal('modal-debit')">+ LOG NEW CASH DEBIT</button>
+                        </div>
+                        <div class="table-container mt-2">
+                            <table class="cyber-table">
+                                <thead><tr><th>Reference Profile</th><th>Transaction Details</th><th>Value (LKR)</th><th>Action</th></tr></thead>
+                                <tbody id="debits-tbody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TAB: CHEQUE SALES -->
+                <div id="tab-chequesales" class="tab-content">
+                    <div class="glass-card border-cyan">
+                        <div class="flex-between">
+                            <h2 class="neon-text-cyan"><i class="fas fa-money-check"></i> Cheque Sales Log System</h2>
+                            <button class="cyber-btn-small" onclick="openModal('modal-cheque')">+ LOG CHEQUE TRANSACTION</button>
+                        </div>
+                        <div class="table-container mt-2">
+                            <table class="cyber-table">
+                                <thead><tr><th>Customer Reference</th><th>Invoice Reference No</th><th>Cheque Asset ID No</th><th>Face Value Amount</th><th>Action</th></tr></thead>
+                                <tbody id="cheque-tbody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TAB: PURCHASING -->
+                <div id="tab-purchasing" class="tab-content">
+                    <div class="glass-card border-purple">
+                        <div class="flex-between">
+                            <h2 class="neon-text-purple"><i class="fas fa-shopping-cart"></i> Procurement Ledgers</h2>
+                            <button class="cyber-btn-small" onclick="openModal('modal-purchase')">+ LOG PROCUREMENT RECORD</button>
+                        </div>
+                        <div class="table-container mt-2">
+                            <table class="cyber-table">
+                                <thead><tr><th>Vendor Company Name</th><th>Cheque Allocation</th><th>Credit Extension</th><th>Immediate Cash Outlay</th><th>Action</th></tr></thead>
+                                <tbody id="purchasing-tbody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TAB: CREDIT BILLS -->
+                <div id="tab-credit" class="tab-content">
+                    <div class="glass-card border-orange">
+                        <div class="flex-between" style="margin-bottom:15px;">
+                            <h2 class="neon-text-orange"><i class="fas fa-money-check-alt"></i> Credit Invoices Engine</h2>
+                            <button class="cyber-btn-small" onclick="openModal('modal-credit-bill')">+ INSTANTIATE CREDIT BILL</button>
+                        </div>
+                        
+                        <h3 class="neon-text-cyan" style="font-size:1.1rem; margin-top:1rem;"><i class="fas fa-bolt"></i> Today's Issued Credit Bills</h3>
+                        <div class="table-container mt-1">
+                            <table class="cyber-table">
+                                <thead><tr><th>Customer Name</th><th>Invoice Index Reference</th><th>Total Amount</th><th>Maturity Date</th><th>Status</th><th>Settled Date</th><th>Action</th></tr></thead>
+                                <tbody id="credit-today-tbody"></tbody>
+                            </table>
+                        </div>
+
+                        <h3 class="neon-text-purple" style="font-size:1.1rem; margin-top:1.5rem;"><i class="fas fa-layer-group"></i> All Historical Credit Balance Trackers</h3>
+                        <div class="table-container mt-1">
+                            <table class="cyber-table">
+                                <thead><tr><th>Issue Date</th><th>Customer Name</th><th>Invoice Index Reference</th><th>Total Amount</th><th>Maturity Date</th><th>Status</th><th>Settled Date</th><th>Action</th></tr></thead>
+                                <tbody id="credit-all-tbody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TAB: CREDIT COLLECTIONS -->
+                <div id="tab-collections" class="tab-content">
+                    <div class="glass-card border-green">
+                        <h2 class="neon-text-green"><i class="fas fa-coins"></i> Credit Bill Settlement Clearing Hub</h2>
+                        <p style="color:#aaa; margin-bottom:15px;">Process partial or absolute invoice balance collections below:</p>
+                        <div class="table-container">
+                            <table class="cyber-table">
+                                <thead><tr><th>Original Date</th><th>Customer Name</th><th>Invoice No</th><th>Outstanding Due</th><th>Status</th><th>Settled Date</th><th>Process Settlement Action</th></tr></thead>
+                                <tbody id="collections-tbody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TAB: STAFF MANAGEMENT -->
+                <div id="tab-staff" class="tab-content">
+                    <div class="glass-card border-cyan">
+                        <div class="flex-between">
+                            <h2 class="neon-text-cyan"><i class="fas fa-users"></i> Staff Wage Adjustments & Advances</h2>
+                            <button class="cyber-btn-small" onclick="openModal('modal-staff')">+ LOG SALARY DISBURSEMENT</button>
+                        </div>
+                        <div class="table-container mt-2">
+                            <table class="cyber-table">
+                                <thead><tr><th>Operator Employee ID Name</th><th>Reference Comments</th><th>Advance Allocation</th><th>Timestamp</th><th>Action</th></tr></thead>
+                                <tbody id="staff-tbody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TAB: REPORTS -->
+                <div id="tab-reports" class="tab-content">
+                    <div class="glass-card border-purple">
+                        <h2 class="neon-text-purple"><i class="fas fa-file-invoice"></i> Date-Range Query Report Matrix Engine</h2>
+                        <div class="report-filter-bar mt-2">
+                            <div>
+                                <label style="display:block; margin-bottom:5px;">Filter Start Date</label>
+                                <input type="date" id="report-start-date" class="cyber-input">
+                            </div>
+                            <div>
+                                <label style="display:block; margin-bottom:5px;">Filter End Date</label>
+                                <input type="date" id="report-end-date" class="cyber-input">
+                            </div>
+                            <button class="cyber-btn-small" style="border-color:var(--purple); color:var(--purple);" onclick="generateRangeReport()">EXECUTE SYSTEM INQUIRY</button>
+                        </div>
+
+                        <div class="grid-cards">
+                            <div class="glass-card border-cyan"><h4>Total Computed Gross Sales</h4><p style="font-size:1.8rem; font-weight:bold;" class="neon-text-cyan" id="rep-sales">LKR 0.00</p></div>
+                            <div class="glass-card border-orange"><h4>Total Account Credit Extensions</h4><p style="font-size:1.8rem; font-weight:bold;" class="neon-text-orange" id="rep-credits">LKR 0.00</p></div>
+                            <div class="glass-card border-green"><h4>Total Credit Cash Collections</h4><p style="font-size:1.8rem; font-weight:bold;" class="neon-text-green" id="rep-collections">LKR 0.00</p></div>
+                            <div class="glass-card border-red"><h4>Total System Store Expenses</h4><p style="font-size:1.8rem; font-weight:bold;" class="neon-text-red" id="rep-expenses">LKR 0.00</p></div>
+                            <div class="glass-card border-orange"><h4>Total Cash Debits</h4><p style="font-size:1.8rem; font-weight:bold;" class="neon-text-orange" id="rep-debits">LKR 0.00</p></div>
+                            <div class="glass-card border-purple"><h4>Total Staff Salary Advances</h4><p style="font-size:1.8rem; font-weight:bold;" class="neon-text-purple" id="rep-staff">LKR 0.00</p></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TAB: SETTINGS -->
+                <div id="tab-settings" class="tab-content">
+                    <div class="glass-card border-cyan">
+                        <h2 class="neon-text-cyan"><i class="fas fa-cog"></i> Master System Adjustments</h2>
+                        <div class="settings-grid mt-2" style="display:grid; grid-template-columns:1fr 1fr; gap:20px;">
+                            <div class="glass-card">
+                                <h3>Aesthetic Themes</h3>
+                                <div style="display:flex; gap:10px; margin-top:10px;">
+                                    <div style="width:30px; height:30px; background:#00f0ff; border-radius:50%; cursor:pointer;" onclick="changeAccent('#00f0ff')"></div>
+                                    <div style="width:30px; height:30px; background:#c400ff; border-radius:50%; cursor:pointer;" onclick="changeAccent('#c400ff')"></div>
+                                    <div style="width:30px; height:30px; background:#00ff99; border-radius:50%; cursor:pointer;" onclick="changeAccent('#00ff99')"></div>
+                                </div>
+                            </div>
+                            <div class="glass-card">
+                                <h3>Infrastructure Commands</h3>
+                                <button class="cyber-btn-small" style="width:100%; margin-top:10px; border-color:var(--red); color:var(--red);" onclick="factoryResetDatabase()">WIPE DATABASE PERMANENTLY</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- COPYRIGHT PANEL -->
+    <footer class="cyber-footer">
+        POWERED BY COGNITIVE ERP UTILITIES // SYSTEM ARCHITECT: <span>SARANGA DILSHAN</span> © 2026.
+    </footer>
+
+    <!-- =========================================
+         DYNAMIC MODAL FORMS DATA SYSTEM
+         ========================================= -->
+    
+    <!-- MODAL: SECURITY PIN OVERRIDE -->
+    <div id="modal-security" class="modal-overlay">
+        <div class="glass-card cyber-modal border-red">
+            <div class="modal-header">
+                <h3 class="neon-text-red"><i class="fas fa-shield-alt"></i> Security Clearance Required</h3>
+                <button class="modal-close" onclick="closeModal('modal-security')">&times;</button>
             </div>
-        </main>
+            <div class="form-group">
+                <label>Input Override Admin PIN</label>
+                <input type="password" id="input-security-pin" placeholder="••••">
+            </div>
+            <div class="modal-footer-btns">
+                <button class="cyber-btn-small" id="btn-security-submit">CONFIRM ERASE</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: MANAGE DAILY SALES MATRIX -->
+    <div id="modal-sales" class="modal-overlay">
+        <div class="glass-card cyber-modal border-cyan">
+            <div class="modal-header">
+                <h3 class="neon-text-cyan"><i class="fas fa-edit"></i> Edit Shift Gross Sales</h3>
+                <button class="modal-close" onclick="closeModal('modal-sales')">&times;</button>
+            </div>
+            <div class="form-group">
+                <label>Daily Cash / Gross Sales Value (LKR)</label>
+                <input type="number" id="input-sales-value">
+            </div>
+            <div class="modal-footer-btns">
+                <button class="cyber-btn-small" onclick="submitDailySale()">UPDATE STATE</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: ADD EXPENSE RECORD -->
+    <div id="modal-expense" class="modal-overlay">
+        <div class="glass-card cyber-modal border-red">
+            <div class="modal-header">
+                <h3 class="neon-text-red"><i class="fas fa-file-invoice-dollar"></i> Record Store Expense</h3>
+                <button class="modal-close" onclick="closeModal('modal-expense')">&times;</button>
+            </div>
+            <div class="form-group">
+                <label>Category Group</label>
+                <select id="form-exp-category">
+                    <option value="Utilities">Utilities</option>
+                    <option value="Food & Logistics">Food & Logistics</option>
+                    <option value="Fuel / Transport">Fuel / Transport</option>
+                    <option value="Maintenance">Maintenance</option>
+                    <option value="Other Overheads">Other Overheads</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Operational Description Note</label>
+                <input type="text" id="form-exp-desc" placeholder="Details of cash outflow...">
+            </div>
+            <div class="form-group">
+                <label>Amount (LKR)</label>
+                <input type="number" id="form-exp-amount" placeholder="0.00">
+            </div>
+            <div class="modal-footer-btns">
+                <button class="cyber-btn-small" style="border-color:var(--red); color:var(--red);" onclick="submitExpenseForm()">SAVE ENTRY</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: ADD CASH DEBIT -->
+    <div id="modal-debit" class="modal-overlay">
+        <div class="glass-card cyber-modal border-orange">
+            <div class="modal-header">
+                <h3 class="neon-text-orange"><i class="fas fa-hand-holding-usd"></i> Log Cash Debit</h3>
+                <button class="modal-close" onclick="closeModal('modal-debit')">&times;</button>
+            </div>
+            <div class="form-group">
+                <label>Recipient / Reference Profile</label>
+                <input type="text" id="form-deb-profile" placeholder="Name or transaction account reference...">
+            </div>
+            <div class="form-group">
+                <label>Transaction Details</label>
+                <input type="text" id="form-deb-details" placeholder="Reason for direct debit outflow...">
+            </div>
+            <div class="form-group">
+                <label>Value (LKR)</label>
+                <input type="number" id="form-deb-amount" placeholder="0.00">
+            </div>
+            <div class="modal-footer-btns">
+                <button class="cyber-btn-small" style="border-color:var(--orange); color:var(--orange);" onclick="submitDebitForm()">COMMIT DEBIT</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: ADD CHEQUE SALE -->
+    <div id="modal-cheque" class="modal-overlay">
+        <div class="glass-card cyber-modal border-cyan">
+            <div class="modal-header">
+                <h3 class="neon-text-cyan"><i class="fas fa-money-check"></i> Log Cheque Transaction</h3>
+                <button class="modal-close" onclick="closeModal('modal-cheque')">&times;</button>
+            </div>
+            <div class="form-group">
+                <label>Client Account Entity Name</label>
+                <input type="text" id="form-chq-customer" placeholder="Customer reference...">
+            </div>
+            <div class="form-group">
+                <label>Invoice Reference No</label>
+                <input type="text" id="form-chq-invoice" placeholder="Invoice trace value...">
+            </div>
+            <div class="form-group">
+                <label>Cheque Asset ID Number</label>
+                <input type="text" id="form-chq-no" placeholder="Bank serial token ID...">
+            </div>
+            <div class="form-group">
+                <label>Face Value Amount (LKR)</label>
+                <input type="number" id="form-chq-amount" placeholder="0.00">
+            </div>
+            <div class="modal-footer-btns">
+                <button class="cyber-btn-small" onclick="submitChequeForm()">SAVE ASSET LOG</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: ADD PROCUREMENT RECORD -->
+    <div id="modal-purchase" class="modal-overlay">
+        <div class="glass-card cyber-modal border-purple">
+            <div class="modal-header">
+                <h3 class="neon-text-purple"><i class="fas fa-shopping-cart"></i> Procurement Allocation Ledger</h3>
+                <button class="modal-close" onclick="closeModal('modal-purchase')">&times;</button>
+            </div>
+            <div class="form-group">
+                <label>Wholesale Vendor Entity Label</label>
+                <input type="text" id="form-pur-company" placeholder="Supplier corporate entity name...">
+            </div>
+            <div class="form-group">
+                <label>Cheque Allocation Component</label>
+                <input type="number" id="form-pur-cheque" value="0">
+            </div>
+            <div class="form-group">
+                <label>Credited Balance Deferment Component</label>
+                <input type="number" id="form-pur-credit" value="0">
+            </div>
+            <div class="form-group">
+                <label>Immediate Cash Outlay</label>
+                <input type="number" id="form-pur-cash" value="0">
+            </div>
+            <div class="modal-footer-btns">
+                <button class="cyber-btn-small" style="border-color:var(--purple); color:var(--purple);" onclick="submitPurchaseForm()">COMMIT BALANCES</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: INSTANTIATE CREDIT BILL -->
+    <div id="modal-credit-bill" class="modal-overlay">
+        <div class="glass-card cyber-modal border-orange">
+            <div class="modal-header">
+                <h3 class="neon-text-orange"><i class="fas fa-money-check-alt"></i> Instantiate Credit Invoice</h3>
+                <button class="modal-close" onclick="closeModal('modal-credit-bill')">&times;</button>
+            </div>
+            <div class="form-group">
+                <label>Debtor Client Profile Name</label>
+                <input type="text" id="form-crd-customer" placeholder="Client account name...">
+            </div>
+            <div class="form-group">
+                <label>Invoice Number</label>
+                <input type="text" id="form-crd-billno" placeholder="e.g. INV-1024">
+            </div>
+            <div class="form-group">
+                <label>Total Invoice Credit Value (LKR)</label>
+                <input type="number" id="form-crd-amount" placeholder="0.00">
+            </div>
+            <div class="form-group">
+                <label>Lifespan Limit Terms (Days)</label>
+                <input type="number" id="form-crd-terms" value="30">
+            </div>
+            <div class="modal-footer-btns">
+                <button class="cyber-btn-small" style="border-color:var(--orange); color:var(--orange);" onclick="submitCreditBillForm()">SPAWN INVOICE</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: CREDIT BILL CLEARING PIPELINE -->
+    <div id="modal-settlement" class="modal-overlay">
+        <div class="glass-card cyber-modal border-green">
+            <div class="modal-header">
+                <h3 class="neon-text-green"><i class="fas fa-coins"></i> Process Invoice Settlement</h3>
+                <button class="modal-close" onclick="closeModal('modal-settlement')">&times;</button>
+            </div>
+            <input type="hidden" id="form-set-datekey">
+            <input type="hidden" id="form-set-index">
+            <div class="form-group">
+                <label>Transaction Settlement Mode</label>
+                <select id="form-set-type">
+                    <option value="cash">Cash Settlement</option>
+                    <option value="cheq">Cheque Asset Clearing</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Instalment Type</label>
+                <select id="form-set-instalment">
+                    <option value="Absolute Full Settlement">Absolute Full Settlement</option>
+                    <option value="Step Partial Instalment">Step Partial Instalment</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Settlement Recognition Date</label>
+                <input type="date" id="form-set-date">
+            </div>
+            <div class="modal-footer-btns">
+                <button class="cyber-btn-small" style="border-color:var(--green); color:var(--green);" onclick="submitSettlementPipeline()">CLEAR TRANSACTION</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: LOG SALARY DISBURSEMENT -->
+    <div id="modal-staff" class="modal-overlay">
+        <div class="glass-card cyber-modal border-cyan">
+            <div class="modal-header">
+                <h3 class="neon-text-cyan"><i class="fas fa-users"></i> Staff Advance Tracker</h3>
+                <button class="modal-close" onclick="closeModal('modal-staff')">&times;</button>
+            </div>
+            <div class="form-group">
+                <label>Employee Reference ID/Name</label>
+                <input type="text" id="form-stf-name" placeholder="Staff member name...">
+            </div>
+            <div class="form-group">
+                <label>Advance Disbursed Amount (LKR)</label>
+                <input type="number" id="form-stf-amount" placeholder="0.00">
+            </div>
+            <div class="form-group">
+                <label>Compliance / Tracking Note</label>
+                <input type="text" id="form-stf-remark" placeholder="Shift comments or adjustment parameters...">
+            </div>
+            <div class="modal-footer-btns">
+                <button class="cyber-btn-small" onclick="submitStaffForm()">DISBURSE ADVANCE</button>
+            </div>
+        </div>
     </div>
 
     <div id="toast-container"></div>
@@ -497,10 +766,10 @@
         firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
 
-        let activeDate = new Date().toISOString().split('T')[0];
+        const todayActualISO = new Date().toISOString().split('T')[0];
+        let activeDate = todayActualISO;
         const SECURITY_PIN = "2345";
         
-        // Comprehensive Local Cache Mirroring Architecture
         let masterTimeline = {};
         let appData = {};
 
@@ -514,6 +783,17 @@
             setInterval(() => {
                 document.getElementById('live-clock').innerText = new Date().toLocaleTimeString('en-US', { hour12: false });
             }, 1000);
+        }
+
+        /* =========================================
+           CENTRAL MODAL WINDOW CONTROLLERS
+           ========================================= */
+        function openModal(modalId) {
+            document.getElementById(modalId).classList.add('active');
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('active');
         }
 
         /* =========================================
@@ -567,9 +847,20 @@
             db.ref("timeline_ledger").set(masterTimeline);
         }
 
-        function changeActiveDate() {
-            activeDate = document.getElementById('system-date-picker').value;
-            if(activeDate) {
+        function changeActiveDateWithAuth() {
+            const targetDate = document.getElementById('system-date-picker').value;
+            if(!targetDate) return;
+
+            if (targetDate !== todayActualISO) {
+                executeSecureAction(() => {
+                    activeDate = targetDate;
+                    parseCurrentDateState();
+                    showToast(`Retro-timeline unlocked: ${activeDate}`, "orange", "fa-calendar-day");
+                }, () => {
+                    document.getElementById('system-date-picker').value = activeDate;
+                });
+            } else {
+                activeDate = targetDate;
                 parseCurrentDateState();
                 showToast(`Shift timeline target: ${activeDate}`, "cyan", "fa-calendar-day");
             }
@@ -581,23 +872,20 @@
            DASHBOARD REALTIME CALCULATORS
            ========================================= */
         function calculateOperationalDashboardAggregates() {
-            // Expenses Calculation
             let totalExpenses = 0;
             if(appData.expenses) appData.expenses.forEach(e => totalExpenses += parseFloat(e.amount || 0));
             appData.dashboard.expenses = totalExpenses;
 
-            // Credits Issued Calculation
             let totalCredits = 0;
             if(appData.creditBills) appData.creditBills.forEach(c => totalCredits += parseFloat(c.amount || 0));
             appData.dashboard.credit = totalCredits;
 
-            // Direct UI Field Updates
             document.getElementById('stat-sales').innerText = fmtLKR(appData.dashboard.sales);
             document.getElementById('stat-cash').innerText = fmtLKR(appData.dashboard.cash);
             document.getElementById('stat-credit').innerText = fmtLKR(appData.dashboard.credit);
             document.getElementById('stat-expenses').innerText = fmtLKR(appData.dashboard.expenses);
 
-            // Compute Sub-Metrics Arrays across specific segments
+            // FIX: Dynamic Scanning across the entire historical matrix for collections targeting today
             let todayCollections = 0;
             Object.keys(masterTimeline).forEach(dt => {
                 const day = masterTimeline[dt];
@@ -610,6 +898,11 @@
                 }
             });
             document.getElementById('stat-dash-collected').innerText = fmtLKR(todayCollections);
+
+            // NEW: Preview Today Cheque Sales inside the Dashboard
+            let todayCheqSalesSum = 0;
+            if(appData.chequeSales) appData.chequeSales.forEach(c => todayCheqSalesSum += parseFloat(c.amount || 0));
+            document.getElementById('stat-dash-cheqsales').innerText = fmtLKR(todayCheqSalesSum);
 
             let todayProcurement = 0;
             if(appData.purchasing) appData.purchasing.forEach(p => todayProcurement += (parseFloat(p.cash || 0) + parseFloat(p.cheque || 0)));
@@ -624,23 +917,48 @@
             document.getElementById('stat-dash-debits').innerText = fmtLKR(todayDebits);
         }
 
-        function editDailySale() {
-            const val = prompt("Update Daily Cash/Gross Sales Target Matrix:", appData.dashboard.sales);
-            if(val === null || isNaN(val)) return;
-            appData.dashboard.sales = parseFloat(val) || 0;
+        function openSalesModal() {
+            document.getElementById('input-sales-value').value = appData.dashboard.sales;
+            openModal('modal-sales');
+        }
+
+        function submitDailySale() {
+            const val = parseFloat(document.getElementById('input-sales-value').value) || 0;
+            appData.dashboard.sales = val;
             pushDataStateToCloud();
+            closeModal('modal-sales');
             logToTerminal("SALES", `Shift baseline updated manually to ${fmtLKR(val)}`, "var(--cyan)");
         }
 
         /* =========================================
-           SECURITY ENFORCED MODULE CONTROLLERS
+           SECURITY FIREWALL CALL EXECUTION
            ========================================= */
-        function verifySecurityOverride() {
-            const code = prompt("INPUT SECURITY DELETION PIN:");
-            if(code === SECURITY_PIN) return true;
-            showToast("ACCESS DENIED. INVALID PIN CODE.", "red", "fa-shield-alt");
-            return false;
+        function executeSecureAction(onSuccess, onCancel = null) {
+            openModal('modal-security');
+            document.getElementById('input-security-pin').value = '';
+            document.getElementById('input-security-pin').focus();
+            
+            document.getElementById('btn-security-submit').onclick = function() {
+                const pin = document.getElementById('input-security-pin').value;
+                if(pin === SECURITY_PIN) {
+                    closeModal('modal-security');
+                    onSuccess();
+                } else {
+                    showToast("ACCESS DENIED. INVALID PIN CODE.", "red", "fa-shield-alt");
+                    if(onCancel) onCancel();
+                }
+            };
+
+            // Bind fallback on modal tracking exit close
+            document.querySelector('#modal-security .modal-close').onclick = function() {
+                closeModal('modal-security');
+                if(onCancel) onCancel();
+            };
         }
+
+        /* =========================================
+           MODULE TRANSACTION PROCESSING FUNCTIONS
+           ========================================= */
 
         // EXPENSE COMPONENT
         function renderExpenses() {
@@ -651,19 +969,26 @@
                 });
             }
         }
-        function addExpense() {
-            const cat = prompt("Category (e.g., Utilities, Food, Fuel):"); if(!cat) return;
-            const desc = prompt("Operational description tag:");
-            const amount = parseFloat(prompt("Transaction Outflow Amount (LKR):") || 0);
-            if(!amount) return;
+        function submitExpenseForm() {
+            const cat = document.getElementById('form-exp-category').value;
+            const desc = document.getElementById('form-exp-desc').value;
+            const amount = parseFloat(document.getElementById('form-exp-amount').value || 0);
+            if(!amount) return showToast("Please input a valid amount", "red", "fa-exclamation");
+            
             if(!appData.expenses) appData.expenses = [];
             appData.expenses.push({ category: cat, desc, amount });
-            pushDataStateToCloud(); logToTerminal("EXPENSE", `Captured overhead outtake: ${cat} -> ${fmtLKR(amount)}`, "var(--red)");
+            pushDataStateToCloud();
+            
+            document.getElementById('form-exp-desc').value = '';
+            document.getElementById('form-exp-amount').value = '';
+            closeModal('modal-expense');
+            logToTerminal("EXPENSE", `Captured overhead outtake: ${cat} -> ${fmtLKR(amount)}`, "var(--red)");
         }
         function deleteExpense(index) {
-            if(!verifySecurityOverride()) return;
-            appData.expenses.splice(index, 1);
-            pushDataStateToCloud();
+            executeSecureAction(() => {
+                appData.expenses.splice(index, 1);
+                pushDataStateToCloud();
+            });
         }
 
         // OTHER CASH DEBITS COMPONENT
@@ -675,19 +1000,27 @@
                 });
             }
         }
-        function addDebit() {
-            const profile = prompt("Recipient / Reference Profile Name:"); if(!profile) return;
-            const details = prompt("Statement Note / Reason:");
-            const amount = parseFloat(prompt("Cash outflow absolute amount (LKR):") || 0);
-            if(!amount) return;
+        function submitDebitForm() {
+            const profile = document.getElementById('form-deb-profile').value;
+            const details = document.getElementById('form-deb-details').value;
+            const amount = parseFloat(document.getElementById('form-deb-amount').value || 0);
+            if(!profile || !amount) return showToast("Profile Reference and Amount are required.", "red", "fa-exclamation");
+
             if(!appData.debits) appData.debits = [];
             appData.debits.push({ profile, details, amount });
-            pushDataStateToCloud(); logToTerminal("DEBIT", `Non-overhead transaction registered to ${profile}`, "var(--orange)");
+            pushDataStateToCloud();
+
+            document.getElementById('form-deb-profile').value = '';
+            document.getElementById('form-deb-details').value = '';
+            document.getElementById('form-deb-amount').value = '';
+            closeModal('modal-debit');
+            logToTerminal("DEBIT", `Non-overhead transaction registered to ${profile}`, "var(--orange)");
         }
         function deleteDebit(index) {
-            if(!verifySecurityOverride()) return;
-            appData.debits.splice(index, 1);
-            pushDataStateToCloud();
+            executeSecureAction(() => {
+                appData.debits.splice(index, 1);
+                pushDataStateToCloud();
+            });
         }
 
         // CHEQUE SALES LOG COMPONENT
@@ -699,20 +1032,29 @@
                 });
             }
         }
-        function addChequeSale() {
-            const customer = prompt("Client Account Entity Name:"); if(!customer) return;
-            const invoice = prompt("Invoice Tracking Index Number:");
-            const chequeNo = prompt("Banking Cheque Registry ID Number:");
-            const amount = parseFloat(prompt("Instrument Face Value (LKR):") || 0);
-            if(!amount) return;
+        function submitChequeForm() {
+            const customer = document.getElementById('form-chq-customer').value;
+            const invoice = document.getElementById('form-chq-invoice').value;
+            const chequeNo = document.getElementById('form-chq-no').value;
+            const amount = parseFloat(document.getElementById('form-chq-amount').value || 0);
+            if(!customer || !chequeNo || !amount) return showToast("Customer, Cheque ID, and Amount are required.", "red", "fa-exclamation");
+
             if(!appData.chequeSales) appData.chequeSales = [];
             appData.chequeSales.push({ customer, invoice, chequeNo, amount });
-            pushDataStateToCloud(); logToTerminal("CHEQUE", `Captured trade cheque asset ${chequeNo} worth ${fmtLKR(amount)}`, "var(--cyan)");
+            pushDataStateToCloud();
+
+            document.getElementById('form-chq-customer').value = '';
+            document.getElementById('form-chq-invoice').value = '';
+            document.getElementById('form-chq-no').value = '';
+            document.getElementById('form-chq-amount').value = '';
+            closeModal('modal-cheque');
+            logToTerminal("CHEQUE", `Captured trade cheque asset ${chequeNo} worth ${fmtLKR(amount)}`, "var(--cyan)");
         }
         function deleteChequeSale(index) {
-            if(!verifySecurityOverride()) return;
-            appData.chequeSales.splice(index, 1);
-            pushDataStateToCloud();
+            executeSecureAction(() => {
+                appData.chequeSales.splice(index, 1);
+                pushDataStateToCloud();
+            });
         }
 
         // PROCUREMENT PURCHASING COMPONENT
@@ -724,19 +1066,29 @@
                 });
             }
         }
-        function addPurchaseRow() {
-            const company = prompt("Wholesale Vendor Entity Label:"); if(!company) return;
-            const cheque = parseFloat(prompt("Cheque collateral component value:") || 0);
-            const credit = parseFloat(prompt("Credited balance deferment component value:") || 0);
-            const cash = parseFloat(prompt("Immediate cash disbursement allocation:") || 0);
+        function submitPurchaseForm() {
+            const company = document.getElementById('form-pur-company').value;
+            const cheque = parseFloat(document.getElementById('form-pur-cheque').value || 0);
+            const credit = parseFloat(document.getElementById('form-pur-credit').value || 0);
+            const cash = parseFloat(document.getElementById('form-pur-cash').value || 0);
+            if(!company) return showToast("Wholesale Vendor Label is required.", "red", "fa-exclamation");
+
             if(!appData.purchasing) appData.purchasing = [];
             appData.purchasing.push({ company, cheque, credit, cash });
-            pushDataStateToCloud(); logToTerminal("PROCURE", `Committed trade payload configuration for ${company}`, "var(--purple)");
+            pushDataStateToCloud();
+
+            document.getElementById('form-pur-company').value = '';
+            document.getElementById('form-pur-cheque').value = '0';
+            document.getElementById('form-pur-credit').value = '0';
+            document.getElementById('form-pur-cash').value = '0';
+            closeModal('modal-purchase');
+            logToTerminal("PROCURE", `Committed trade payload configuration for ${company}`, "var(--purple)");
         }
         function deletePurchase(index) {
-            if(!verifySecurityOverride()) return;
-            appData.purchasing.splice(index, 1);
-            pushDataStateToCloud();
+            executeSecureAction(() => {
+                appData.purchasing.splice(index, 1);
+                pushDataStateToCloud();
+            });
         }
 
         // CREDIT CONTROL DATA MANAGEMENT PIPELINE
@@ -745,11 +1097,14 @@
             const allBody = document.getElementById('credit-all-tbody'); allBody.innerHTML = '';
             const clearingHubBody = document.getElementById('collections-tbody'); clearingHubBody.innerHTML = '';
 
-            // Map and organize through the database records array structure
             Object.keys(masterTimeline).forEach(dateKey => {
                 const dateGroup = masterTimeline[dateKey];
                 if(dateGroup.creditBills) {
                     dateGroup.creditBills.forEach((bill, itemIndex) => {
+                        const settledDateStr = bill.clearedOnDate ? bill.clearedOnDate : '-';
+                        const paymentTypeStr = bill.paymentType ? `<br><small style="color:var(--green)">${bill.paymentType}</small>` : '';
+                        const statusBadgeClass = bill.status === 'cleared' ? 'badge-cleared' : 'badge-pending';
+                        
                         const tableRowString = `
                             <tr>
                                 ${dateKey !== activeDate ? `<td>${dateKey}</td>` : ''}
@@ -757,67 +1112,88 @@
                                 <td style="font-family:monospace;">${bill.billNo}</td>
                                 <td class="neon-text-orange">${fmtLKR(bill.amount)}</td>
                                 <td>${bill.dueDate}</td>
-                                <td><span class="badge badge-${bill.status}">${bill.status}</span></td>
+                                <td><span class="badge ${statusBadgeClass}">${bill.status}</span></td>
+                                <td style="color:var(--green); font-weight:bold;">${settledDateStr} ${paymentTypeStr}</td>
                                 <td>
                                     <button class="icon-btn" onclick="deleteCreditBill('${dateKey}', ${itemIndex})"><i class="fas fa-trash neon-text-red"></i></button>
                                 </td>
                             </tr>`;
                         
-                        // Segregate display into specific table views
                         if(dateKey === activeDate) todayBody.innerHTML += tableRowString;
                         allBody.innerHTML += tableRowString;
 
-                        // Display active pending accounts within the Clearing Hub
-                        if(bill.status !== 'cleared') {
-                            clearingHubBody.innerHTML += `
-                                <tr>
-                                    <td>${dateKey}</td>
-                                    <td><strong>${bill.customer}</strong></td>
-                                    <td>${bill.billNo}</td>
-                                    <td class="neon-text-red">${fmtLKR(bill.amount)}</td>
-                                    <td><span class="badge badge-${bill.status}">${bill.status}</span></td>
-                                    <td>
-                                        <button class="cyber-btn-small" style="border-color:var(--green); color:var(--green);" onclick="processSettlementPipeline('${dateKey}', ${itemIndex})">CLEAR TRANS</button>
-                                    </td>
-                                </tr>`;
-                        }
+                        // Show invoice inside clearing hub
+                        clearingHubBody.innerHTML += `
+                            <tr>
+                                <td>${dateKey}</td>
+                                <td><strong>${bill.customer}</strong></td>
+                                <td>${bill.billNo}</td>
+                                <td class="neon-text-red">${fmtLKR(bill.amount)}</td>
+                                <td><span class="badge ${statusBadgeClass}">${bill.status}</span></td>
+                                <td style="color:var(--green); font-weight:bold;">${settledDateStr}</td>
+                                <td>
+                                    ${bill.status !== 'cleared' ? 
+                                    `<button class="cyber-btn-small" style="border-color:var(--green); color:var(--green);" onclick="openSettlementPipeline('${dateKey}', ${itemIndex})">CLEAR TRANS</button>` : 
+                                    `<span style="color:var(--green)"><i class="fas fa-check-circle"></i> Closed</span>`}
+                                </td>
+                            </tr>`;
                     });
                 }
             });
         }
-        function addCreditBill() {
-            const customer = prompt("Debtor Client Profile Name:"); if(!customer) return;
-            const amount = parseFloat(prompt("Total Invoice Credit Allocation Value (LKR):") || 0); if(!amount) return;
-            const billNo = "SS-CR-" + Math.floor(Math.random() * 9000 + 1000);
-            const terms = parseInt(prompt("Credit lifespan limit terms (Days):") || "30");
+        
+        function submitCreditBillForm() {
+            const customer = document.getElementById('form-crd-customer').value;
+            const billNo = document.getElementById('form-crd-billno').value; // FIX: Ask explicit Invoice Number input
+            const amount = parseFloat(document.getElementById('form-crd-amount').value || 0);
+            const terms = parseInt(document.getElementById('form-crd-terms').value || "30");
+            
+            if(!customer || !billNo || !amount) return showToast("Customer reference, Invoice No, and Value are required.", "red", "fa-exclamation");
+
             const dueDate = new Date(Date.now() + terms * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
             
             if(!appData.creditBills) appData.creditBills = [];
-            appData.creditBills.push({ customer, billNo, amount, dueDate, status: 'pending' });
-            pushDataStateToCloud(); logToTerminal("CREDIT", `Spawned asset invoice record ${billNo} to ${customer}`, "var(--orange)");
-        }
-        function processSettlementPipeline(dateKey, itemIndex) {
-            const mechanism = prompt("Define Transaction Settlement Mode (Type 'Cash' or 'Cheq'):");
-            if(!mechanism) return;
-            const normalType = mechanism.toLowerCase().trim();
-            if(normalType !== 'cash' && normalType !== 'cheq') return showToast("Unsupported Transaction Route", "red", "fa-times");
-            
-            const clearingDate = prompt("Input settlement recognition date (YYYY-MM-DD):", activeDate);
-            if(!clearingDate) return;
+            appData.creditBills.push({ customer, billNo, amount, dueDate, status: 'pending', clearedOnDate: '', paymentType: '' });
+            pushDataStateToCloud();
 
-            // Target historical structural node path manually across object tree references
+            document.getElementById('form-crd-customer').value = '';
+            document.getElementById('form-crd-billno').value = '';
+            document.getElementById('form-crd-amount').value = '';
+            closeModal('modal-credit-bill');
+            logToTerminal("CREDIT", `Spawned asset invoice record ${billNo} to ${customer}`, "var(--orange)");
+        }
+        
+        function openSettlementPipeline(dateKey, itemIndex) {
+            document.getElementById('form-set-datekey').value = dateKey;
+            document.getElementById('form-set-index').value = itemIndex;
+            document.getElementById('form-set-date').value = todayActualISO;
+            openModal('modal-settlement');
+        }
+        
+        function submitSettlementPipeline() {
+            const dateKey = document.getElementById('form-set-datekey').value;
+            const itemIndex = parseInt(document.getElementById('form-set-index').value);
+            const mechanism = document.getElementById('form-set-type').value;
+            const instalment = document.getElementById('form-set-instalment').value; // FIX: Add Instalment Type
+            const clearingDate = document.getElementById('form-set-date').value;
+
+            if(!clearingDate) return showToast("Please pick a settlement date.", "red", "fa-exclamation");
+
             masterTimeline[dateKey].creditBills[itemIndex].status = "cleared";
             masterTimeline[dateKey].creditBills[itemIndex].clearedOnDate = clearingDate;
-            masterTimeline[dateKey].creditBills[itemIndex].paymentType = normalType === 'cash' ? 'Cash Settlement' : 'Cheque Asset Clearing';
+            masterTimeline[dateKey].creditBills[itemIndex].paymentType = `${mechanism === 'cash' ? 'Cash' : 'Cheque'} [${instalment}]`;
 
             db.ref("timeline_ledger").set(masterTimeline);
+            closeModal('modal-settlement');
             showToast("Settlement Cleared Successfully", "green", "fa-check");
-            logToTerminal("COLLECT", `Invoice balance on ${masterTimeline[dateKey].creditBills[itemIndex].billNo} successfully cleared via ${normalType.toUpperCase()}`, "var(--green)");
+            logToTerminal("COLLECT", `Invoice balance on ${masterTimeline[dateKey].creditBills[itemIndex].billNo} successfully cleared via ${mechanism.toUpperCase()}`, "var(--green)");
         }
+        
         function deleteCreditBill(dateKey, index) {
-            if(!verifySecurityOverride()) return;
-            masterTimeline[dateKey].creditBills.splice(index, 1);
-            db.ref("timeline_ledger").set(masterTimeline);
+            executeSecureAction(() => {
+                masterTimeline[dateKey].creditBills.splice(index, 1);
+                db.ref("timeline_ledger").set(masterTimeline);
+            });
         }
 
         // STAFF MANAGEMENT COMPONENT
@@ -829,18 +1205,27 @@
                 });
             }
         }
-        function addStaffAdvance() {
-            const name = prompt("Employee Reference Identifier Name:"); if(!name) return;
-            const amount = parseFloat(prompt("Advance payload disbursement value (LKR):") || 0); if(!amount) return;
-            const remark = prompt("Internal compliance tracking note:");
+        function submitStaffForm() {
+            const name = document.getElementById('form-stf-name').value;
+            const amount = parseFloat(document.getElementById('form-stf-amount').value || 0);
+            const remark = document.getElementById('form-stf-remark').value;
+            if(!name || !amount) return showToast("Employee ID Name and Amount are required.", "red", "fa-exclamation");
+
             if(!appData.staffAdvances) appData.staffAdvances = [];
             appData.staffAdvances.push({ name, amount, remark, date: activeDate });
-            pushDataStateToCloud(); logToTerminal("STAFF", `Disbursed outtake wage shift advance to ${name}`, "var(--cyan)");
+            pushDataStateToCloud();
+
+            document.getElementById('form-stf-name').value = '';
+            document.getElementById('form-stf-amount').value = '';
+            document.getElementById('form-stf-remark').value = '';
+            closeModal('modal-staff');
+            logToTerminal("STAFF", `Disbursed outtake wage shift advance to ${name}`, "var(--cyan)");
         }
         function deleteStaffAdvance(index) {
-            if(!verifySecurityOverride()) return;
-            appData.staffAdvances.splice(index, 1);
-            pushDataStateToCloud();
+            executeSecureAction(() => {
+                appData.staffAdvances.splice(index, 1);
+                pushDataStateToCloud();
+            });
         }
 
         /* =========================================
@@ -881,29 +1266,40 @@
         }
 
         /* =========================================
-           RANGE MULTI-DATE QUERY REPORT MATRIX ENGINE
+           FIXED: RANGE MULTI-DATE QUERY REPORT MATRIX ENGINE
            ========================================= */
         function generateRangeReport() {
             const start = document.getElementById('report-start-date').value;
             const end = document.getElementById('report-end-date').value;
             if(!start || !end) return showToast("Select Query Constraints First", "orange", "fa-calendar");
 
-            let computedSales = 0, computedCredits = 0, computedCollections = 0, computedExpenses = 0, computedStaff = 0;
+            let computedSales = 0, computedCredits = 0, computedCollections = 0, computedExpenses = 0, computedDebits = 0, computedStaff = 0;
 
+            // Loop sequentially through every calendar point inside timeline snapshot database
             Object.keys(masterTimeline).forEach(dateKey => {
                 if(dateKey >= start && dateKey <= end) {
                     const node = masterTimeline[dateKey];
+                    
+                    // 1. Total Sales
                     if(node.dashboard && node.dashboard.sales) computedSales += parseFloat(node.dashboard.sales || 0);
+                    
+                    // 2. Total Expenses
                     if(node.expenses) node.expenses.forEach(e => computedExpenses += parseFloat(e.amount || 0));
+                    
+                    // 3. Total Cash Debits
+                    if(node.debits) node.debits.forEach(d => computedDebits += parseFloat(d.amount || 0));
+                    
+                    // 4. Staff Salary Advance Outlays
                     if(node.staffAdvances) node.staffAdvances.forEach(s => computedStaff += parseFloat(s.amount || 0));
                     
+                    // 5. Total Credit Issued
                     if(node.creditBills) {
                         node.creditBills.forEach(b => {
                             computedCredits += parseFloat(b.amount || 0);
                         });
                     }
                     
-                    // Cross reference multi-node clearing paths over data records
+                    // 6. Total Credit Collections (Calculated via accurate settlement date parsing parameters)
                     Object.keys(masterTimeline).forEach(innerKey => {
                         const innerNode = masterTimeline[innerKey];
                         if(innerNode.creditBills) {
@@ -921,9 +1317,10 @@
             document.getElementById('rep-credits').innerText = fmtLKR(computedCredits);
             document.getElementById('rep-collections').innerText = fmtLKR(computedCollections);
             document.getElementById('rep-expenses').innerText = fmtLKR(computedExpenses);
+            document.getElementById('rep-debits').innerText = fmtLKR(computedDebits);
             document.getElementById('rep-staff').innerText = fmtLKR(computedStaff);
             
-            showToast("Data-Range Matrix Queries Computed", "purple", "fa-analytics");
+            showToast("Analytical Reports Formatted Successfully.", "purple", "fa-analytics");
         }
 
         /* =========================================
@@ -971,10 +1368,17 @@
         }
 
         function changeAccent(color) { document.documentElement.style.setProperty('--cyan', color); }
-        function factoryResetDatabase() { if(confirm("PERMANENTLY DESTROY GLOBAL DISTRIBUTED DATABASE?")) { if(prompt("INPUT MASTER PASSWORD OVERRIDE CODE:") === SECURITY_PIN) { db.ref("/").remove(); location.reload(); } } }
+        
+        function factoryResetDatabase() {
+            executeSecureAction(() => {
+                db.ref("/").remove();
+                location.reload();
+            });
+        }
 
         function showToast(msg, colorClass, icon) {
             const container = document.getElementById('toast-container');
+            if(!container) return;
             const toast = document.createElement('div'); toast.className = `toast border-${colorClass}`;
             let colorHex = colorClass === 'green' ? '#00ff99' : colorClass === 'red' ? '#ff3b3b' : colorClass === 'orange' ? '#ff9f1c' : colorClass === 'purple' ? '#c400ff' : '#00f0ff';
             toast.innerHTML = `<i class="fas ${icon}" style="color:${colorHex}"></i><div>${msg}</div>`;
