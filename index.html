@@ -847,24 +847,16 @@
             db.ref("timeline_ledger").set(masterTimeline);
         }
 
-function changeActiveDateWithAuth() {
-    const targetDate = document.getElementById('system-date-picker').value;
-    if(!targetDate) return;
+        function changeActiveDateWithAuth() {
+            const targetDate = document.getElementById('system-date-picker').value;
+            if(!targetDate) return;
 
-    if (targetDate !== todayActualISO) {
-        executeSecureAction(() => {
-            activeDate = targetDate;
-            parseCurrentDateState();
-            showToast(`Retro-timeline unlocked: ${activeDate}`, "orange", "fa-calendar-day");
-        }, () => {
-            document.getElementById('system-date-picker').value = activeDate;
-        });
-    } else {
-        activeDate = targetDate;
-        parseCurrentDateState();
-        showToast(`Shift timeline target: ${activeDate}`, "cyan", "fa-calendar-day");
-    }
-}
+            if (targetDate !== todayActualISO) {
+                executeSecureAction(() => {
+                    activeDate = targetDate;
+                    parseCurrentDateState();
+                    showToast(`Retro-timeline unlocked: ${activeDate}`, "orange", "fa-calendar-day");
+                }, () => {
                     document.getElementById('system-date-picker').value = activeDate;
                 });
             } else {
