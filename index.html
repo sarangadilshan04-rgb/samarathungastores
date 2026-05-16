@@ -5,11 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Enterprise AI Ledger | Samarathunga Stores</title>
     
-    <!-- Fonts & Icons -->
     <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-    <!-- Firebase SDK Scripts -->
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 
@@ -134,8 +132,6 @@
         .stat-card { position: relative; overflow: hidden; padding: 1.25rem; }
         .stat-header { font-size: 1rem; color: #aaa; margin-bottom: 0.5rem; display: flex; align-items: center; gap: 8px; }
         .stat-value { font-size: 1.8rem; font-weight: bold; margin-bottom: 0.75rem; }
-        .progress-bar { width: 100%; height: 4px; background: rgba(255,255,255,0.1); border-radius: 2px; overflow: hidden; }
-        .progress-bar .fill { height: 100%; }
 
         .summary-center { margin-top: 2rem; }
         .system-log-box { font-family: monospace; line-height: 1.6; color: #8a99ad; padding: 1rem; border-radius: 6px; background: rgba(0,0,0,0.4); max-height: 200px; overflow-y: auto; }
@@ -189,7 +185,6 @@
 </head>
 <body>
 
-    <!-- LOADING SCREEN -->
     <div id="loading-screen">
         <div class="loader">
             <div class="ring"></div>
@@ -200,7 +195,6 @@
         <div id="loading-percent">0%</div>
     </div>
 
-    <!-- LOGIN PAGE -->
     <div id="login-page">
         <div class="glass-card login-box border-cyan">
             <h2 class="neon-text-cyan">SYSTEM_ACCESS</h2>
@@ -223,9 +217,7 @@
         </div>
     </div>
 
-    <!-- MAIN APP STRUCTURE -->
     <div id="main-app" class="hidden">
-        <!-- HEADER -->
         <header class="glass-panel top-nav">
             <div class="nav-left">
                 <button id="menu-toggle"><i class="fas fa-bars"></i></button>
@@ -242,11 +234,10 @@
         </header>
 
         <div class="app-container-inner">
-            <!-- SIDEBAR -->
             <nav id="sidebar" class="glass-panel">
                 <div class="brand">
                     <i class="fas fa-microchip neon-text-cyan"></i>
-                    <h3>SM_DSMS_v3.0</h3>
+                    <h3>AI_ERP_v3</h3>
                 </div>
                 <ul class="nav-links">
                     <li class="active" onclick="switchTab('dashboard')"><i class="fas fa-chart-line"></i> Dashboard</li>
@@ -264,7 +255,6 @@
             </nav>
 
             <main id="content">
-                <!-- TAB: DASHBOARD -->
                 <div id="tab-dashboard" class="tab-content active">
                     <div class="grid-cards">
                         <div class="glass-card stat-card border-cyan hover-float">
@@ -288,7 +278,7 @@
                     <div class="grid-cards" style="margin-top: 1.5rem;">
                         <div class="glass-card stat-card border-green hover-float">
                             <div class="stat-header">Today Cash Collections <i class="fas fa-money-bill-wave neon-text-green" style="margin-left:auto;"></i></div>
-                        <div class="stat-value neon-text-green" id="stat-dash-col-cash">LKR 0.00</div>
+                            <div class="stat-value neon-text-green" id="stat-dash-col-cash">LKR 0.00</div>
                         </div>
                         <div class="glass-card stat-card border-cyan hover-float">
                             <div class="stat-header">Today Cheq Collections <i class="fas fa-money-check-alt neon-text-cyan" style="margin-left:auto;"></i></div>
@@ -302,16 +292,21 @@
                             <div class="stat-header">Today Procurement Outlay <i class="fas fa-truck neon-text-purple" style="margin-left:auto;"></i></div>
                             <div class="stat-value neon-text-purple" id="stat-dash-purchasing">LKR 0.00</div>
                         </div>
+                    </div>
+                    
+                    <div class="grid-cards" style="margin-top: 1.5rem;">
                         <div class="glass-card stat-card border-cyan hover-float">
                             <div class="stat-header">Today Staff Advances <i class="fas fa-users neon-text-cyan" style="margin-left:auto;"></i></div>
                             <div class="stat-value neon-text-cyan" id="stat-dash-staff">LKR 0.00</div>
                         </div>
-                    </div>
-                    
-                    <div class="grid-cards" style="margin-top: 1.5rem;">
-                        <div class="glass-card stat-card border-orange hover-float" style="grid-column: span 1;">
+                        <div class="glass-card stat-card border-orange hover-float">
                             <div class="stat-header">Today Other Cash Debits <i class="fas fa-wallet neon-text-orange" style="margin-left:auto;"></i></div>
                             <div class="stat-value neon-text-orange" id="stat-dash-debits">LKR 0.00</div>
+                        </div>
+                        <div class="glass-card stat-card border-purple hover-float" style="grid-column: span 2;">
+                            <div class="stat-header">System Balance Check (Formula) <i class="fas fa-sync neon-text-purple" style="margin-left:auto;"></i></div>
+                            <div class="stat-value neon-text-purple" id="stat-formula-result">LKR 0.00</div>
+                            <small style="color: #888;">Target: 0.00</small>
                         </div>
                     </div>
 
@@ -321,7 +316,6 @@
                     </div>
                 </div>
 
-                <!-- TAB: CASH CALCULATOR -->
                 <div id="tab-cash" class="tab-content">
                     <div class="glass-card border-green">
                         <h2 class="neon-text-green"><i class="fas fa-calculator"></i> Cash Note Denomination Matrix</h2>
@@ -336,7 +330,6 @@
                     </div>
                 </div>
 
-                <!-- TAB: EXPENSES -->
                 <div id="tab-expenses" class="tab-content">
                     <div class="glass-card border-red">
                         <div class="flex-between">
@@ -352,7 +345,6 @@
                     </div>
                 </div>
 
-                <!-- TAB: CASH DEBITS -->
                 <div id="tab-debits" class="tab-content">
                     <div class="glass-card border-orange">
                         <div class="flex-between">
@@ -368,7 +360,6 @@
                     </div>
                 </div>
 
-                <!-- TAB: CHEQUE SALES -->
                 <div id="tab-chequesales" class="tab-content">
                     <div class="glass-card border-cyan">
                         <div class="flex-between">
@@ -384,7 +375,6 @@
                     </div>
                 </div>
 
-                <!-- TAB: PURCHASING -->
                 <div id="tab-purchasing" class="tab-content">
                     <div class="glass-card border-purple">
                         <div class="flex-between">
@@ -400,7 +390,6 @@
                     </div>
                 </div>
 
-                <!-- TAB: CREDIT BILLS -->
                 <div id="tab-credit" class="tab-content">
                     <div class="glass-card border-orange">
                         <div class="flex-between" style="margin-bottom:15px;">
@@ -426,7 +415,6 @@
                     </div>
                 </div>
 
-                <!-- TAB: CREDIT COLLECTIONS -->
                 <div id="tab-collections" class="tab-content">
                     <div class="glass-card border-green">
                         <h2 class="neon-text-green"><i class="fas fa-coins"></i> Credit Bill Settlement Clearing Hub</h2>
@@ -440,7 +428,6 @@
                     </div>
                 </div>
 
-                <!-- TAB: STAFF MANAGEMENT -->
                 <div id="tab-staff" class="tab-content">
                     <div class="glass-card border-cyan">
                         <div class="flex-between">
@@ -456,7 +443,6 @@
                     </div>
                 </div>
 
-                <!-- TAB: REPORTS -->
                 <div id="tab-reports" class="tab-content">
                     <div class="glass-card border-purple">
                         <h2 class="neon-text-purple"><i class="fas fa-file-invoice"></i> Date-Range Query Report Matrix Engine</h2>
@@ -483,7 +469,6 @@
                     </div>
                 </div>
 
-                <!-- TAB: SETTINGS -->
                 <div id="tab-settings" class="tab-content">
                     <div class="glass-card border-cyan">
                         <h2 class="neon-text-cyan"><i class="fas fa-cog"></i> Master System Adjustments</h2>
@@ -497,8 +482,8 @@
                                 </div>
                             </div>
                             <div class="glass-card">
-                                <h3>Infrastructure Commands</h3>
-                                <button class="cyber-btn-small" style="width:100%; margin-top:10px; border-color:var(--red); color:var(--red);" onclick="factoryResetDatabase()">WIPE DATABASE PERMANENTLY</button>
+                                <h3>System Data Backup</h3>
+                                <button class="cyber-btn-small" style="width:100%; margin-top:10px; border-color:var(--green); color:var(--green);" onclick="downloadBackup()">DOWNLOAD FULL BACKUP</button>
                             </div>
                         </div>
                     </div>
@@ -507,16 +492,10 @@
         </div>
     </div>
 
-    <!-- COPYRIGHT PANEL -->
     <footer class="cyber-footer">
-        SYSTEM ARCHITECT: <span>SARANGA DILSHAN</span> © 2026.
+        POWERED BY COGNITIVE ERP UTILITIES // SYSTEM ARCHITECT: <span>SARANGA DILSHAN</span> © 2026.
     </footer>
 
-    <!-- =========================================
-         DYNAMIC MODAL FORMS DATA SYSTEM
-         ========================================= -->
-    
-    <!-- MODAL: SECURITY PIN OVERRIDE -->
     <div id="modal-security" class="modal-overlay">
         <div class="glass-card cyber-modal border-red">
             <div class="modal-header">
@@ -528,12 +507,11 @@
                 <input type="password" id="input-security-pin" placeholder="••••">
             </div>
             <div class="modal-footer-btns">
-                <button class="cyber-btn-small" id="btn-security-submit">CONFIRM ERASE</button>
+                <button class="cyber-btn-small" id="btn-security-submit">CONFIRM OVERRIDE</button>
             </div>
         </div>
     </div>
 
-    <!-- MODAL: MANAGE DAILY SALES MATRIX -->
     <div id="modal-sales" class="modal-overlay">
         <div class="glass-card cyber-modal border-cyan">
             <div class="modal-header">
@@ -550,7 +528,6 @@
         </div>
     </div>
 
-    <!-- MODAL: ADD EXPENSE RECORD -->
     <div id="modal-expense" class="modal-overlay">
         <div class="glass-card cyber-modal border-red">
             <div class="modal-header">
@@ -581,7 +558,6 @@
         </div>
     </div>
 
-    <!-- MODAL: ADD CASH DEBIT -->
     <div id="modal-debit" class="modal-overlay">
         <div class="glass-card cyber-modal border-orange">
             <div class="modal-header">
@@ -606,7 +582,6 @@
         </div>
     </div>
 
-    <!-- MODAL: ADD CHEQUE SALE -->
     <div id="modal-cheque" class="modal-overlay">
         <div class="glass-card cyber-modal border-cyan">
             <div class="modal-header">
@@ -635,7 +610,6 @@
         </div>
     </div>
 
-    <!-- MODAL: ADD PROCUREMENT RECORD -->
     <div id="modal-purchase" class="modal-overlay">
         <div class="glass-card cyber-modal border-purple">
             <div class="modal-header">
@@ -664,7 +638,6 @@
         </div>
     </div>
 
-    <!-- MODAL: INSTANTIATE CREDIT BILL -->
     <div id="modal-credit-bill" class="modal-overlay">
         <div class="glass-card cyber-modal border-orange">
             <div class="modal-header">
@@ -693,7 +666,6 @@
         </div>
     </div>
 
-    <!-- MODAL: CREDIT BILL CLEARING PIPELINE -->
     <div id="modal-settlement" class="modal-overlay">
         <div class="glass-card cyber-modal border-green">
             <div class="modal-header">
@@ -726,7 +698,6 @@
         </div>
     </div>
 
-    <!-- MODAL: LOG SALARY DISBURSEMENT -->
     <div id="modal-staff" class="modal-overlay">
         <div class="glass-card cyber-modal border-cyan">
             <div class="modal-header">
@@ -851,23 +822,19 @@
             db.ref("timeline_ledger").set(masterTimeline);
         }
 
-function changeActiveDateWithAuth() {
-    const targetDate = document.getElementById('system-date-picker').value;
-    
-    // Stop if the user clears the date picker
-    if(!targetDate) return; 
+        function changeActiveDateWithAuth() {
+            const targetDate = document.getElementById('system-date-picker').value;
+            if(!targetDate) return;
 
-    // Directly apply the date change
-    activeDate = targetDate;
-    parseCurrentDateState();
-    
-    // Trigger the notification
-    if (targetDate !== todayActualISO) {
-        showToast(`Historical Timeline: ${activeDate}`, "orange", "fa-calendar-day");
-    } else {
-        showToast(`Current Shift: ${activeDate}`, "cyan", "fa-calendar-day");
-    }
-}
+            activeDate = targetDate;
+            parseCurrentDateState();
+
+            if (targetDate !== todayActualISO) {
+                showToast(`Retro-timeline target unlocked: ${activeDate}`, "orange", "fa-calendar-day");
+            } else {
+                showToast(`Shift timeline target: ${activeDate}`, "cyan", "fa-calendar-day");
+            }
+        }
 
         const fmtLKR = val => new Intl.NumberFormat('en-LK', { style: 'currency', currency: 'LKR' }).format(val || 0);
 
@@ -875,75 +842,70 @@ function changeActiveDateWithAuth() {
            DASHBOARD REALTIME CALCULATORS
            ========================================= */
         function calculateOperationalDashboardAggregates() {
+            // Get core dashboard variables
+            let physicalCash = parseFloat(appData.dashboard.cash || 0);
+            let grossSales = parseFloat(appData.dashboard.sales || 0);
+
+            let creditGenerated = 0;
+            if(appData.creditBills) appData.creditBills.forEach(c => creditGenerated += parseFloat(c.amount || 0));
+            appData.dashboard.credit = creditGenerated;
+
             let totalExpenses = 0;
             if(appData.expenses) appData.expenses.forEach(e => totalExpenses += parseFloat(e.amount || 0));
             appData.dashboard.expenses = totalExpenses;
 
-            let totalCredits = 0;
-            if(appData.creditBills) appData.creditBills.forEach(c => totalCredits += parseFloat(c.amount || 0));
-            appData.dashboard.credit = totalCredits;
+            let otherDebits = 0;
+            if(appData.debits) appData.debits.forEach(d => otherDebits += parseFloat(d.amount || 0));
 
-            document.getElementById('stat-sales').innerText = fmtLKR(appData.dashboard.sales);
-            document.getElementById('stat-cash').innerText = fmtLKR(appData.dashboard.cash);
-            document.getElementById('stat-credit').innerText = fmtLKR(appData.dashboard.credit);
-            document.getElementById('stat-expenses').innerText = fmtLKR(appData.dashboard.expenses);
+            let chequeSales = 0;
+            if(appData.chequeSales) appData.chequeSales.forEach(c => chequeSales += parseFloat(c.amount || 0));
 
-            // FIX: Dynamic Scanning across the entire historical matrix for collections targeting today
+            let procurement = 0;
+            if(appData.purchasing) appData.purchasing.forEach(p => procurement += (parseFloat(p.cash || 0) + parseFloat(p.cheque || 0)));
+
+            let staffAdvances = 0;
+            if(appData.staffAdvances) appData.staffAdvances.forEach(s => staffAdvances += parseFloat(s.amount || 0));
+
+            // Dynamic Scanning for Collections targeting today
             let todayCashCollections = 0;
             let todayCheqCollections = 0;
             Object.keys(masterTimeline).forEach(dt => {
-              const day = masterTimeline[dt];
-              if(day.creditBills) {
-                day.creditBills.forEach(bill => {
-                   if(bill.status === 'cleared' && bill.clearedOnDate === activeDate) {
-                     const amount = parseFloat(bill.amount || 0);
-                       // Check the paymentType string defined during settlement
-                      if (bill.paymentType && bill.paymentType.includes('Cheque')) {
-                         todayCheqCollections += amount;
-                      } else {
-                    // Defaults to cash if paymentType is 'Cash' or undefined
-                    todayCashCollections += amount; 
-// FIX: Dynamic Scanning across the entire historical matrix for collections targeting today
-let todayCashCollections = 0;
-let todayCheqCollections = 0;
-Object.keys(masterTimeline).forEach(dt => {
-    const day = masterTimeline[dt];
-    if(day.creditBills) {
-        day.creditBills.forEach(bill => {
-            if(bill.status === 'cleared' && bill.clearedOnDate === activeDate) {
-                const amount = parseFloat(bill.amount || 0);
-                // Check the paymentType string defined during settlement
-                if (bill.paymentType && bill.paymentType.includes('Cheque')) {
-                    todayCheqCollections += amount;
-                } else {
-                    // Defaults to cash if paymentType is 'Cash' or undefined
-                    todayCashCollections += amount; 
+                const day = masterTimeline[dt];
+                if(day.creditBills) {
+                    day.creditBills.forEach(bill => {
+                        if(bill.status === 'cleared' && bill.clearedOnDate === activeDate) {
+                            const amount = parseFloat(bill.amount || 0);
+                            if (bill.paymentType && bill.paymentType.includes('Cheque')) {
+                                todayCheqCollections += amount;
+                            } else {
+                                todayCashCollections += amount; 
+                            }
+                        }
+                    });
                 }
-            }
-        });
-    }
-});
-document.getElementById('stat-dash-col-cash').innerText = fmtLKR(todayCashCollections);
-document.getElementById('stat-dash-col-cheq').innerText = fmtLKR(todayCheqCollections);
-           document.getElementById('stat-dash-col-cash').innerText = fmtLKR(todayCashCollections);
-           document.getElementById('stat-dash-col-cheq').innerText = fmtLKR(todayCheqCollections);
+            });
 
-            // NEW: Preview Today Cheque Sales inside the Dashboard
-            let todayCheqSalesSum = 0;
-            if(appData.chequeSales) appData.chequeSales.forEach(c => todayCheqSalesSum += parseFloat(c.amount || 0));
-            document.getElementById('stat-dash-cheqsales').innerText = fmtLKR(todayCheqSalesSum);
+            // USER FORMULA: (Cash + CreditGen + Exp + ChqSales + Procure + Staff) - (CashColl + OtherDebits + GrossSales)
+            let formulaResult = (physicalCash + creditGenerated + totalExpenses + chequeSales + procurement + staffAdvances) 
+                                - (todayCashCollections + otherDebits + grossSales);
 
-            let todayProcurement = 0;
-            if(appData.purchasing) appData.purchasing.forEach(p => todayProcurement += (parseFloat(p.cash || 0) + parseFloat(p.cheque || 0)));
-            document.getElementById('stat-dash-purchasing').innerText = fmtLKR(todayProcurement);
+            // Update UI elements
+            document.getElementById('stat-sales').innerText = fmtLKR(grossSales);
+            document.getElementById('stat-cash').innerText = fmtLKR(physicalCash);
+            document.getElementById('stat-credit').innerText = fmtLKR(creditGenerated);
+            document.getElementById('stat-expenses').innerText = fmtLKR(totalExpenses);
 
-            let todayStaff = 0;
-            if(appData.staffAdvances) appData.staffAdvances.forEach(s => todayStaff += parseFloat(s.amount || 0));
-            document.getElementById('stat-dash-staff').innerText = fmtLKR(todayStaff);
+            document.getElementById('stat-dash-col-cash').innerText = fmtLKR(todayCashCollections);
+            document.getElementById('stat-dash-col-cheq').innerText = fmtLKR(todayCheqCollections);
+            document.getElementById('stat-dash-cheqsales').innerText = fmtLKR(chequeSales);
+            document.getElementById('stat-dash-purchasing').innerText = fmtLKR(procurement);
+            document.getElementById('stat-dash-staff').innerText = fmtLKR(staffAdvances);
+            document.getElementById('stat-dash-debits').innerText = fmtLKR(otherDebits);
 
-            let todayDebits = 0;
-            if(appData.debits) appData.debits.forEach(d => todayDebits += parseFloat(d.amount || 0));
-            document.getElementById('stat-dash-debits').innerText = fmtLKR(todayDebits);
+            // Set Formula Result with status color
+            const formulaEl = document.getElementById('stat-formula-result');
+            formulaEl.innerText = fmtLKR(formulaResult);
+            formulaEl.style.color = (Math.abs(formulaResult) < 0.01) ? "var(--green)" : "var(--red)";
         }
 
         function openSalesModal() {
@@ -978,7 +940,6 @@ document.getElementById('stat-dash-col-cheq').innerText = fmtLKR(todayCheqCollec
                 }
             };
 
-            // Bind fallback on modal tracking exit close
             document.querySelector('#modal-security .modal-close').onclick = function() {
                 closeModal('modal-security');
                 if(onCancel) onCancel();
@@ -1151,7 +1112,6 @@ document.getElementById('stat-dash-col-cheq').innerText = fmtLKR(todayCheqCollec
                         if(dateKey === activeDate) todayBody.innerHTML += tableRowString;
                         allBody.innerHTML += tableRowString;
 
-                        // Show invoice inside clearing hub
                         clearingHubBody.innerHTML += `
                             <tr>
                                 <td>${dateKey}</td>
@@ -1173,7 +1133,7 @@ document.getElementById('stat-dash-col-cheq').innerText = fmtLKR(todayCheqCollec
         
         function submitCreditBillForm() {
             const customer = document.getElementById('form-crd-customer').value;
-            const billNo = document.getElementById('form-crd-billno').value; // FIX: Ask explicit Invoice Number input
+            const billNo = document.getElementById('form-crd-billno').value;
             const amount = parseFloat(document.getElementById('form-crd-amount').value || 0);
             const terms = parseInt(document.getElementById('form-crd-terms').value || "30");
             
@@ -1203,7 +1163,7 @@ document.getElementById('stat-dash-col-cheq').innerText = fmtLKR(todayCheqCollec
             const dateKey = document.getElementById('form-set-datekey').value;
             const itemIndex = parseInt(document.getElementById('form-set-index').value);
             const mechanism = document.getElementById('form-set-type').value;
-            const instalment = document.getElementById('form-set-instalment').value; // FIX: Add Instalment Type
+            const instalment = document.getElementById('form-set-instalment').value;
             const clearingDate = document.getElementById('form-set-date').value;
 
             if(!clearingDate) return showToast("Please pick a settlement date.", "red", "fa-exclamation");
@@ -1215,7 +1175,7 @@ document.getElementById('stat-dash-col-cheq').innerText = fmtLKR(todayCheqCollec
             db.ref("timeline_ledger").set(masterTimeline);
             closeModal('modal-settlement');
             showToast("Settlement Cleared Successfully", "green", "fa-check");
-            logToTerminal("COLLECT", `Invoice balance on ${masterTimeline[dateKey].creditBills[itemIndex].billNo} successfully cleared via ${mechanism.toUpperCase()}`, "var(--green)");
+            logToTerminal("COLLECT", `Invoice balance cleared via ${mechanism.toUpperCase()}`, "var(--green)");
         }
         
         function deleteCreditBill(dateKey, index) {
@@ -1304,31 +1264,15 @@ document.getElementById('stat-dash-col-cheq').innerText = fmtLKR(todayCheqCollec
 
             let computedSales = 0, computedCredits = 0, computedCollections = 0, computedExpenses = 0, computedDebits = 0, computedStaff = 0;
 
-            // Loop sequentially through every calendar point inside timeline snapshot database
             Object.keys(masterTimeline).forEach(dateKey => {
                 if(dateKey >= start && dateKey <= end) {
                     const node = masterTimeline[dateKey];
-                    
-                    // 1. Total Sales
                     if(node.dashboard && node.dashboard.sales) computedSales += parseFloat(node.dashboard.sales || 0);
-                    
-                    // 2. Total Expenses
                     if(node.expenses) node.expenses.forEach(e => computedExpenses += parseFloat(e.amount || 0));
-                    
-                    // 3. Total Cash Debits
                     if(node.debits) node.debits.forEach(d => computedDebits += parseFloat(d.amount || 0));
-                    
-                    // 4. Staff Salary Advance Outlays
                     if(node.staffAdvances) node.staffAdvances.forEach(s => computedStaff += parseFloat(s.amount || 0));
+                    if(node.creditBills) node.creditBills.forEach(b => computedCredits += parseFloat(b.amount || 0));
                     
-                    // 5. Total Credit Issued
-                    if(node.creditBills) {
-                        node.creditBills.forEach(b => {
-                            computedCredits += parseFloat(b.amount || 0);
-                        });
-                    }
-                    
-                    // 6. Total Credit Collections (Calculated via accurate settlement date parsing parameters)
                     Object.keys(masterTimeline).forEach(innerKey => {
                         const innerNode = masterTimeline[innerKey];
                         if(innerNode.creditBills) {
@@ -1373,7 +1317,7 @@ document.getElementById('stat-dash-col-cheq').innerText = fmtLKR(todayCheqCollec
             document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
             document.querySelectorAll('.nav-links li').forEach(l => l.classList.remove('active'));
             document.getElementById(`tab-${tabId}`).classList.add('active');
-            event.currentTarget.classList.add('active');
+            if (event) event.currentTarget.classList.add('active');
         }
 
         document.getElementById('menu-toggle').addEventListener('click', () => {
@@ -1398,11 +1342,20 @@ document.getElementById('stat-dash-col-cheq').innerText = fmtLKR(todayCheqCollec
 
         function changeAccent(color) { document.documentElement.style.setProperty('--cyan', color); }
         
-        function factoryResetDatabase() {
-            executeSecureAction(() => {
-                db.ref("/").remove();
-                location.reload();
-            });
+        function downloadBackup() {
+            const jsonStr = JSON.stringify(masterTimeline, null, 2);
+            const blob = new Blob([jsonStr], { type: "application/json" });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `samarathunga_backup_${new Date().toISOString().split('T')[0]}.json`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            
+            showToast("System Backup Downloaded", "green", "fa-download");
+            logToTerminal("BACKUP", "Full system database payload exported locally.", "var(--green)");
         }
 
         function showToast(msg, colorClass, icon) {
