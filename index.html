@@ -889,18 +889,44 @@ function changeActiveDateWithAuth() {
             document.getElementById('stat-expenses').innerText = fmtLKR(appData.dashboard.expenses);
 
             // FIX: Dynamic Scanning across the entire historical matrix for collections targeting today
-            let todayCollections = 0;
+            let todayCashCollections = 0;
+            let todayCheqCollections = 0;
             Object.keys(masterTimeline).forEach(dt => {
-                const day = masterTimeline[dt];
-                if(day.creditBills) {
-                    day.creditBills.forEach(bill => {
-                        if(bill.status === 'cleared' && bill.clearedOnDate === activeDate) {
-                            todayCollections += parseFloat(bill.amount || 0);
-                        }
-                    });
+              const day = masterTimeline[dt];
+              if(day.creditBills) {
+                day.creditBills.forEach(bill => {
+                   if(bill.status === 'cleared' && bill.clearedOnDate === activeDate) {
+                     const amount = parseFloat(bill.amount || 0);
+                       // Check the paymentType string defined during settlement
+                      if (bill.paymentType && bill.paymentType.includes('Cheque')) {
+                         todayCheqCollections += amount;
+                      } else {
+                    // Defaults to cash if paymentType is 'Cash' or undefined
+                    todayCashCollections += amount; 
+// FIX: Dynamic Scanning across the entire historical matrix for collections targeting today
+let todayCashCollections = 0;
+let todayCheqCollections = 0;
+Object.keys(masterTimeline).forEach(dt => {
+    const day = masterTimeline[dt];
+    if(day.creditBills) {
+        day.creditBills.forEach(bill => {
+            if(bill.status === 'cleared' && bill.clearedOnDate === activeDate) {
+                const amount = parseFloat(bill.amount || 0);
+                // Check the paymentType string defined during settlement
+                if (bill.paymentType && bill.paymentType.includes('Cheque')) {
+                    todayCheqCollections += amount;
+                } else {
+                    // Defaults to cash if paymentType is 'Cash' or undefined
+                    todayCashCollections += amount; 
                 }
-            });
-            document.getElementById('stat-dash-collected').innerText = fmtLKR(todayCollections);
+            }
+        });
+    }
+});
+document.getElementById('stat-dash-col-cash').innerText = fmtLKR(todayCashCollections);
+document.getElementById('stat-dash-col-cheq').innerText = fmtLKR(todayCheqCollections);
+           document.getElementById('stat-dash-col-cash').innerText = fmtLKR(todayCashCollections);
+           document.getElementById('stat-dash-col-cheq').innerText = fmtLKR(todayCheqCollections);
 
             // NEW: Preview Today Cheque Sales inside the Dashboard
             let todayCheqSalesSum = 0;
