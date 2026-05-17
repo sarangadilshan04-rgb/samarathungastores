@@ -121,7 +121,7 @@
         #live-clock { font-size: 1.5rem; font-weight: bold; font-family: monospace; }
         .profile-avatar img { width: 40px; height: 40px; border-radius: 50%; border: 2px solid var(--cyan); box-shadow: 0 0 10px var(--cyan); }
         .icon-btn { background: none; border: none; color: var(--text); font-size: 1.2rem; cursor: pointer; margin-left: 5px; }
-        .ledger-date-picker { background: rgba(0, 0, 0, 0.6); border: 1px solid var(--cyan); color: #ffffff; font-family: monospace; font-size: 1.1rem; padding: 6px 12px; border-radius: 4px; outline: none; cursor: pointer; box-shadow: 0 0 10px rgba(0, 240, 255, 0.2); color-scheme: dark; }
+        .ledger-date-picker { background: rgba(0, 0, 0, 0.6); border: 1px solid var(--cyan); color: var(--cyan); font-family: monospace; font-size: 1.1rem; padding: 6px 12px; border-radius: 4px; outline: none; cursor: pointer; box-shadow: 0 0 10px rgba(0, 240, 255, 0.2); }
 
         /* DASHBOARD TABS & GRIDS */
         .tab-content { padding: 2rem; display: none; animation: fadeIn 0.4s ease; }
@@ -352,7 +352,7 @@
                     <div class="glass-card border-red">
                         <div class="flex-between">
                             <h2 class="neon-text-red"><i class="fas fa-file-invoice-dollar"></i> Expense Registry</h2>
-                            <button class="cyber-btn-small" onclick="openModal('modal-expense')">+ RECORD NEW EXPENSE</button>
+                            <button class="cyber-btn-small" onclick="openAddExpense()">+ RECORD NEW EXPENSE</button>
                         </div>
                         <div class="table-container mt-2">
                             <table class="cyber-table">
@@ -366,7 +366,7 @@
                     <div class="glass-card border-orange">
                         <div class="flex-between">
                             <h2 class="neon-text-orange"><i class="fas fa-hand-holding-usd"></i> Other Cash Debits</h2>
-                            <button class="cyber-btn-small" onclick="openModal('modal-debit')">+ LOG NEW CASH DEBIT</button>
+                            <button class="cyber-btn-small" onclick="openAddDebit()">+ LOG NEW CASH DEBIT</button>
                         </div>
                         <div class="table-container mt-2">
                             <table class="cyber-table">
@@ -380,7 +380,7 @@
                     <div class="glass-card border-cyan">
                         <div class="flex-between">
                             <h2 class="neon-text-cyan"><i class="fas fa-money-check"></i> Cheque Sales Log System</h2>
-                            <button class="cyber-btn-small" onclick="openModal('modal-cheque')">+ LOG CHEQUE TRANSACTION</button>
+                            <button class="cyber-btn-small" onclick="openAddCheque()">+ LOG CHEQUE TRANSACTION</button>
                         </div>
                         <div class="table-container mt-2">
                             <table class="cyber-table">
@@ -395,7 +395,7 @@
                     <div class="glass-card border-purple">
                         <div class="flex-between">
                             <h2 class="neon-text-purple"><i class="fas fa-shopping-cart"></i> Procurement Ledgers</h2>
-                            <button class="cyber-btn-small" onclick="openModal('modal-purchase')">+ LOG PROCUREMENT RECORD</button>
+                            <button class="cyber-btn-small" onclick="openAddPurchase()">+ LOG PROCUREMENT RECORD</button>
                         </div>
                         <div class="table-container mt-2">
                             <table class="cyber-table">
@@ -445,7 +445,7 @@
                     <div class="glass-card border-orange">
                         <div class="flex-between" style="margin-bottom:5px;">
                             <h2 class="neon-text-orange"><i class="fas fa-money-check-alt"></i> Credit Invoices Engine</h2>
-                            <button class="cyber-btn-small" onclick="openModal('modal-credit-bill')">+ INSTANTIATE CREDIT BILL</button>
+                            <button class="cyber-btn-small" onclick="openAddCreditBill()">+ INSTANTIATE CREDIT BILL</button>
                         </div>
                         <div class="search-bar-container">
                             <input type="text" class="cyber-input" placeholder="🔍 Search credit invoices by name or number..." onkeyup="filterTable('credit-today-tbody', this.value); filterTable('credit-all-tbody', this.value)">
@@ -491,7 +491,7 @@
                     <div class="glass-card border-cyan">
                         <div class="flex-between">
                             <h2 class="neon-text-cyan"><i class="fas fa-users"></i> Staff Wage Adjustments & Advances</h2>
-                            <button class="cyber-btn-small" onclick="openModal('modal-staff')">+ LOG SALARY DISBURSEMENT</button>
+                            <button class="cyber-btn-small" onclick="openAddStaff()">+ LOG SALARY DISBURSEMENT</button>
                         </div>
                         
                         <div class="search-bar-container">
@@ -558,6 +558,11 @@
                                 <h3>System Data Backup</h3>
                                 <button class="cyber-btn-small" style="width:100%; margin-top:10px; border-color:var(--green); color:var(--green);" onclick="downloadBackup()">DOWNLOAD FULL BACKUP</button>
                             </div>
+                        </div>
+
+                        <div class="glass-card summary-center border-purple mt-2">
+                            <h3 class="neon-text-purple" style="margin-bottom: 1rem;"><i class="fas fa-terminal"></i> Global Operational Log Engine</h3>
+                            <div class="system-log-box" id="system-log-terminal-settings"></div>
                         </div>
                     </div>
                 </div>
@@ -651,7 +656,7 @@
 
     <div id="modal-credit-bill" class="modal-overlay">
         <div class="glass-card cyber-modal border-orange">
-            <div class="modal-header"><h3 class="neon-text-orange"><i class="fas fa-money-check-alt"></i> Instantiate Credit Invoice</h3><button class="modal-close" onclick="closeModal('modal-credit-bill')">&times;</button></div>
+            <div class="modal-header"><h3 class="neon-text-orange"><i class="fas fa-money-check-alt"></i> Instantiate/Edit Credit Invoice</h3><button class="modal-close" onclick="closeModal('modal-credit-bill')">&times;</button></div>
             <div class="form-group">
                 <label>Debtor Client Profile Name</label>
                 <input type="text" id="form-crd-customer-input" list="credit-customer-list" class="cyber-input" placeholder="Search existing or type new customer name..." style="width:100%;">
@@ -699,6 +704,12 @@
         // Edit Tracking Variables
         let editCompanyIdx = -1;
         let editCustomerIdx = -1;
+        let editExpenseIdx = -1;
+        let editDebitIdx = -1;
+        let editChequeIdx = -1;
+        let editPurchaseIdx = -1;
+        let editCreditKey = null; let editCreditIdx = -1;
+        let editStaffIdx = -1;
 
         document.addEventListener("DOMContentLoaded", () => {
             document.getElementById('system-date-picker').value = activeDate;
@@ -1199,14 +1210,37 @@
             showToast(`Auto-cleared bills for ${customerName}`, "green", "fa-check-double");
         }
 
-        // EXPENSES, DEBITS, CHEQUES, PURCHASES
+        // EXPENSES
         function renderExpenses() {
             const tbody = document.getElementById('expense-tbody'); tbody.innerHTML = '';
             if(appData.expenses) {
                 appData.expenses.forEach((e, index) => {
-                    tbody.innerHTML += `<tr><td><span class="neon-text-red">${e.category}</span></td><td>${e.desc}</td><td>${fmtLKR(e.amount)}</td><td><button class="icon-btn" onclick="deleteExpense(${index})" title="Reverse/Delete"><i class="fas fa-trash neon-text-red"></i></button></td></tr>`;
+                    tbody.innerHTML += `<tr>
+                        <td><span class="neon-text-red">${e.category}</span></td>
+                        <td>${e.desc}</td>
+                        <td>${fmtLKR(e.amount)}</td>
+                        <td>
+                            <button class="icon-btn" onclick="editExpense(${index})" title="Edit"><i class="fas fa-pen neon-text-cyan"></i></button>
+                            <button class="icon-btn" onclick="deleteExpense(${index})" title="Reverse/Delete"><i class="fas fa-trash neon-text-red"></i></button>
+                        </td>
+                    </tr>`;
                 });
             }
+        }
+        function openAddExpense() {
+            editExpenseIdx = -1;
+            document.getElementById('form-exp-category').value = 'Utilities';
+            document.getElementById('form-exp-desc').value = '';
+            document.getElementById('form-exp-amount').value = '';
+            openModal('modal-expense');
+        }
+        function editExpense(index) {
+            editExpenseIdx = index;
+            const e = appData.expenses[index];
+            document.getElementById('form-exp-category').value = e.category;
+            document.getElementById('form-exp-desc').value = e.desc;
+            document.getElementById('form-exp-amount').value = e.amount;
+            openModal('modal-expense');
         }
         function submitExpenseForm() {
             const cat = document.getElementById('form-exp-category').value;
@@ -1215,13 +1249,17 @@
             if(!amount) return showToast("Please input a valid amount", "red", "fa-exclamation");
             
             if(!appData.expenses) appData.expenses = [];
-            appData.expenses.push({ category: cat, desc, amount });
-            pushDataStateToCloud();
             
-            document.getElementById('form-exp-desc').value = '';
-            document.getElementById('form-exp-amount').value = '';
+            if (editExpenseIdx > -1) {
+                appData.expenses[editExpenseIdx] = { category: cat, desc, amount };
+                logToTerminal("EDIT", `Updated overhead outtake: ${cat} -> ${fmtLKR(amount)}`, "var(--red)");
+            } else {
+                appData.expenses.push({ category: cat, desc, amount });
+                logToTerminal("EXPENSE", `Captured overhead outtake: ${cat} -> ${fmtLKR(amount)}`, "var(--red)");
+            }
+            
+            pushDataStateToCloud();
             closeModal('modal-expense');
-            logToTerminal("EXPENSE", `Captured overhead outtake: ${cat} -> ${fmtLKR(amount)}`, "var(--red)");
         }
         function deleteExpense(index) { 
             executeSecureAction(() => { 
@@ -1232,13 +1270,37 @@
             }); 
         }
 
+        // DEBITS
         function renderDebits() {
             const tbody = document.getElementById('debits-tbody'); tbody.innerHTML = '';
             if(appData.debits) {
                 appData.debits.forEach((d, index) => {
-                    tbody.innerHTML += `<tr><td><strong>${d.profile}</strong></td><td>${d.details}</td><td>${fmtLKR(d.amount)}</td><td><button class="icon-btn" onclick="deleteDebit(${index})" title="Reverse/Delete"><i class="fas fa-trash neon-text-red"></i></button></td></tr>`;
+                    tbody.innerHTML += `<tr>
+                        <td><strong>${d.profile}</strong></td>
+                        <td>${d.details}</td>
+                        <td>${fmtLKR(d.amount)}</td>
+                        <td>
+                            <button class="icon-btn" onclick="editDebit(${index})" title="Edit"><i class="fas fa-pen neon-text-cyan"></i></button>
+                            <button class="icon-btn" onclick="deleteDebit(${index})" title="Reverse/Delete"><i class="fas fa-trash neon-text-red"></i></button>
+                        </td>
+                    </tr>`;
                 });
             }
+        }
+        function openAddDebit() {
+            editDebitIdx = -1;
+            document.getElementById('form-deb-profile').value = '';
+            document.getElementById('form-deb-details').value = '';
+            document.getElementById('form-deb-amount').value = '';
+            openModal('modal-debit');
+        }
+        function editDebit(index) {
+            editDebitIdx = index;
+            const d = appData.debits[index];
+            document.getElementById('form-deb-profile').value = d.profile;
+            document.getElementById('form-deb-details').value = d.details;
+            document.getElementById('form-deb-amount').value = d.amount;
+            openModal('modal-debit');
         }
         function submitDebitForm() {
             const profile = document.getElementById('form-deb-profile').value;
@@ -1247,14 +1309,17 @@
             if(!profile || !amount) return showToast("Profile Reference and Amount are required.", "red", "fa-exclamation");
 
             if(!appData.debits) appData.debits = [];
-            appData.debits.push({ profile, details, amount });
+            
+            if (editDebitIdx > -1) {
+                appData.debits[editDebitIdx] = { profile, details, amount };
+                logToTerminal("EDIT", `Updated non-overhead transaction to ${profile}`, "var(--orange)");
+            } else {
+                appData.debits.push({ profile, details, amount });
+                logToTerminal("DEBIT", `Non-overhead transaction registered to ${profile}`, "var(--orange)");
+            }
+            
             pushDataStateToCloud();
-
-            document.getElementById('form-deb-profile').value = '';
-            document.getElementById('form-deb-details').value = '';
-            document.getElementById('form-deb-amount').value = '';
             closeModal('modal-debit');
-            logToTerminal("DEBIT", `Non-overhead transaction registered to ${profile}`, "var(--orange)");
         }
         function deleteDebit(index) { 
             executeSecureAction(() => { 
@@ -1265,13 +1330,40 @@
             }); 
         }
 
+        // CHEQUE SALES
         function renderChequeSales() {
             const tbody = document.getElementById('cheque-tbody'); tbody.innerHTML = '';
             if(appData.chequeSales) {
                 appData.chequeSales.forEach((c, index) => {
-                    tbody.innerHTML += `<tr><td>${c.customer}</td><td>${c.invoice}</td><td style="font-family:monospace;">${c.chequeNo}</td><td class="neon-text-cyan">${fmtLKR(c.amount)}</td><td><button class="icon-btn" onclick="deleteChequeSale(${index})" title="Reverse/Delete"><i class="fas fa-trash neon-text-red"></i></button></td></tr>`;
+                    tbody.innerHTML += `<tr>
+                        <td>${c.customer}</td>
+                        <td>${c.invoice}</td>
+                        <td style="font-family:monospace;">${c.chequeNo}</td>
+                        <td class="neon-text-cyan">${fmtLKR(c.amount)}</td>
+                        <td>
+                            <button class="icon-btn" onclick="editCheque(${index})" title="Edit"><i class="fas fa-pen neon-text-cyan"></i></button>
+                            <button class="icon-btn" onclick="deleteChequeSale(${index})" title="Reverse/Delete"><i class="fas fa-trash neon-text-red"></i></button>
+                        </td>
+                    </tr>`;
                 });
             }
+        }
+        function openAddCheque() {
+            editChequeIdx = -1;
+            document.getElementById('form-chq-customer').value = '';
+            document.getElementById('form-chq-invoice').value = '';
+            document.getElementById('form-chq-no').value = '';
+            document.getElementById('form-chq-amount').value = '';
+            openModal('modal-cheque');
+        }
+        function editCheque(index) {
+            editChequeIdx = index;
+            const c = appData.chequeSales[index];
+            document.getElementById('form-chq-customer').value = c.customer;
+            document.getElementById('form-chq-invoice').value = c.invoice;
+            document.getElementById('form-chq-no').value = c.chequeNo;
+            document.getElementById('form-chq-amount').value = c.amount;
+            openModal('modal-cheque');
         }
         function submitChequeForm() {
             const customer = document.getElementById('form-chq-customer').value;
@@ -1281,15 +1373,17 @@
             if(!customer || !chequeNo || !amount) return showToast("Customer, Cheque ID, and Amount are required.", "red", "fa-exclamation");
 
             if(!appData.chequeSales) appData.chequeSales = [];
-            appData.chequeSales.push({ customer, invoice, chequeNo, amount });
+            
+            if (editChequeIdx > -1) {
+                appData.chequeSales[editChequeIdx] = { customer, invoice, chequeNo, amount };
+                logToTerminal("EDIT", `Updated trade cheque asset ${chequeNo}`, "var(--cyan)");
+            } else {
+                appData.chequeSales.push({ customer, invoice, chequeNo, amount });
+                logToTerminal("CHEQUE", `Captured trade cheque asset ${chequeNo} worth ${fmtLKR(amount)}`, "var(--cyan)");
+            }
+            
             pushDataStateToCloud();
-
-            document.getElementById('form-chq-customer').value = '';
-            document.getElementById('form-chq-invoice').value = '';
-            document.getElementById('form-chq-no').value = '';
-            document.getElementById('form-chq-amount').value = '';
             closeModal('modal-cheque');
-            logToTerminal("CHEQUE", `Captured trade cheque asset ${chequeNo} worth ${fmtLKR(amount)}`, "var(--cyan)");
         }
         function deleteChequeSale(index) { 
             executeSecureAction(() => { 
@@ -1300,13 +1394,40 @@
             }); 
         }
 
+        // PURCHASING
         function renderPurchasing() {
             const tbody = document.getElementById('purchasing-tbody'); tbody.innerHTML = '';
             if(appData.purchasing) {
                 appData.purchasing.forEach((p, index) => {
-                    tbody.innerHTML += `<tr><td><span class="neon-text-purple">${p.company}</span></td><td>${fmtLKR(p.cheque)}</td><td>${fmtLKR(p.credit)}</td><td>${fmtLKR(p.cash)}</td><td><button class="icon-btn" onclick="deletePurchase(${index})" title="Reverse/Delete"><i class="fas fa-trash neon-text-red"></i></button></td></tr>`;
+                    tbody.innerHTML += `<tr>
+                        <td><span class="neon-text-purple">${p.company}</span></td>
+                        <td>${fmtLKR(p.cheque)}</td>
+                        <td>${fmtLKR(p.credit)}</td>
+                        <td>${fmtLKR(p.cash)}</td>
+                        <td>
+                            <button class="icon-btn" onclick="editPurchase(${index})" title="Edit"><i class="fas fa-pen neon-text-cyan"></i></button>
+                            <button class="icon-btn" onclick="deletePurchase(${index})" title="Reverse/Delete"><i class="fas fa-trash neon-text-red"></i></button>
+                        </td>
+                    </tr>`;
                 });
             }
+        }
+        function openAddPurchase() {
+            editPurchaseIdx = -1;
+            document.getElementById('form-pur-company').value = '';
+            document.getElementById('form-pur-cheque').value = '0';
+            document.getElementById('form-pur-credit').value = '0';
+            document.getElementById('form-pur-cash').value = '0';
+            openModal('modal-purchase');
+        }
+        function editPurchase(index) {
+            editPurchaseIdx = index;
+            const p = appData.purchasing[index];
+            document.getElementById('form-pur-company').value = p.company;
+            document.getElementById('form-pur-cheque').value = p.cheque;
+            document.getElementById('form-pur-credit').value = p.credit;
+            document.getElementById('form-pur-cash').value = p.cash;
+            openModal('modal-purchase');
         }
         function submitPurchaseForm() {
             const company = document.getElementById('form-pur-company').value;
@@ -1316,15 +1437,17 @@
             if(!company) return showToast("Wholesale Vendor Label is required.", "red", "fa-exclamation");
 
             if(!appData.purchasing) appData.purchasing = [];
-            appData.purchasing.push({ company, cheque, credit, cash });
+            
+            if (editPurchaseIdx > -1) {
+                appData.purchasing[editPurchaseIdx] = { company, cheque, credit, cash };
+                logToTerminal("EDIT", `Updated trade payload configuration for ${company}`, "var(--purple)");
+            } else {
+                appData.purchasing.push({ company, cheque, credit, cash });
+                logToTerminal("PROCURE", `Committed trade payload configuration for ${company}`, "var(--purple)");
+            }
+            
             pushDataStateToCloud();
-
-            document.getElementById('form-pur-company').value = '';
-            document.getElementById('form-pur-cheque').value = '0';
-            document.getElementById('form-pur-credit').value = '0';
-            document.getElementById('form-pur-cash').value = '0';
             closeModal('modal-purchase');
-            logToTerminal("PROCURE", `Committed trade payload configuration for ${company}`, "var(--purple)");
         }
         function deletePurchase(index) { 
             executeSecureAction(() => { 
@@ -1373,6 +1496,7 @@
                                 <td><span class="badge ${statusBadgeClass}">${bill.status}</span></td>
                                 <td style="color:var(--green); font-weight:bold;">${settledDateStr} ${paymentTypeStr}</td>
                                 <td>
+                                    <button class="icon-btn" onclick="editCreditBill('${dateKey}', ${itemIndex})" title="Edit"><i class="fas fa-pen neon-text-cyan"></i></button>
                                     <button class="icon-btn" onclick="deleteCreditBill('${dateKey}', ${itemIndex})" title="Reverse/Delete"><i class="fas fa-trash neon-text-red"></i></button>
                                 </td>
                             </tr>`;
@@ -1401,7 +1525,23 @@
                 }
             });
         }
-        
+        function openAddCreditBill() {
+            editCreditKey = null; editCreditIdx = -1;
+            document.getElementById('form-crd-customer-input').value = '';
+            document.getElementById('form-crd-billno').value = '';
+            document.getElementById('form-crd-amount').value = '';
+            document.getElementById('form-crd-terms').value = '30';
+            openModal('modal-credit-bill');
+        }
+        function editCreditBill(dateKey, index) {
+            editCreditKey = dateKey; editCreditIdx = index;
+            const b = masterTimeline[dateKey].creditBills[index];
+            document.getElementById('form-crd-customer-input').value = b.customer;
+            document.getElementById('form-crd-billno').value = b.billNo;
+            document.getElementById('form-crd-amount').value = b.amount;
+            document.getElementById('form-crd-terms').value = '30';
+            openModal('modal-credit-bill');
+        }
         function submitCreditBillForm() {
             let customer = document.getElementById('form-crd-customer-input').value;
             const billNo = document.getElementById('form-crd-billno').value;
@@ -1412,15 +1552,21 @@
 
             const dueDate = new Date(Date.now() + terms * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
             
-            if(!appData.creditBills) appData.creditBills = [];
-            appData.creditBills.push({ customer, billNo, amount, dueDate, status: 'pending', clearedOnDate: '', paymentType: '' });
-            pushDataStateToCloud();
+            if (editCreditIdx > -1 && editCreditKey) {
+                masterTimeline[editCreditKey].creditBills[editCreditIdx].customer = customer;
+                masterTimeline[editCreditKey].creditBills[editCreditIdx].billNo = billNo;
+                masterTimeline[editCreditKey].creditBills[editCreditIdx].amount = amount;
+                masterTimeline[editCreditKey].creditBills[editCreditIdx].dueDate = dueDate;
+                db.ref("timeline_ledger").set(masterTimeline);
+                logToTerminal("EDIT", `Updated asset invoice record ${billNo}`, "var(--orange)");
+            } else {
+                if(!appData.creditBills) appData.creditBills = [];
+                appData.creditBills.push({ customer, billNo, amount, dueDate, status: 'pending', clearedOnDate: '', paymentType: '' });
+                pushDataStateToCloud();
+                logToTerminal("CREDIT", `Spawned asset invoice record ${billNo} to ${customer}`, "var(--orange)");
+            }
 
-            document.getElementById('form-crd-customer-input').value = '';
-            document.getElementById('form-crd-billno').value = '';
-            document.getElementById('form-crd-amount').value = '';
             closeModal('modal-credit-bill');
-            logToTerminal("CREDIT", `Spawned asset invoice record ${billNo} to ${customer}`, "var(--orange)");
         }
         
         let currentSettlementBalance = 0;
@@ -1508,7 +1654,15 @@
             
             if(appData.staffAdvances) {
                 appData.staffAdvances.forEach((s, index) => {
-                    tbody.innerHTML += `<tr><td><span class="neon-text-cyan">${s.name}</span></td><td>${s.remark}</td><td class="neon-text-cyan">${fmtLKR(s.amount)}</td><td><button class="icon-btn" onclick="deleteStaffAdvance(${index})" title="Reverse/Delete"><i class="fas fa-trash neon-text-red"></i></button></td></tr>`;
+                    tbody.innerHTML += `<tr>
+                        <td><span class="neon-text-cyan">${s.name}</span></td>
+                        <td>${s.remark}</td>
+                        <td class="neon-text-cyan">${fmtLKR(s.amount)}</td>
+                        <td>
+                            <button class="icon-btn" onclick="editStaff(${index})" title="Edit"><i class="fas fa-pen neon-text-cyan"></i></button>
+                            <button class="icon-btn" onclick="deleteStaffAdvance(${index})" title="Reverse/Delete"><i class="fas fa-trash neon-text-red"></i></button>
+                        </td>
+                    </tr>`;
                 });
             }
 
@@ -1525,7 +1679,21 @@
                 }
             });
         }
-        
+        function openAddStaff() {
+            editStaffIdx = -1;
+            document.getElementById('form-stf-name').value = '';
+            document.getElementById('form-stf-amount').value = '';
+            document.getElementById('form-stf-remark').value = '';
+            openModal('modal-staff');
+        }
+        function editStaff(index) {
+            editStaffIdx = index;
+            const s = appData.staffAdvances[index];
+            document.getElementById('form-stf-name').value = s.name;
+            document.getElementById('form-stf-amount').value = s.amount;
+            document.getElementById('form-stf-remark').value = s.remark;
+            openModal('modal-staff');
+        }
         function submitStaffForm() {
             const name = document.getElementById('form-stf-name').value;
             const amount = parseFloat(document.getElementById('form-stf-amount').value || 0);
@@ -1533,14 +1701,17 @@
             if(!name || !amount) return showToast("Employee ID Name and Amount are required.", "red", "fa-exclamation");
 
             if(!appData.staffAdvances) appData.staffAdvances = [];
-            appData.staffAdvances.push({ name, amount, remark, date: activeDate });
+            
+            if (editStaffIdx > -1) {
+                appData.staffAdvances[editStaffIdx] = { name, amount, remark, date: activeDate };
+                logToTerminal("EDIT", `Updated wage shift advance to ${name}`, "var(--cyan)");
+            } else {
+                appData.staffAdvances.push({ name, amount, remark, date: activeDate });
+                logToTerminal("STAFF", `Disbursed wage shift advance to ${name}`, "var(--cyan)");
+            }
+            
             pushDataStateToCloud();
-
-            document.getElementById('form-stf-name').value = '';
-            document.getElementById('form-stf-amount').value = '';
-            document.getElementById('form-stf-remark').value = '';
             closeModal('modal-staff');
-            logToTerminal("STAFF", `Disbursed wage shift advance to ${name}`, "var(--cyan)");
         }
         function deleteStaffAdvance(index) { 
             executeSecureAction(() => { 
@@ -1740,9 +1911,19 @@
         }
 
         function logToTerminal(tag, msg, color) {
-            const terminal = document.getElementById('system-log-terminal'); if(!terminal) return;
-            terminal.innerHTML += `<div class="log-entry"><span style="color:${color}">[${tag}]</span> [${new Date().toLocaleTimeString()}] ${msg}</div>`;
-            terminal.scrollTop = terminal.scrollHeight;
+            const entryStr = `<div class="log-entry"><span style="color:${color}">[${tag}]</span> [${new Date().toLocaleTimeString()}] ${msg}</div>`;
+            
+            const terminalMain = document.getElementById('system-log-terminal'); 
+            if(terminalMain) {
+                terminalMain.innerHTML += entryStr;
+                terminalMain.scrollTop = terminalMain.scrollHeight;
+            }
+
+            const terminalSettings = document.getElementById('system-log-terminal-settings');
+            if(terminalSettings) {
+                terminalSettings.innerHTML += entryStr;
+                terminalSettings.scrollTop = terminalSettings.scrollHeight;
+            }
         }
 
         function changeAccent(color) { document.documentElement.style.setProperty('--cyan', color); }
