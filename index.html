@@ -120,8 +120,9 @@
         .shop-name { font-size: 1.5rem; letter-spacing: 2px; }
         #live-clock { font-size: 1.5rem; font-weight: bold; font-family: monospace; }
         .profile-avatar img { width: 40px; height: 40px; border-radius: 50%; border: 2px solid var(--cyan); box-shadow: 0 0 10px var(--cyan); }
-        .icon-btn { background: none; border: none; color: var(--text); font-size: 1.2rem; cursor: pointer; }
-        .ledger-date-picker { background: rgba(0, 0, 0, 0.6); border: 1px solid var(--cyan); color: #ffffff; font-family: monospace; font-size: 1.1rem; padding: 6px 12px; border-radius: 4px; outline: none; cursor: pointer; box-shadow: 0 0 10px rgba(0, 240, 255, 0.2); color-scheme: dark; }
+        .icon-btn { background: none; border: none; color: var(--text); font-size: 1.2rem; cursor: pointer; margin-left: 5px; }
+        .ledger-date-picker { background: rgba(0, 0, 0, 0.6); border: 1px solid var(--cyan); color: var(--cyan); font-family: monospace; font-size: 1.1rem; padding: 6px 12px; border-radius: 4px; outline: none; cursor: pointer; box-shadow: 0 0 10px rgba(0, 240, 255, 0.2); }
+
         /* DASHBOARD TABS & GRIDS */
         .tab-content { padding: 2rem; display: none; animation: fadeIn 0.4s ease; }
         .tab-content.active { display: block; }
@@ -409,7 +410,7 @@
                     <div class="glass-card border-purple">
                         <div class="flex-between">
                             <h2 class="neon-text-purple"><i class="fas fa-industry"></i> Company Ledger Master</h2>
-                            <button class="cyber-btn-small" onclick="openModal('modal-company')">+ ADD COMPANY</button>
+                            <button class="cyber-btn-small" onclick="openAddCompany()">+ ADD COMPANY</button>
                         </div>
                         <div class="table-container mt-2">
                             <table class="cyber-table">
@@ -424,8 +425,13 @@
                     <div class="glass-card border-orange">
                         <div class="flex-between">
                             <h2 class="neon-text-orange"><i class="fas fa-address-book"></i> Customer Ledger & Auto-Pay</h2>
-                            <button class="cyber-btn-small" onclick="openModal('modal-customer')">+ ADD CUSTOMER</button>
+                            <button class="cyber-btn-small" onclick="openAddCustomer()">+ ADD CUSTOMER</button>
                         </div>
+                        
+                        <div class="search-bar-container mt-2">
+                            <input type="text" class="cyber-input" placeholder="🔍 Search customers by name, address or contact..." onkeyup="filterTable('customer-tbody', this.value)">
+                        </div>
+
                         <div class="table-container mt-2">
                             <table class="cyber-table">
                                 <thead><tr><th>Name</th><th>Address</th><th>Contact No</th><th>WhatsApp</th><th>Total Outstanding</th><th>Action</th></tr></thead>
@@ -581,7 +587,7 @@
 
     <div id="modal-company" class="modal-overlay">
         <div class="glass-card cyber-modal border-purple">
-            <div class="modal-header"><h3 class="neon-text-purple"><i class="fas fa-industry"></i> Add Vendor Company</h3><button class="modal-close" onclick="closeModal('modal-company')">&times;</button></div>
+            <div class="modal-header"><h3 class="neon-text-purple"><i class="fas fa-industry"></i> Add/Edit Vendor Company</h3><button class="modal-close" onclick="closeModal('modal-company')">&times;</button></div>
             <div class="form-group"><label>Company Name</label><input type="text" id="form-cmp-name" placeholder="Vendor Co..."></div>
             <div class="form-group"><label>Sales Person</label><input type="text" id="form-cmp-salesperson" placeholder="Representative Name..."></div>
             <div class="form-group"><label>Contact Number</label><input type="text" id="form-cmp-contact" placeholder="07..."></div>
@@ -591,7 +597,7 @@
     
     <div id="modal-customer" class="modal-overlay">
         <div class="glass-card cyber-modal border-orange">
-            <div class="modal-header"><h3 class="neon-text-orange"><i class="fas fa-address-book"></i> Add Customer Profile</h3><button class="modal-close" onclick="closeModal('modal-customer')">&times;</button></div>
+            <div class="modal-header"><h3 class="neon-text-orange"><i class="fas fa-address-book"></i> Add/Edit Customer Profile</h3><button class="modal-close" onclick="closeModal('modal-customer')">&times;</button></div>
             <div class="form-group"><label>Customer Name</label><input type="text" id="form-cus-name" placeholder="Client Name..."></div>
             <div class="form-group"><label>Address</label><input type="text" id="form-cus-address" placeholder="Client Address..."></div>
             <div class="form-group"><label>Contact No</label><input type="text" id="form-cus-contact" placeholder="07..."></div>
@@ -648,8 +654,8 @@
             <div class="modal-header"><h3 class="neon-text-orange"><i class="fas fa-money-check-alt"></i> Instantiate Credit Invoice</h3><button class="modal-close" onclick="closeModal('modal-credit-bill')">&times;</button></div>
             <div class="form-group">
                 <label>Debtor Client Profile Name</label>
-                <select id="form-crd-customer-select" onchange="toggleOtherCustomerDropdown()"></select>
-                <input type="text" id="form-crd-customer-other" placeholder="Type new customer name..." style="display:none; margin-top:10px;">
+                <input type="text" id="form-crd-customer-input" list="credit-customer-list" class="cyber-input" placeholder="Search existing or type new customer name..." style="width:100%;">
+                <datalist id="credit-customer-list"></datalist>
             </div>
             <div class="form-group"><label>Invoice Number</label><input type="text" id="form-crd-billno" placeholder="e.g. INV-1024"></div>
             <div class="form-group"><label>Total Invoice Credit Value (LKR)</label><input type="number" id="form-crd-amount" placeholder="0.00"></div>
@@ -689,6 +695,10 @@
         
         let masterTimeline = {};
         let appData = {};
+
+        // Edit Tracking Variables
+        let editCompanyIdx = -1;
+        let editCustomerIdx = -1;
 
         document.addEventListener("DOMContentLoaded", () => {
             document.getElementById('system-date-picker').value = activeDate;
@@ -932,27 +942,17 @@
                 }
             }
             
-            const custSelect = document.getElementById('form-crd-customer-select');
-            if(custSelect) {
-                custSelect.innerHTML = '<option value="">-- Select Existing Customer --</option>';
+            const creditCustList = document.getElementById('credit-customer-list');
+            if(creditCustList) {
+                creditCustList.innerHTML = '';
                 if(reg.customers) {
                     reg.customers.forEach(c => {
-                        custSelect.innerHTML += `<option value="${c.name}">${c.name}</option>`;
+                        creditCustList.innerHTML += `<option value="${c.name}">`;
                     });
                 }
-                custSelect.innerHTML += '<option value="OTHER">Other / One-Time Walk-In</option>';
             }
         }
 
-        function toggleOtherCustomerDropdown() {
-            const val = document.getElementById('form-crd-customer-select').value;
-            const otherInput = document.getElementById('form-crd-customer-other');
-            if (val === "OTHER") {
-                otherInput.style.display = 'block';
-            } else {
-                otherInput.style.display = 'none';
-            }
-        }
 
         /* =========================================
            MODULE TRANSACTION PROCESSING FUNCTIONS
@@ -964,9 +964,32 @@
             const reg = masterTimeline["GLOBAL_REGISTRY"];
             if(reg.companies) {
                 reg.companies.forEach((c, index) => {
-                    tbody.innerHTML += `<tr><td><strong class="neon-text-purple">${c.name}</strong></td><td>${c.salesperson}</td><td>${c.contact}</td><td><button class="icon-btn" onclick="deleteCompany(${index})"><i class="fas fa-trash neon-text-red"></i></button></td></tr>`;
+                    tbody.innerHTML += `<tr>
+                        <td><strong class="neon-text-purple">${c.name}</strong></td>
+                        <td>${c.salesperson}</td>
+                        <td>${c.contact}</td>
+                        <td>
+                            <button class="icon-btn" onclick="editCompany(${index})" title="Edit"><i class="fas fa-pen neon-text-cyan"></i></button>
+                            <button class="icon-btn" onclick="deleteCompany(${index})" title="Reverse/Delete"><i class="fas fa-trash neon-text-red"></i></button>
+                        </td>
+                    </tr>`;
                 });
             }
+        }
+        function openAddCompany() {
+            editCompanyIdx = -1;
+            document.getElementById('form-cmp-name').value = '';
+            document.getElementById('form-cmp-salesperson').value = '';
+            document.getElementById('form-cmp-contact').value = '';
+            openModal('modal-company');
+        }
+        function editCompany(index) {
+            editCompanyIdx = index;
+            const c = masterTimeline["GLOBAL_REGISTRY"].companies[index];
+            document.getElementById('form-cmp-name').value = c.name;
+            document.getElementById('form-cmp-salesperson').value = c.salesperson;
+            document.getElementById('form-cmp-contact').value = c.contact;
+            openModal('modal-company');
         }
         function submitCompanyForm() {
             const name = document.getElementById('form-cmp-name').value;
@@ -975,16 +998,25 @@
             if(!name) return showToast("Company Name is required.", "red", "fa-exclamation");
 
             if(!masterTimeline["GLOBAL_REGISTRY"].companies) masterTimeline["GLOBAL_REGISTRY"].companies = [];
-            masterTimeline["GLOBAL_REGISTRY"].companies.push({ name, salesperson, contact });
+            
+            if (editCompanyIdx > -1) {
+                masterTimeline["GLOBAL_REGISTRY"].companies[editCompanyIdx] = { name, salesperson, contact };
+            } else {
+                masterTimeline["GLOBAL_REGISTRY"].companies.push({ name, salesperson, contact });
+            }
+            
             db.ref("timeline_ledger").set(masterTimeline);
-
-            document.getElementById('form-cmp-name').value = '';
-            document.getElementById('form-cmp-salesperson').value = '';
-            document.getElementById('form-cmp-contact').value = '';
             closeModal('modal-company');
             showToast("Vendor Company Master Saved", "purple", "fa-industry");
         }
-        function deleteCompany(index) { executeSecureAction(() => { masterTimeline["GLOBAL_REGISTRY"].companies.splice(index, 1); db.ref("timeline_ledger").set(masterTimeline); }); }
+        function deleteCompany(index) { 
+            executeSecureAction(() => { 
+                const c = masterTimeline["GLOBAL_REGISTRY"].companies[index];
+                masterTimeline["GLOBAL_REGISTRY"].companies.splice(index, 1); 
+                db.ref("timeline_ledger").set(masterTimeline); 
+                logToTerminal("REVERSE", `Deleted Vendor Profile: ${c.name}`, "var(--orange)");
+            }); 
+        }
 
         // CUSTOMERS & AUTO PAY
         function renderCustomers() {
@@ -993,21 +1025,41 @@
             if(reg.customers) {
                 reg.customers.forEach((c, index) => {
                     const outstanding = calculateCustomerOutstanding(c.name);
+                    const outColor = outstanding > 0 ? "neon-text-red" : "neon-text-green";
+                    
                     tbody.innerHTML += `
                         <tr>
                             <td><strong class="neon-text-orange">${c.name}</strong></td>
                             <td>${c.address}</td>
                             <td>${c.contact}</td>
                             <td>${c.wa}</td>
-                            <td class="neon-text-red" style="font-weight:bold;">${fmtLKR(outstanding)}</td>
+                            <td class="${outColor}" style="font-weight:bold;">${fmtLKR(outstanding)}</td>
                             <td>
                                 <button class="cyber-btn-small" style="padding:4px 8px; font-size:0.8rem; margin-right:5px; border-color:var(--cyan); color:var(--cyan);" onclick="viewCustomerInvoices('${c.name}')"><i class="fas fa-eye"></i> BILLS</button>
                                 <button class="cyber-btn-small" style="padding:4px 8px; font-size:0.8rem; margin-right:5px; border-color:var(--green); color:var(--green);" onclick="openCustomerPayment('${c.name}')"><i class="fas fa-money-bill-wave"></i> PAY</button>
-                                <button class="icon-btn" onclick="deleteCustomer(${index})"><i class="fas fa-trash neon-text-red"></i></button>
+                                <button class="icon-btn" onclick="editCustomer(${index})" title="Edit"><i class="fas fa-pen neon-text-cyan"></i></button>
+                                <button class="icon-btn" onclick="deleteCustomer(${index})" title="Reverse/Delete"><i class="fas fa-trash neon-text-red"></i></button>
                             </td>
                         </tr>`;
                 });
             }
+        }
+        function openAddCustomer() {
+            editCustomerIdx = -1;
+            document.getElementById('form-cus-name').value = '';
+            document.getElementById('form-cus-address').value = '';
+            document.getElementById('form-cus-contact').value = '';
+            document.getElementById('form-cus-wa').value = '';
+            openModal('modal-customer');
+        }
+        function editCustomer(index) {
+            editCustomerIdx = index;
+            const c = masterTimeline["GLOBAL_REGISTRY"].customers[index];
+            document.getElementById('form-cus-name').value = c.name;
+            document.getElementById('form-cus-address').value = c.address;
+            document.getElementById('form-cus-contact').value = c.contact;
+            document.getElementById('form-cus-wa').value = c.wa;
+            openModal('modal-customer');
         }
         function submitCustomerForm() {
             const name = document.getElementById('form-cus-name').value;
@@ -1017,17 +1069,25 @@
             if(!name) return showToast("Customer Name is required.", "red", "fa-exclamation");
 
             if(!masterTimeline["GLOBAL_REGISTRY"].customers) masterTimeline["GLOBAL_REGISTRY"].customers = [];
-            masterTimeline["GLOBAL_REGISTRY"].customers.push({ name, address, contact, wa });
+            
+            if (editCustomerIdx > -1) {
+                masterTimeline["GLOBAL_REGISTRY"].customers[editCustomerIdx] = { name, address, contact, wa };
+            } else {
+                masterTimeline["GLOBAL_REGISTRY"].customers.push({ name, address, contact, wa });
+            }
+            
             db.ref("timeline_ledger").set(masterTimeline);
-
-            document.getElementById('form-cus-name').value = '';
-            document.getElementById('form-cus-address').value = '';
-            document.getElementById('form-cus-contact').value = '';
-            document.getElementById('form-cus-wa').value = '';
             closeModal('modal-customer');
             showToast("Customer Profile Master Saved", "orange", "fa-address-book");
         }
-        function deleteCustomer(index) { executeSecureAction(() => { masterTimeline["GLOBAL_REGISTRY"].customers.splice(index, 1); db.ref("timeline_ledger").set(masterTimeline); }); }
+        function deleteCustomer(index) { 
+            executeSecureAction(() => { 
+                const c = masterTimeline["GLOBAL_REGISTRY"].customers[index];
+                masterTimeline["GLOBAL_REGISTRY"].customers.splice(index, 1); 
+                db.ref("timeline_ledger").set(masterTimeline); 
+                logToTerminal("REVERSE", `Deleted Customer Profile: ${c.name}`, "var(--orange)");
+            }); 
+        }
 
         function viewCustomerInvoices(customerName) {
             document.getElementById('view-inv-customer-name').innerText = customerName;
@@ -1144,7 +1204,7 @@
             const tbody = document.getElementById('expense-tbody'); tbody.innerHTML = '';
             if(appData.expenses) {
                 appData.expenses.forEach((e, index) => {
-                    tbody.innerHTML += `<tr><td><span class="neon-text-red">${e.category}</span></td><td>${e.desc}</td><td>${fmtLKR(e.amount)}</td><td><button class="icon-btn" onclick="deleteExpense(${index})"><i class="fas fa-trash neon-text-red"></i></button></td></tr>`;
+                    tbody.innerHTML += `<tr><td><span class="neon-text-red">${e.category}</span></td><td>${e.desc}</td><td>${fmtLKR(e.amount)}</td><td><button class="icon-btn" onclick="deleteExpense(${index})" title="Reverse/Delete"><i class="fas fa-trash neon-text-red"></i></button></td></tr>`;
                 });
             }
         }
@@ -1163,13 +1223,20 @@
             closeModal('modal-expense');
             logToTerminal("EXPENSE", `Captured overhead outtake: ${cat} -> ${fmtLKR(amount)}`, "var(--red)");
         }
-        function deleteExpense(index) { executeSecureAction(() => { appData.expenses.splice(index, 1); pushDataStateToCloud(); }); }
+        function deleteExpense(index) { 
+            executeSecureAction(() => { 
+                const e = appData.expenses[index];
+                appData.expenses.splice(index, 1); 
+                pushDataStateToCloud(); 
+                logToTerminal("REVERSE", `Reversed Expense: ${e.category} (${fmtLKR(e.amount)})`, "var(--orange)");
+            }); 
+        }
 
         function renderDebits() {
             const tbody = document.getElementById('debits-tbody'); tbody.innerHTML = '';
             if(appData.debits) {
                 appData.debits.forEach((d, index) => {
-                    tbody.innerHTML += `<tr><td><strong>${d.profile}</strong></td><td>${d.details}</td><td>${fmtLKR(d.amount)}</td><td><button class="icon-btn" onclick="deleteDebit(${index})"><i class="fas fa-trash neon-text-red"></i></button></td></tr>`;
+                    tbody.innerHTML += `<tr><td><strong>${d.profile}</strong></td><td>${d.details}</td><td>${fmtLKR(d.amount)}</td><td><button class="icon-btn" onclick="deleteDebit(${index})" title="Reverse/Delete"><i class="fas fa-trash neon-text-red"></i></button></td></tr>`;
                 });
             }
         }
@@ -1189,13 +1256,20 @@
             closeModal('modal-debit');
             logToTerminal("DEBIT", `Non-overhead transaction registered to ${profile}`, "var(--orange)");
         }
-        function deleteDebit(index) { executeSecureAction(() => { appData.debits.splice(index, 1); pushDataStateToCloud(); }); }
+        function deleteDebit(index) { 
+            executeSecureAction(() => { 
+                const d = appData.debits[index];
+                appData.debits.splice(index, 1); 
+                pushDataStateToCloud(); 
+                logToTerminal("REVERSE", `Reversed Debit: ${d.profile} (${fmtLKR(d.amount)})`, "var(--orange)");
+            }); 
+        }
 
         function renderChequeSales() {
             const tbody = document.getElementById('cheque-tbody'); tbody.innerHTML = '';
             if(appData.chequeSales) {
                 appData.chequeSales.forEach((c, index) => {
-                    tbody.innerHTML += `<tr><td>${c.customer}</td><td>${c.invoice}</td><td style="font-family:monospace;">${c.chequeNo}</td><td class="neon-text-cyan">${fmtLKR(c.amount)}</td><td><button class="icon-btn" onclick="deleteChequeSale(${index})"><i class="fas fa-trash neon-text-red"></i></button></td></tr>`;
+                    tbody.innerHTML += `<tr><td>${c.customer}</td><td>${c.invoice}</td><td style="font-family:monospace;">${c.chequeNo}</td><td class="neon-text-cyan">${fmtLKR(c.amount)}</td><td><button class="icon-btn" onclick="deleteChequeSale(${index})" title="Reverse/Delete"><i class="fas fa-trash neon-text-red"></i></button></td></tr>`;
                 });
             }
         }
@@ -1217,13 +1291,20 @@
             closeModal('modal-cheque');
             logToTerminal("CHEQUE", `Captured trade cheque asset ${chequeNo} worth ${fmtLKR(amount)}`, "var(--cyan)");
         }
-        function deleteChequeSale(index) { executeSecureAction(() => { appData.chequeSales.splice(index, 1); pushDataStateToCloud(); }); }
+        function deleteChequeSale(index) { 
+            executeSecureAction(() => { 
+                const c = appData.chequeSales[index];
+                appData.chequeSales.splice(index, 1); 
+                pushDataStateToCloud(); 
+                logToTerminal("REVERSE", `Reversed Cheque Sale: ${c.chequeNo} (${fmtLKR(c.amount)})`, "var(--orange)");
+            }); 
+        }
 
         function renderPurchasing() {
             const tbody = document.getElementById('purchasing-tbody'); tbody.innerHTML = '';
             if(appData.purchasing) {
                 appData.purchasing.forEach((p, index) => {
-                    tbody.innerHTML += `<tr><td><span class="neon-text-purple">${p.company}</span></td><td>${fmtLKR(p.cheque)}</td><td>${fmtLKR(p.credit)}</td><td>${fmtLKR(p.cash)}</td><td><button class="icon-btn" onclick="deletePurchase(${index})"><i class="fas fa-trash neon-text-red"></i></button></td></tr>`;
+                    tbody.innerHTML += `<tr><td><span class="neon-text-purple">${p.company}</span></td><td>${fmtLKR(p.cheque)}</td><td>${fmtLKR(p.credit)}</td><td>${fmtLKR(p.cash)}</td><td><button class="icon-btn" onclick="deletePurchase(${index})" title="Reverse/Delete"><i class="fas fa-trash neon-text-red"></i></button></td></tr>`;
                 });
             }
         }
@@ -1245,7 +1326,14 @@
             closeModal('modal-purchase');
             logToTerminal("PROCURE", `Committed trade payload configuration for ${company}`, "var(--purple)");
         }
-        function deletePurchase(index) { executeSecureAction(() => { appData.purchasing.splice(index, 1); pushDataStateToCloud(); }); }
+        function deletePurchase(index) { 
+            executeSecureAction(() => { 
+                const p = appData.purchasing[index];
+                appData.purchasing.splice(index, 1); 
+                pushDataStateToCloud(); 
+                logToTerminal("REVERSE", `Reversed Procurement: ${p.company}`, "var(--orange)");
+            }); 
+        }
 
         // CREDIT PIPELINE
         function renderCreditInvoicesAndCollections() {
@@ -1285,7 +1373,7 @@
                                 <td><span class="badge ${statusBadgeClass}">${bill.status}</span></td>
                                 <td style="color:var(--green); font-weight:bold;">${settledDateStr} ${paymentTypeStr}</td>
                                 <td>
-                                    <button class="icon-btn" onclick="deleteCreditBill('${dateKey}', ${itemIndex})"><i class="fas fa-trash neon-text-red"></i></button>
+                                    <button class="icon-btn" onclick="deleteCreditBill('${dateKey}', ${itemIndex})" title="Reverse/Delete"><i class="fas fa-trash neon-text-red"></i></button>
                                 </td>
                             </tr>`;
                         
@@ -1315,9 +1403,7 @@
         }
         
         function submitCreditBillForm() {
-            let customer = document.getElementById('form-crd-customer-select').value;
-            if (customer === "OTHER") customer = document.getElementById('form-crd-customer-other').value;
-            
+            let customer = document.getElementById('form-crd-customer-input').value;
             const billNo = document.getElementById('form-crd-billno').value;
             const amount = parseFloat(document.getElementById('form-crd-amount').value || 0);
             const terms = parseInt(document.getElementById('form-crd-terms').value || "30");
@@ -1330,9 +1416,7 @@
             appData.creditBills.push({ customer, billNo, amount, dueDate, status: 'pending', clearedOnDate: '', paymentType: '' });
             pushDataStateToCloud();
 
-            document.getElementById('form-crd-customer-select').value = '';
-            document.getElementById('form-crd-customer-other').value = '';
-            document.getElementById('form-crd-customer-other').style.display = 'none';
+            document.getElementById('form-crd-customer-input').value = '';
             document.getElementById('form-crd-billno').value = '';
             document.getElementById('form-crd-amount').value = '';
             closeModal('modal-credit-bill');
@@ -1405,7 +1489,14 @@
             closeModal('modal-settlement');
             showToast(`Payment of ${fmtLKR(payingAmount)} Processed`, "green", "fa-check");
         }
-        function deleteCreditBill(dateKey, index) { executeSecureAction(() => { masterTimeline[dateKey].creditBills.splice(index, 1); db.ref("timeline_ledger").set(masterTimeline); }); }
+        function deleteCreditBill(dateKey, index) { 
+            executeSecureAction(() => { 
+                const b = masterTimeline[dateKey].creditBills[index];
+                masterTimeline[dateKey].creditBills.splice(index, 1); 
+                db.ref("timeline_ledger").set(masterTimeline); 
+                logToTerminal("REVERSE", `Reversed Credit Invoice: ${b.billNo} for ${b.customer}`, "var(--orange)");
+            }); 
+        }
 
         // STAFF COMPONENT
         function renderStaffAdvances() {
@@ -1417,7 +1508,7 @@
             
             if(appData.staffAdvances) {
                 appData.staffAdvances.forEach((s, index) => {
-                    tbody.innerHTML += `<tr><td><span class="neon-text-cyan">${s.name}</span></td><td>${s.remark}</td><td class="neon-text-cyan">${fmtLKR(s.amount)}</td><td><button class="icon-btn" onclick="deleteStaffAdvance(${index})"><i class="fas fa-trash neon-text-red"></i></button></td></tr>`;
+                    tbody.innerHTML += `<tr><td><span class="neon-text-cyan">${s.name}</span></td><td>${s.remark}</td><td class="neon-text-cyan">${fmtLKR(s.amount)}</td><td><button class="icon-btn" onclick="deleteStaffAdvance(${index})" title="Reverse/Delete"><i class="fas fa-trash neon-text-red"></i></button></td></tr>`;
                 });
             }
 
@@ -1451,7 +1542,14 @@
             closeModal('modal-staff');
             logToTerminal("STAFF", `Disbursed wage shift advance to ${name}`, "var(--cyan)");
         }
-        function deleteStaffAdvance(index) { executeSecureAction(() => { appData.staffAdvances.splice(index, 1); pushDataStateToCloud(); }); }
+        function deleteStaffAdvance(index) { 
+            executeSecureAction(() => { 
+                const s = appData.staffAdvances[index];
+                appData.staffAdvances.splice(index, 1); 
+                pushDataStateToCloud(); 
+                logToTerminal("REVERSE", `Reversed Staff Advance: ${s.name} (${fmtLKR(s.amount)})`, "var(--orange)");
+            }); 
+        }
 
         /* =========================================
            UPGRADED CASH CALCULATOR MATRIX ENGINE
