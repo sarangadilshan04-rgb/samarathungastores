@@ -20,7 +20,6 @@
             --glass: rgba(255, 255, 255, 0.9); 
             --glass-border: rgba(46, 139, 87, 0.2); 
             
-            /* Earthy & Botanical Accents */
             --cyan: #2e8b57; 
             --purple: #556b2f; 
             --green: #228b22; 
@@ -43,20 +42,17 @@
             background-position: center;
         }
 
-        /* Scrollbar */
         ::-webkit-scrollbar { width: 8px; }
         ::-webkit-scrollbar-track { background: var(--bg); }
         ::-webkit-scrollbar-thumb { background: #b0c4b1; border-radius: 4px; }
         ::-webkit-scrollbar-thumb:hover { background: var(--cyan); }
 
-        /* Typography Colors */
         .neon-text-cyan { color: var(--cyan); font-weight: 600; }
         .neon-text-purple { color: var(--purple); font-weight: 600; }
         .neon-text-green { color: var(--green); font-weight: 600; }
         .neon-text-orange { color: var(--orange); font-weight: 600; }
         .neon-text-red { color: var(--red); font-weight: 600; }
 
-        /* Card Borders */
         .border-cyan { border-top: 4px solid var(--cyan); }
         .border-green { border-top: 4px solid var(--green); }
         .border-orange { border-top: 4px solid var(--orange); }
@@ -69,14 +65,12 @@
         .p-2 { padding: 1.5rem; }
         .flex-between { display: flex; justify-content: space-between; align-items: center; gap: 10px; }
         
-        /* Badges */
         .badge { padding: 4px 10px; border-radius: 20px; font-weight: 600; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.5px; }
         .badge-pending { background: rgba(216, 67, 21, 0.1); color: var(--orange); }
         .badge-cleared { background: rgba(34, 139, 34, 0.1); color: var(--green); }
         .badge-overdue { background: rgba(198, 40, 40, 0.1); color: var(--red); }
         .badge-partial { background: rgba(46, 139, 87, 0.1); color: var(--cyan); }
 
-        /* Glass Cards */
         .glass-panel, .glass-card { 
             background: var(--glass); 
             backdrop-filter: blur(12px); 
@@ -88,27 +82,6 @@
         .glass-card { padding: 1.5rem; transition: transform 0.3s ease, box-shadow 0.3s ease; }
         .hover-float:hover { transform: translateY(-3px); box-shadow: 0 8px 25px rgba(46, 139, 87, 0.08); }
 
-        /* =========================================
-           LIVE FALLING LEAVES EFFECT
-           ========================================= */
-        .falling-leaf {
-            position: fixed;
-            top: -10%;
-            z-index: 0; 
-            color: rgba(46, 139, 87, 0.15); 
-            font-size: 1.5rem;
-            user-select: none;
-            pointer-events: none;
-            animation: fall linear forwards;
-        }
-        @keyframes fall {
-            0% { transform: translate(0, 0) rotate(0deg); opacity: 0; }
-            10% { opacity: 1; }
-            90% { opacity: 1; }
-            100% { transform: translate(var(--end-x), 110vh) rotate(var(--rot)); opacity: 0; }
-        }
-
-        /* LOADING SCREEN */
         #loading-screen { position: fixed; inset: 0; background: var(--bg); z-index: 9999; display: flex; flex-direction: column; justify-content: center; align-items: center; transition: opacity 0.5s; }
         .loader { position: relative; width: 150px; height: 150px; display: flex; justify-content: center; align-items: center; }
         .ring { position: absolute; width: 100%; height: 100%; border-radius: 50%; border: 3px solid transparent; animation: rotate 2s linear infinite; }
@@ -118,7 +91,6 @@
         @keyframes rotate { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         #loading-percent { margin-top: 20px; font-size: 1.2rem; font-weight: 600; color: var(--cyan); }
 
-        /* LOGIN PAGE */
         #login-page { position: fixed; inset: 0; background: var(--bg); z-index: 9000; display: flex; justify-content: center; align-items: center; background-image: linear-gradient(rgba(244,247,244,0.8), rgba(244,247,244,0.9)), url('https://images.unsplash.com/photo-1497250681960-ef046c08a56e?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80'); background-size: cover; }
         .login-box { width: 100%; max-width: 400px; text-align: center; background: #fff; padding: 2.5rem; }
         .login-box h2 { font-size: 1.8rem; margin-bottom: 0.5rem; color: var(--cyan); font-weight: 700; }
@@ -127,7 +99,6 @@
         .input-group i { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); font-size: 1.1rem; color: #888; }
         .input-group .toggle-password { left: auto; right: 15px; cursor: pointer; color: #888; }
         
-        /* Clean Inputs */
         .input-group input, .cyber-input, .cyber-select { 
             width: 100%; padding: 12px 15px 12px 45px; 
             background: #fff; 
@@ -142,7 +113,6 @@
             border-color: var(--cyan); box-shadow: 0 0 0 3px rgba(46, 139, 87, 0.15); 
         }
 
-        /* Clean Buttons */
         .cyber-btn, .cyber-btn-small { 
             width: 100%; padding: 12px; margin-top: 1.5rem; 
             background: var(--cyan); color: #fff; 
@@ -160,7 +130,6 @@
         .search-bar-container { margin: 15px 0; }
         .search-bar-container input { width: 100%; padding-left: 15px; }
 
-        /* MAIN APP LAYOUT */
         #main-app { display: flex; height: 100vh; flex-direction: column; overflow: hidden; }
         .app-container-inner { display: flex; flex: 1; overflow: hidden; }
         
@@ -183,8 +152,7 @@
         .icon-btn:hover { transform: scale(1.1); }
         .ledger-date-picker { background: #f4f7f4; border: 1px solid #d1d9d1; color: var(--text); font-family: var(--font-main); font-weight: 500; font-size: 0.95rem; padding: 6px 12px; border-radius: 6px; outline: none; cursor: pointer; }
 
-        /* DASHBOARD TABS & GRIDS */
-        .tab-content { padding: 2rem; display: none; animation: fadeIn 0.4s ease; position: relative; z-index: 1; }
+        .tab-content { padding: 2rem; display: none; animation: fadeIn 0.4s ease; }
         .tab-content.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
         .grid-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1.5rem; }
@@ -196,7 +164,6 @@
         .system-log-box { font-family: monospace; font-size: 0.9rem; line-height: 1.6; color: #4a5c4d; padding: 1rem; border-radius: 8px; background: #f8faf8; border: 1px solid #d1d9d1; max-height: 250px; overflow-y: auto; }
         .log-entry { margin-bottom: 5px; border-bottom: 1px solid #eef2eb; padding-bottom: 4px; }
 
-        /* ADVANCED TABLES & SYSTEMS */
         .table-container { width: 100%; overflow-x: auto; background: #fff; border-radius: 12px; margin-bottom: 1.5rem; border: 1px solid var(--glass-border); box-shadow: 0 2px 10px rgba(0,0,0,0.02); }
         .cyber-table { width: 100%; border-collapse: collapse; min-width: 600px; }
         .cyber-table th { background: #f4f7f4; padding: 14px 12px; text-align: left; font-weight: 600; font-size: 0.9rem; text-transform: uppercase; color: #555; border-bottom: 2px solid var(--cyan); }
@@ -211,7 +178,6 @@
         
         .calculator-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 2rem; }
         
-        /* SMOOTH CASH CALCULATOR UI */
         .cash-row { display: flex; align-items: center; justify-content: space-between; background: #fff; border: 1px solid var(--glass-border); padding: 12px 20px; border-radius: 8px; margin-bottom: 12px; transition: all 0.2s ease-out; box-shadow: 0 2px 5px rgba(0,0,0,0.02); }
         .cash-row:hover { background: #f8faf8; transform: translateY(-2px); box-shadow: 0 6px 15px rgba(46, 139, 87, 0.08); }
         .cash-label { font-size: 1.2rem; font-weight: 700; width: 110px; color: var(--green); }
@@ -232,7 +198,6 @@
         .toast { background: #fff; border-left: 5px solid var(--cyan); padding: 15px 20px; border-radius: 8px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); color: var(--text); animation: slideIn 0.3s ease; display: flex; align-items: center; gap: 12px; font-weight: 500; font-size: 0.95rem; }
         @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
 
-        /* MODAL DIALOGS SYSTEM */
         .modal-overlay { position: fixed; inset: 0; background: rgba(244, 247, 244, 0.7); backdrop-filter: blur(5px); -webkit-backdrop-filter: blur(5px); z-index: 9500; display: flex; justify-content: center; align-items: center; opacity: 0; pointer-events: none; transition: opacity 0.3s ease; }
         .modal-overlay.active { opacity: 1; pointer-events: auto; }
         .cyber-modal { width: 100%; max-width: 550px; max-height: 90vh; overflow-y: auto; position: relative; background: #fff; border-radius: 16px; box-shadow: 0 10px 40px rgba(0,0,0,0.1); border: none; }
@@ -246,7 +211,6 @@
         .form-group input:focus, .form-group select:focus { border-color: var(--cyan); box-shadow: 0 0 0 3px rgba(46, 139, 87, 0.15); }
         .modal-footer-btns { display: flex; justify-content: flex-end; gap: 10px; margin-top: 1.5rem; }
 
-        /* FOOTER SYSTEM */
         .cyber-footer { background: #fff; text-align: center; padding: 12px; font-size: 0.85rem; color: #888; border-top: 1px solid var(--glass-border); width: 100%; z-index: 10; position: fixed; bottom: 0; left: 0; }
         .cyber-footer span { color: var(--cyan); font-weight: 600; }
 
@@ -314,7 +278,7 @@
                     <li onclick="switchTab('cash')"><i class="fas fa-wallet"></i> Cash Calculator</li>
                     <li onclick="switchTab('expenses')"><i class="fas fa-file-invoice-dollar"></i> Expenses</li>
                     <li onclick="switchTab('debits')"><i class="fas fa-hand-holding-usd"></i> Cash Debits</li>
-                    <li onclick="switchTab('chequesales')"><i class="fas fa-money-check"></i> Cheque Sales</li>
+                    <li onclick="switchTab('banking')"><i class="fas fa-university"></i> Bank Transfers</li> <li onclick="switchTab('chequesales')"><i class="fas fa-money-check"></i> Cheque Sales</li>
                     <li onclick="switchTab('purchasing')"><i class="fas fa-shopping-cart"></i> Purchasing</li>
                     <li onclick="switchTab('companies')"><i class="fas fa-industry"></i> Company Ledger</li>
                     <li onclick="switchTab('customers')"><i class="fas fa-address-book"></i> Customer Ledger</li>
@@ -378,13 +342,28 @@
                         <div class="glass-card stat-card border-purple hover-float" style="grid-column: span 2;">
                             <div class="stat-header">System Balance Check (Formula) <i class="fas fa-sync neon-text-purple" style="margin-left:auto;"></i></div>
                             <div class="stat-value neon-text-purple" id="stat-formula-result">LKR 0.00</div>
-                            <small style="color: #888;">Target: 0.00 | Uses Cash Purchasing & Cash Sales</small>
+                            <small style="color: #888;">Target: 0.00 | Includes Bank Transfers</small>
                         </div>
                     </div>
 
                     <div class="glass-card summary-center border-purple">
                         <h3 class="neon-text-purple" style="margin-bottom: 1rem;"><i class="fas fa-terminal"></i> Global Operational Log Engine</h3>
                         <div class="system-log-box" id="system-log-terminal"></div>
+                    </div>
+                </div>
+
+                <div id="tab-banking" class="tab-content">
+                    <div class="glass-card border-green">
+                        <div class="flex-between">
+                            <h2 class="neon-text-green"><i class="fas fa-university"></i> Bank Deposits & Withdrawals</h2>
+                            <button class="cyber-btn-small" style="background:var(--green);" onclick="openAddBanking()">+ LOG TRANSFER</button>
+                        </div>
+                        <div class="table-container mt-2">
+                            <table class="cyber-table">
+                                <thead><tr><th>Type</th><th>Bank/Account Reference</th><th>Details</th><th>Value (LKR)</th><th>Action</th></tr></thead>
+                                <tbody id="banking-tbody"></tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
 
@@ -589,19 +568,21 @@
 
                         <div class="grid-cards">
                             <div class="glass-card border-cyan"><h4 style="color:#666; font-weight:500; font-size:0.9rem;">Total Computed Gross Sales</h4><p style="font-size:1.8rem; font-weight:bold;" class="neon-text-cyan" id="rep-sales">LKR 0.00</p></div>
-                            <div class="glass-card border-green"><h4 style="color:#666; font-weight:500; font-size:0.9rem;">Total Credit Collections</h4><p style="font-size:1.8rem; font-weight:bold;" class="neon-text-green" id="rep-collections">LKR 0.00</p></div>
-                            <div class="glass-card border-cyan"><h4 style="color:#666; font-weight:500; font-size:0.9rem;">Total Cheque Sales</h4><p style="font-size:1.8rem; font-weight:bold;" class="neon-text-cyan" id="rep-cheq-sales">LKR 0.00</p></div>
-                            <div class="glass-card border-orange"><h4 style="color:#666; font-weight:500; font-size:0.9rem;">Total Account Credit Given</h4><p style="font-size:1.8rem; font-weight:bold;" class="neon-text-orange" id="rep-credits">LKR 0.00</p></div>
-                            <div class="glass-card border-red"><h4 style="color:#666; font-weight:500; font-size:0.9rem;">Total Store Expenses</h4><p style="font-size:1.8rem; font-weight:bold;" class="neon-text-red" id="rep-expenses">LKR 0.00</p></div>
+                            <div class="glass-card border-orange"><h4 style="color:#666; font-weight:500; font-size:0.9rem;">Total Account Credit Extensions</h4><p style="font-size:1.8rem; font-weight:bold;" class="neon-text-orange" id="rep-credits">LKR 0.00</p></div>
+                            <div class="glass-card border-green"><h4 style="color:#666; font-weight:500; font-size:0.9rem;">Total Credit Cash Collections</h4><p style="font-size:1.8rem; font-weight:bold;" class="neon-text-green" id="rep-collections">LKR 0.00</p></div>
+                            <div class="glass-card border-red"><h4 style="color:#666; font-weight:500; font-size:0.9rem;">Total System Store Expenses</h4><p style="font-size:1.8rem; font-weight:bold;" class="neon-text-red" id="rep-expenses">LKR 0.00</p></div>
                             <div class="glass-card border-orange"><h4 style="color:#666; font-weight:500; font-size:0.9rem;">Total Cash Debits</h4><p style="font-size:1.8rem; font-weight:bold;" class="neon-text-orange" id="rep-debits">LKR 0.00</p></div>
-                            <div class="glass-card border-purple"><h4 style="color:#666; font-weight:500; font-size:0.9rem;">Total Cash Purchasing</h4><p style="font-size:1.8rem; font-weight:bold;" class="neon-text-purple" id="rep-purchasing">LKR 0.00</p></div>
                             <div class="glass-card border-purple"><h4 style="color:#666; font-weight:500; font-size:0.9rem;">Total Staff Salary Advances</h4><p style="font-size:1.8rem; font-weight:bold;" class="neon-text-purple" id="rep-staff">LKR 0.00</p></div>
-                            
-                            <div class="glass-card border-green" style="grid-column: 1 / -1; background: #fff;">
-                                <h4 style="color:#666; font-weight:500; font-size:0.9rem; text-transform: uppercase;">Net System Cash Flow (Inflows vs Outflows)</h4>
-                                <p style="font-size:2.5rem; font-weight:bold;" class="neon-text-green" id="rep-net-cash">LKR 0.00</p>
-                                <small style="color:#888;">Formula: (Gross Sales + Collections) - (Expenses + Cash Debits + Staff Advances + Cash Purchasing)</small>
-                            </div>
+                        </div>
+
+                        <h3 class="neon-text-purple mt-2" style="font-size:1.2rem; margin-top: 2rem;"><i class="fas fa-list-alt"></i> Detailed Transaction Breakdown</h3>
+                        <div class="table-container mt-1">
+                            <table class="cyber-table">
+                                <thead><tr><th>Date</th><th>Transaction Type</th><th>Reference / Entity</th><th>Amount (LKR)</th></tr></thead>
+                                <tbody id="detailed-report-tbody">
+                                    <tr><td colspan="4" style="text-align:center; color:#888;">Generate an inquiry to view detailed breakdown.</td></tr>
+                                </tbody>
+                            </table>
                         </div>
                     </div>
                 </div>
@@ -733,6 +714,8 @@
         </div>
     </div>
 
+    <div id="modal-banking" class="modal-overlay"><div class="glass-card cyber-modal border-green"><div class="modal-header"><h3 class="neon-text-green"><i class="fas fa-university"></i> Log Bank Transfer</h3><button class="modal-close" onclick="closeModal('modal-banking')">&times;</button></div><div class="form-group"><label>Transfer Direction Type</label><select id="form-bnk-type"><option value="deposit">Deposit to Bank (Cash Out)</option><option value="withdrawal">Withdrawal from Bank (Cash In)</option></select></div><div class="form-group"><label>Bank / Account Reference</label><input type="text" id="form-bnk-ref" placeholder="BOC / ComBank / Acc #..."></div><div class="form-group"><label>Reference Details</label><input type="text" id="form-bnk-details" placeholder="Remarks or slip number..."></div><div class="form-group"><label>Value (LKR)</label><input type="number" id="form-bnk-amount" placeholder="0.00"></div><div class="modal-footer-btns"><button class="cyber-btn-small" style="background:var(--green);" onclick="submitBankingForm()">COMMIT TRANSFER</button></div></div></div>
+
     <div id="modal-expense" class="modal-overlay"><div class="glass-card cyber-modal border-red"><div class="modal-header"><h3 class="neon-text-red"><i class="fas fa-file-invoice-dollar"></i> Record Store Expense</h3><button class="modal-close" onclick="closeModal('modal-expense')">&times;</button></div><div class="form-group"><label>Category Group</label><select id="form-exp-category"><option value="Utilities">Utilities</option><option value="Food & Logistics">Food & Logistics</option><option value="Fuel / Transport">Fuel / Transport</option><option value="Maintenance">Maintenance</option><option value="Other Overheads">Other Overheads</option></select></div><div class="form-group"><label>Operational Description Note</label><input type="text" id="form-exp-desc" placeholder="Details of cash outflow..."></div><div class="form-group"><label>Amount (LKR)</label><input type="number" id="form-exp-amount" placeholder="0.00"></div><div class="modal-footer-btns"><button class="cyber-btn-small" style="background:var(--red);" onclick="submitExpenseForm()">SAVE ENTRY</button></div></div></div>
     <div id="modal-debit" class="modal-overlay"><div class="glass-card cyber-modal border-orange"><div class="modal-header"><h3 class="neon-text-orange"><i class="fas fa-hand-holding-usd"></i> Log Cash Debit</h3><button class="modal-close" onclick="closeModal('modal-debit')">&times;</button></div><div class="form-group"><label>Recipient / Reference Profile</label><input type="text" id="form-deb-profile" placeholder="Name or transaction account reference..."></div><div class="form-group"><label>Transaction Details</label><input type="text" id="form-deb-details" placeholder="Reason for direct debit outflow..."></div><div class="form-group"><label>Value (LKR)</label><input type="number" id="form-deb-amount" placeholder="0.00"></div><div class="modal-footer-btns"><button class="cyber-btn-small" style="background:var(--orange);" onclick="submitDebitForm()">COMMIT DEBIT</button></div></div></div>
     <div id="modal-cheque" class="modal-overlay"><div class="glass-card cyber-modal border-cyan"><div class="modal-header"><h3 class="neon-text-cyan"><i class="fas fa-money-check"></i> Log Cheque Transaction</h3><button class="modal-close" onclick="closeModal('modal-cheque')">&times;</button></div><div class="form-group"><label>Client Account Entity Name</label><input type="text" id="form-chq-customer" placeholder="Customer reference..."></div><div class="form-group"><label>Invoice Reference No</label><input type="text" id="form-chq-invoice" placeholder="Invoice trace value..."></div><div class="form-group"><label>Cheque Asset ID Number</label><input type="text" id="form-chq-no" placeholder="Bank serial token ID..."></div><div class="form-group"><label>Face Value Amount (LKR)</label><input type="number" id="form-chq-amount" placeholder="0.00"></div><div class="modal-footer-btns"><button class="cyber-btn-small" onclick="submitChequeForm()">SAVE ASSET LOG</button></div></div></div>
@@ -774,39 +757,14 @@
         let editPurchaseIdx = -1;
         let editCreditKey = null; let editCreditIdx = -1;
         let editStaffIdx = -1;
+        let editBankingIdx = -1;
 
         document.addEventListener("DOMContentLoaded", () => {
             document.getElementById('system-date-picker').value = activeDate;
             setupClock();
             checkLoginState();
             initializeDatabaseStream();
-            initFallingLeaves();
         });
-
-        /* =========================================
-           LIVE FALLING LEAVES INITIALIZATION
-           ========================================= */
-        function initFallingLeaves() {
-            setInterval(() => {
-                const leaf = document.createElement('i');
-                leaf.className = 'fas fa-leaf falling-leaf';
-                // Random horizontal start position
-                leaf.style.left = Math.random() * 100 + 'vw';
-                // Random fall duration between 8 and 14 seconds
-                leaf.style.animationDuration = (Math.random() * 6 + 8) + 's'; 
-                // Random horizontal drift and rotation
-                leaf.style.setProperty('--end-x', (Math.random() * 300 - 150) + 'px');
-                leaf.style.setProperty('--rot', (Math.random() * 360) + 'deg');
-                // Random size
-                const size = Math.random() * 1.5 + 0.8; 
-                leaf.style.fontSize = size + 'rem';
-                
-                document.body.appendChild(leaf);
-                
-                // Cleanup leaf from DOM after animation completes
-                setTimeout(() => leaf.remove(), 15000);
-            }, 1200); // Spawns a new leaf every 1.2 seconds
-        }
 
         /* =========================================
            1-HOUR LOGIN PERSISTENCE
@@ -891,7 +849,7 @@
 
         function generateEmptyDateTemplate() {
             return {
-                expenses: [], debits: [], chequeSales: [], purchasing: [], creditBills: [], staffAdvances: [],
+                expenses: [], debits: [], banking: [], chequeSales: [], purchasing: [], creditBills: [], staffAdvances: [],
                 notesValues: { "5000": 0, "2000": 0, "1000": 0, "500": 0, "100": 0, "50": 0, "20": 0 },
                 dashboard: { sales: 0, cash: 0, credit: 0, expenses: 0 }
             };
@@ -936,6 +894,15 @@
             let otherDebits = 0;
             if(appData.debits) appData.debits.forEach(d => otherDebits += parseFloat(d.amount || 0));
 
+            let bankDeposits = 0;
+            let bankWithdrawals = 0;
+            if(appData.banking) {
+                appData.banking.forEach(b => {
+                    if(b.type === 'deposit') bankDeposits += parseFloat(b.amount || 0);
+                    if(b.type === 'withdrawal') bankWithdrawals += parseFloat(b.amount || 0);
+                });
+            }
+
             let chequeSales = 0;
             if(appData.chequeSales) appData.chequeSales.forEach(c => chequeSales += parseFloat(c.amount || 0));
 
@@ -969,8 +936,9 @@
                 }
             });
 
-            let formulaResult = (physicalCash + creditGenerated + totalExpenses + chequeSales + procurementCashOnly + staffAdvances) 
-                                - (todayCashCollections + otherDebits + grossSales);
+            // Adjust Formula with Banking (Deposits take cash out, Withdrawals bring cash in)
+            let formulaResult = (physicalCash + creditGenerated + totalExpenses + chequeSales + procurementCashOnly + staffAdvances + bankDeposits) 
+                                - (todayCashCollections + otherDebits + grossSales + bankWithdrawals);
 
             document.getElementById('stat-sales').innerText = fmtLKR(grossSales);
             document.getElementById('stat-cash').innerText = fmtLKR(physicalCash);
@@ -1058,6 +1026,72 @@
         /* =========================================
            MODULE TRANSACTION PROCESSING FUNCTIONS
            ========================================= */
+
+        // BANKING
+        function renderBanking() {
+            const tbody = document.getElementById('banking-tbody'); tbody.innerHTML = '';
+            if(appData.banking) {
+                appData.banking.forEach((b, index) => {
+                    const color = b.type === 'deposit' ? 'neon-text-red' : 'neon-text-green';
+                    const icon = b.type === 'deposit' ? 'fa-arrow-up' : 'fa-arrow-down';
+                    tbody.innerHTML += `<tr>
+                        <td><span class="${color}"><i class="fas ${icon}"></i> ${b.type.toUpperCase()}</span></td>
+                        <td><strong>${b.ref}</strong></td>
+                        <td>${b.details}</td>
+                        <td style="font-weight:600;" class="${color}">${fmtLKR(b.amount)}</td>
+                        <td>
+                            <button class="icon-btn" onclick="editBanking(${index})" title="Edit"><i class="fas fa-pen neon-text-cyan"></i></button>
+                            <button class="icon-btn" onclick="deleteBanking(${index})" title="Reverse/Delete"><i class="fas fa-trash neon-text-red"></i></button>
+                        </td>
+                    </tr>`;
+                });
+            }
+        }
+        function openAddBanking() {
+            editBankingIdx = -1;
+            document.getElementById('form-bnk-type').value = 'deposit';
+            document.getElementById('form-bnk-ref').value = '';
+            document.getElementById('form-bnk-details').value = '';
+            document.getElementById('form-bnk-amount').value = '';
+            openModal('modal-banking');
+        }
+        function editBanking(index) {
+            editBankingIdx = index;
+            const b = appData.banking[index];
+            document.getElementById('form-bnk-type').value = b.type;
+            document.getElementById('form-bnk-ref').value = b.ref;
+            document.getElementById('form-bnk-details').value = b.details;
+            document.getElementById('form-bnk-amount').value = b.amount;
+            openModal('modal-banking');
+        }
+        function submitBankingForm() {
+            const type = document.getElementById('form-bnk-type').value;
+            const ref = document.getElementById('form-bnk-ref').value;
+            const details = document.getElementById('form-bnk-details').value;
+            const amount = parseFloat(document.getElementById('form-bnk-amount').value || 0);
+            if(!ref || !amount) return showToast("Bank Ref and Amount are required.", "red", "fa-exclamation");
+
+            if(!appData.banking) appData.banking = [];
+            
+            if (editBankingIdx > -1) {
+                appData.banking[editBankingIdx] = { type, ref, details, amount };
+                logToTerminal("EDIT", `Updated bank transfer [${type}] to ${ref}`, "var(--green)");
+            } else {
+                appData.banking.push({ type, ref, details, amount });
+                logToTerminal("BANK", `Bank transfer [${type}] logged for ${ref}`, "var(--green)");
+            }
+            
+            pushDataStateToCloud();
+            closeModal('modal-banking');
+        }
+        function deleteBanking(index) { 
+            executeSecureAction(() => { 
+                const b = appData.banking[index];
+                appData.banking.splice(index, 1); 
+                pushDataStateToCloud(); 
+                logToTerminal("REVERSE", `Reversed Bank Transfer: ${b.ref} (${fmtLKR(b.amount)})`, "var(--orange)");
+            }); 
+        }
 
         // COMPANIES
         function renderCompanies() {
@@ -1594,17 +1628,6 @@
                         if(dateKey === activeDate) todayBody.innerHTML += tableRowString;
                         allBody.innerHTML += tableRowString;
 
-                        let actionButtons = '';
-                        if (bill.status !== 'cleared') {
-                            actionButtons += `<button class="cyber-btn-small" style="background:var(--green); width:100%; margin-bottom:5px;" onclick="openSettlementPipeline('${dateKey}', ${itemIndex})">PAYMENT</button>`;
-                        } else {
-                            actionButtons += `<div style="color:var(--green); font-weight:600; text-align:center; margin-bottom:5px;"><i class="fas fa-check-circle"></i> Closed</div>`;
-                        }
-
-                        if (bill.paymentHistory && bill.paymentHistory.length > 0) {
-                            actionButtons += `<button class="cyber-btn-small" style="background:var(--red); padding: 6px; font-size: 0.8rem; width:100%;" onclick="undoLastSettlement('${dateKey}', ${itemIndex})"><i class="fas fa-undo"></i> REVERSE LAST PAY</button>`;
-                        }
-
                         clearingHubBody.innerHTML += `
                             <tr>
                                 <td>${dateKey}</td>
@@ -1616,7 +1639,13 @@
                                 </td>
                                 <td><span class="badge ${statusBadgeClass}">${bill.status}</span></td>
                                 <td style="color:var(--green); font-weight:bold;">${settledDateStr}</td>
-                                <td>${actionButtons}</td>
+                                <td>
+                                    ${bill.status !== 'cleared' ? 
+                                    `<button class="cyber-btn-small" style="background:var(--green);" onclick="openSettlementPipeline('${dateKey}', ${itemIndex})">PAYMENT</button>` : 
+                                    `<span style="color:var(--green); font-weight:600;"><i class="fas fa-check-circle"></i> Closed</span>`}
+                                    ${paidAmount > 0 ? 
+                                    `<button class="cyber-btn-small" style="background:var(--red); margin-left:5px;" onclick="reverseCreditPayment('${dateKey}', ${itemIndex})"><i class="fas fa-undo"></i></button>` : ''}
+                                </td>
                             </tr>`;
                     });
                 }
@@ -1698,7 +1727,7 @@
 
         function setFullSettlementAmount() {
             document.getElementById('form-set-pay-amount').value = currentSettlementBalance;
-            document.getElementById('form-set-pay-amount').dispatchEvent(new Event('input')); // Trigger preview update
+            document.getElementById('form-set-pay-amount').dispatchEvent(new Event('input')); 
         }
 
         function submitSettlementPipeline() {
@@ -1733,31 +1762,20 @@
             showToast(`Payment of ${fmtLKR(payingAmount)} Processed`, "green", "fa-check");
         }
 
-        function undoLastSettlement(dateKey, itemIndex) {
+        // REDO / REVERSE CREDIT PAYMENT WITH SECURE PIN
+        function reverseCreditPayment(dateKey, itemIndex) {
             executeSecureAction(() => {
                 let bill = masterTimeline[dateKey].creditBills[itemIndex];
+                const amountCleared = bill.paidAmount;
                 
-                if (!bill.paymentHistory || bill.paymentHistory.length === 0) return;
+                bill.paidAmount = 0;
+                bill.status = "pending";
+                bill.clearedOnDate = "";
+                bill.paymentHistory = [];
                 
-                // Pop the most recent payment
-                const lastPayment = bill.paymentHistory.pop();
-                
-                // Deduct from paid amount
-                bill.paidAmount = Math.max(0, (parseFloat(bill.paidAmount) || 0) - lastPayment.amount);
-                
-                // Adjust status
-                if (bill.paidAmount === 0) {
-                    bill.status = "pending";
-                    bill.clearedOnDate = "";
-                } else {
-                    bill.status = "partial";
-                    bill.clearedOnDate = ""; 
-                }
-                
-                // Push to cloud and refresh
                 db.ref("timeline_ledger").set(masterTimeline);
-                logToTerminal("REVERSE", `Security Override: Reversed collection of ${fmtLKR(lastPayment.amount)} for invoice ${bill.billNo}`, "var(--red)");
-                showToast(`Collection of ${fmtLKR(lastPayment.amount)} reversed`, "orange", "fa-undo");
+                logToTerminal("REVERSE", `Reversed Collections for Invoice: ${bill.billNo} (${fmtLKR(amountCleared)})`, "var(--red)");
+                showToast("Payment Collections Successfully Reversed.", "red", "fa-undo");
             });
         }
 
@@ -1953,58 +1971,100 @@
             const end = document.getElementById('report-end-date').value;
             if(!start || !end) return showToast("Select Query Constraints First", "orange", "fa-calendar");
 
-            let computedSales = 0, computedCredits = 0, computedCollections = 0, computedExpenses = 0, 
-                computedDebits = 0, computedStaff = 0, computedCheqSales = 0, computedPurchasingCash = 0;
+            let computedSales = 0, computedCredits = 0, computedCollections = 0, computedExpenses = 0, computedDebits = 0, computedStaff = 0;
+            
+            // Generate detailed Breakdown List
+            let detailedLogs = [];
 
             Object.keys(masterTimeline).forEach(dateKey => {
                 if(dateKey === "GLOBAL_REGISTRY") return;
                 if(dateKey >= start && dateKey <= end) {
                     const node = masterTimeline[dateKey];
                     
-                    if(node.dashboard && node.dashboard.sales) computedSales += parseFloat(node.dashboard.sales || 0);
-                    if(node.expenses) node.expenses.forEach(e => computedExpenses += parseFloat(e.amount || 0));
-                    if(node.debits) node.debits.forEach(d => computedDebits += parseFloat(d.amount || 0));
-                    if(node.staffAdvances) node.staffAdvances.forEach(s => computedStaff += parseFloat(s.amount || 0));
-                    if(node.creditBills) node.creditBills.forEach(b => computedCredits += parseFloat(b.amount || 0));
-                    
-                    if(node.chequeSales) node.chequeSales.forEach(c => computedCheqSales += parseFloat(c.amount || 0));
-                    if(node.purchasing) node.purchasing.forEach(p => computedPurchasingCash += parseFloat(p.cash || 0));
-                    
-                    Object.keys(masterTimeline).forEach(innerKey => {
-                        if(innerKey === "GLOBAL_REGISTRY") return;
-                        const innerNode = masterTimeline[innerKey];
-                        if(innerNode.creditBills) {
-                            innerNode.creditBills.forEach(bill => {
-                                if (bill.paymentHistory) {
-                                    bill.paymentHistory.forEach(pay => {
-                                        if (pay.date >= start && pay.date <= end) {
-                                            computedCollections += parseFloat(pay.amount || 0);
-                                        }
-                                    });
-                                } else if(bill.status === 'cleared' && bill.clearedOnDate >= start && bill.clearedOnDate <= end) {
-                                    computedCollections += parseFloat(bill.amount || 0);
+                    if(node.dashboard && node.dashboard.sales) {
+                        const s = parseFloat(node.dashboard.sales || 0);
+                        computedSales += s;
+                        if(s > 0) detailedLogs.push({date: dateKey, type: 'Gross Sales', ref: 'Daily Sales Baseline', amount: s, color: 'var(--cyan)'});
+                    }
+                    if(node.expenses) {
+                        node.expenses.forEach(e => {
+                            computedExpenses += parseFloat(e.amount || 0);
+                            detailedLogs.push({date: dateKey, type: 'Expense', ref: e.category + ' - ' + e.desc, amount: e.amount, color: 'var(--red)'});
+                        });
+                    }
+                    if(node.debits) {
+                        node.debits.forEach(d => {
+                            computedDebits += parseFloat(d.amount || 0);
+                            detailedLogs.push({date: dateKey, type: 'Cash Debit', ref: d.profile + ' - ' + d.details, amount: d.amount, color: 'var(--orange)'});
+                        });
+                    }
+                    if(node.banking) {
+                        node.banking.forEach(b => {
+                            detailedLogs.push({date: dateKey, type: b.type === 'deposit' ? 'Bank Deposit' : 'Bank Withdrawal', ref: b.ref + ' - ' + b.details, amount: b.amount, color: b.type === 'deposit' ? 'var(--red)' : 'var(--green)'});
+                        });
+                    }
+                    if(node.staffAdvances) {
+                        node.staffAdvances.forEach(s => {
+                            computedStaff += parseFloat(s.amount || 0);
+                            detailedLogs.push({date: dateKey, type: 'Staff Advance', ref: s.name + ' - ' + s.remark, amount: s.amount, color: 'var(--cyan)'});
+                        });
+                    }
+                    if(node.creditBills) {
+                        node.creditBills.forEach(b => {
+                            computedCredits += parseFloat(b.amount || 0);
+                            detailedLogs.push({date: dateKey, type: 'Credit Issued', ref: b.customer + ' (' + b.billNo + ')', amount: b.amount, color: 'var(--orange)'});
+                        });
+                    }
+                }
+            });
+            
+            // Collections Processing
+            Object.keys(masterTimeline).forEach(innerKey => {
+                if(innerKey === "GLOBAL_REGISTRY") return;
+                const innerNode = masterTimeline[innerKey];
+                if(innerNode.creditBills) {
+                    innerNode.creditBills.forEach(bill => {
+                        if (bill.paymentHistory) {
+                            bill.paymentHistory.forEach(pay => {
+                                if (pay.date >= start && pay.date <= end) {
+                                    computedCollections += parseFloat(pay.amount || 0);
+                                    detailedLogs.push({date: pay.date, type: 'Credit Collection', ref: bill.customer + ' (' + bill.billNo + ')', amount: pay.amount, color: 'var(--green)'});
                                 }
                             });
+                        } else if(bill.status === 'cleared' && bill.clearedOnDate >= start && bill.clearedOnDate <= end) {
+                            computedCollections += parseFloat(bill.amount || 0);
+                            detailedLogs.push({date: bill.clearedOnDate, type: 'Credit Collection', ref: bill.customer + ' (' + bill.billNo + ')', amount: bill.amount, color: 'var(--green)'});
                         }
                     });
                 }
             });
 
-            let netCash = (computedSales + computedCollections) - (computedExpenses + computedDebits + computedStaff + computedPurchasingCash);
-
+            // Update Master Cards
             document.getElementById('rep-sales').innerText = fmtLKR(computedSales);
             document.getElementById('rep-credits').innerText = fmtLKR(computedCredits);
             document.getElementById('rep-collections').innerText = fmtLKR(computedCollections);
             document.getElementById('rep-expenses').innerText = fmtLKR(computedExpenses);
             document.getElementById('rep-debits').innerText = fmtLKR(computedDebits);
             document.getElementById('rep-staff').innerText = fmtLKR(computedStaff);
-            document.getElementById('rep-cheq-sales').innerText = fmtLKR(computedCheqSales);
-            document.getElementById('rep-purchasing').innerText = fmtLKR(computedPurchasingCash);
             
-            const netCashEl = document.getElementById('rep-net-cash');
-            netCashEl.innerText = fmtLKR(netCash);
-            netCashEl.style.color = netCash >= 0 ? "var(--green)" : "var(--red)";
+            // Render Detailed Breakdown Table
+            const detailedBody = document.getElementById('detailed-report-tbody');
+            detailedBody.innerHTML = '';
+            detailedLogs.sort((a,b) => a.date.localeCompare(b.date));
             
+            if(detailedLogs.length === 0) {
+                detailedBody.innerHTML = `<tr><td colspan="4" style="text-align:center; color:#888;">No transactions found for this date range.</td></tr>`;
+            } else {
+                detailedLogs.forEach(log => {
+                    detailedBody.innerHTML += `<tr>
+                        <td>${log.date}</td>
+                        <td><strong style="color:${log.color}">${log.type}</strong></td>
+                        <td>${log.ref}</td>
+                        <td style="font-weight:bold; color:${log.color}">${fmtLKR(log.amount)}</td>
+                    </tr>`;
+                });
+            }
+
             showToast("Analytical Reports Formatted Successfully.", "purple", "fa-analytics");
         }
 
@@ -2043,7 +2103,7 @@
         function togglePassword() { const el = document.getElementById('password'); el.type = el.type === 'password' ? 'text' : 'password'; }
 
         function renderAllDynamicModules() {
-            renderExpenses(); renderDebits(); renderChequeSales();
+            renderExpenses(); renderDebits(); renderBanking(); renderChequeSales();
             renderCompanies(); renderCustomers();
             renderPurchasing(); renderCreditInvoicesAndCollections(); renderStaffAdvances();
         }
