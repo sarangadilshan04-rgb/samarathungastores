@@ -16,9 +16,23 @@
            CLEAN BOTANICAL UI & COLOR SYSTEM
            ========================================= */
         :root {
+            /* Light Theme (Default) */
             --bg: #f4f7f4; 
             --glass: rgba(255, 255, 255, 0.9); 
             --glass-border: rgba(46, 139, 87, 0.2); 
+            
+            --card-bg: #ffffff;
+            --input-bg: #ffffff;
+            --table-header: #f4f7f4;
+            --table-hover: #fafcfa;
+            --border-color: #d1d9d1;
+            --overlay-bg: rgba(244, 247, 244, 0.7);
+
+            --bg-gradient-1: rgba(244, 247, 244, 0.92);
+            --bg-gradient-2: rgba(244, 247, 244, 0.95);
+
+            --skeleton-1: #f3f4f6;
+            --skeleton-2: #e5e7eb;
             
             --cyan: #2e8b57; 
             --purple: #556b2f; 
@@ -28,7 +42,38 @@
             --whatsapp: #25D366;
             
             --text: #2c3e2e; 
+            --text-muted: #666666;
             --font-main: 'Poppins', sans-serif;
+        }
+
+        /* Dark Theme Override */
+        [data-theme="dark"] {
+            --bg: #121212;
+            --glass: rgba(30, 30, 30, 0.85);
+            --glass-border: rgba(46, 139, 87, 0.4);
+            
+            --card-bg: #1e1e1e;
+            --input-bg: #2a2a2a;
+            --table-header: #232323;
+            --table-hover: #2a2a2a;
+            --border-color: #333333;
+            --overlay-bg: rgba(18, 18, 18, 0.85);
+
+            --bg-gradient-1: rgba(18, 18, 18, 0.95);
+            --bg-gradient-2: rgba(18, 18, 18, 0.98);
+
+            --skeleton-1: #2a2a2a;
+            --skeleton-2: #3f3f3f;
+
+            /* Brighten Accents Slightly for Dark Contrast */
+            --cyan: #4ade80; 
+            --green: #22c55e;
+            --purple: #a3e635; 
+            --orange: #f97316;
+            --red: #ef4444;
+
+            --text: #e0e0e0;
+            --text-muted: #a0a0a0;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: var(--font-main); }
@@ -37,15 +82,16 @@
             background-color: var(--bg); 
             color: var(--text); 
             overflow-x: hidden;
-            background-image: linear-gradient(rgba(244, 247, 244, 0.92), rgba(244, 247, 244, 0.95)), url('https://images.unsplash.com/photo-1497250681960-ef046c08a56e?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80');
+            background-image: linear-gradient(var(--bg-gradient-1), var(--bg-gradient-2)), url('https://images.unsplash.com/photo-1497250681960-ef046c08a56e?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80');
             background-size: cover;
             background-attachment: fixed;
             background-position: center;
+            transition: background-color 0.3s, color 0.3s;
         }
 
         ::-webkit-scrollbar { width: 8px; }
         ::-webkit-scrollbar-track { background: var(--bg); }
-        ::-webkit-scrollbar-thumb { background: #b0c4b1; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb { background: var(--border-color); border-radius: 4px; }
         ::-webkit-scrollbar-thumb:hover { background: var(--cyan); }
 
         .neon-text-cyan { color: var(--cyan); font-weight: 600; }
@@ -79,6 +125,7 @@
             border: 1px solid var(--glass-border); 
             border-radius: 12px; 
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
+            transition: background 0.3s, border-color 0.3s;
         }
         .glass-card { padding: 1.5rem; }
 
@@ -88,9 +135,9 @@
 
         /* 1. Card Hover Lift */
         .dashboard-card {
-            background: #ffffff;
+            background: var(--card-bg);
             border-radius: 8px;
-            transition: transform 0.2s ease, box-shadow 0.2s ease, border 0.3s ease;
+            transition: transform 0.2s ease, box-shadow 0.2s ease, border 0.3s ease, background 0.3s;
         }
         .dashboard-card:hover {
             transform: translateY(-4px);
@@ -103,7 +150,7 @@
             100% { background-position: 200% 0; }
         }
         .skeleton-loading {
-            background: linear-gradient(90deg, #f3f4f6 25%, #e5e7eb 50%, #f3f4f6 75%);
+            background: linear-gradient(90deg, var(--skeleton-1) 25%, var(--skeleton-2) 50%, var(--skeleton-1) 75%);
             background-size: 200% 100%;
             animation: shimmer 1.5s infinite linear;
             border-radius: 4px;
@@ -119,7 +166,7 @@
             100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
         }
         .card-error-pulse {
-            border: 1px solid #ef4444 !important; 
+            border: 1px solid var(--red) !important; 
             animation: soft-pulse-red 2s infinite;
         }
 
@@ -144,18 +191,18 @@
         @keyframes rotate { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         #loading-percent { margin-top: 20px; font-size: 1.2rem; font-weight: 600; color: var(--cyan); }
 
-        #login-page { position: fixed; inset: 0; background: var(--bg); z-index: 9000; display: flex; justify-content: center; align-items: center; background-image: linear-gradient(rgba(244,247,244,0.8), rgba(244,247,244,0.9)), url('https://images.unsplash.com/photo-1497250681960-ef046c08a56e?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80'); background-size: cover; }
-        .login-box { width: 100%; max-width: 400px; text-align: center; background: #fff; padding: 2.5rem; }
+        #login-page { position: fixed; inset: 0; background: var(--bg); z-index: 9000; display: flex; justify-content: center; align-items: center; background-image: linear-gradient(var(--bg-gradient-1), var(--bg-gradient-2)), url('https://images.unsplash.com/photo-1497250681960-ef046c08a56e?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80'); background-size: cover; }
+        .login-box { width: 100%; max-width: 400px; text-align: center; background: var(--card-bg); padding: 2.5rem; transition: background 0.3s; }
         .login-box h2 { font-size: 1.8rem; margin-bottom: 0.5rem; color: var(--cyan); font-weight: 700; }
-        .login-box p { color: #666; margin-bottom: 1rem; font-size: 0.9rem; }
+        .login-box p { color: var(--text-muted); margin-bottom: 1rem; font-size: 0.9rem; }
         .input-group { position: relative; margin-top: 1.2rem; }
-        .input-group i { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); font-size: 1.1rem; color: #888; }
-        .input-group .toggle-password { left: auto; right: 15px; cursor: pointer; color: #888; }
+        .input-group i { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); font-size: 1.1rem; color: var(--text-muted); }
+        .input-group .toggle-password { left: auto; right: 15px; cursor: pointer; color: var(--text-muted); }
         
         .input-group input, .cyber-input, .cyber-select { 
             width: 100%; padding: 12px 15px 12px 45px; 
-            background: #fff; 
-            border: 1px solid #d1d9d1; 
+            background: var(--input-bg); 
+            border: 1px solid var(--border-color); 
             border-radius: 8px; 
             color: var(--text); 
             font-size: 1rem; outline: none; transition: 0.3s; 
@@ -186,85 +233,85 @@
         #main-app { display: flex; height: 100vh; flex-direction: column; overflow: hidden; }
         .app-container-inner { display: flex; flex: 1; overflow: hidden; }
         
-        #sidebar { width: 260px; height: 100%; padding: 1.5rem 0; display: flex; flex-direction: column; border-right: 1px solid var(--glass-border); border-radius: 0; transition: 0.3s; z-index: 100; background: #fff;}
+        #sidebar { width: 260px; height: 100%; padding: 1.5rem 0; display: flex; flex-direction: column; border-right: 1px solid var(--glass-border); border-radius: 0; transition: 0.3s; z-index: 100; background: var(--card-bg);}
         .brand { display: flex; align-items: center; gap: 10px; padding: 0 1.5rem 2rem; font-size: 1.2rem; font-weight: 700; color: var(--cyan); }
         .nav-links { list-style: none; overflow-y: auto; flex: 1; }
-        .nav-links li { padding: 12px 1.5rem; cursor: pointer; transition: 0.3s; border-left: 4px solid transparent; display: flex; align-items: center; gap: 15px; font-size: 0.95rem; color: #555; }
+        .nav-links li { padding: 12px 1.5rem; cursor: pointer; transition: 0.3s; border-left: 4px solid transparent; display: flex; align-items: center; gap: 15px; font-size: 0.95rem; color: var(--text-muted); }
         .nav-links li:hover { background: rgba(46, 139, 87, 0.05); color: var(--cyan); }
         .nav-links li.active { background: rgba(46, 139, 87, 0.1); border-left-color: var(--cyan); color: var(--cyan); font-weight: 600; }
         
         #content { flex: 1; display: flex; flex-direction: column; overflow-y: auto; padding-bottom: 40px; }
         
-        .top-nav { display: flex; justify-content: space-between; align-items: center; padding: 1rem 2rem; border-radius: 0; border-bottom: 1px solid var(--glass-border); position: sticky; top: 0; z-index: 100; background: #fff;}
+        .top-nav { display: flex; justify-content: space-between; align-items: center; padding: 1rem 2rem; border-radius: 0; border-bottom: 1px solid var(--glass-border); position: sticky; top: 0; z-index: 100; background: var(--card-bg); transition: background 0.3s, border-color 0.3s;}
         .nav-left, .nav-right { display: flex; align-items: center; gap: 20px; }
         .nav-left button { background: none; border: none; color: var(--text); font-size: 1.2rem; cursor: pointer; }
         .shop-name { font-size: 1.3rem; font-weight: 700; color: var(--cyan); }
-        #live-clock { font-size: 1.1rem; font-weight: 600; color: #555; }
+        #live-clock { font-size: 1.1rem; font-weight: 600; color: var(--text-muted); }
         .profile-avatar img { width: 40px; height: 40px; border-radius: 50%; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
-        .icon-btn { background: none; border: none; color: #888; font-size: 1.1rem; cursor: pointer; margin-left: 8px; transition: 0.2s; }
-        .icon-btn:hover { transform: scale(1.1); }
-        .ledger-date-picker { background: #f4f7f4; border: 1px solid #d1d9d1; color: var(--text); font-family: var(--font-main); font-weight: 500; font-size: 0.95rem; padding: 6px 12px; border-radius: 6px; outline: none; cursor: pointer; }
+        .icon-btn { background: none; border: none; color: var(--text-muted); font-size: 1.1rem; cursor: pointer; margin-left: 8px; transition: 0.2s; }
+        .icon-btn:hover { transform: scale(1.1); color: var(--cyan); }
+        .ledger-date-picker { background: var(--bg); border: 1px solid var(--border-color); color: var(--text); font-family: var(--font-main); font-weight: 500; font-size: 0.95rem; padding: 6px 12px; border-radius: 6px; outline: none; cursor: pointer; transition: 0.3s; }
 
         .tab-content { padding: 2rem; display: none; animation: fadeIn 0.4s ease; }
         .tab-content.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
         .grid-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1.5rem; }
         .stat-card { position: relative; overflow: hidden; padding: 1.5rem; }
-        .stat-header { font-size: 0.9rem; color: #666; font-weight: 500; margin-bottom: 0.5rem; display: flex; align-items: center; gap: 8px; text-transform: uppercase; }
+        .stat-header { font-size: 0.9rem; color: var(--text-muted); font-weight: 500; margin-bottom: 0.5rem; display: flex; align-items: center; gap: 8px; text-transform: uppercase; }
         .stat-value { font-size: 1.8rem; font-weight: 700; margin-bottom: 0.5rem; transition: color 0.3s; }
 
-        .summary-center { margin-top: 2rem; background: #fff; }
-        .system-log-box { font-family: monospace; font-size: 0.9rem; line-height: 1.6; color: #4a5c4d; padding: 1rem; border-radius: 8px; background: #f8faf8; border: 1px solid #d1d9d1; max-height: 250px; overflow-y: auto; }
-        .log-entry { margin-bottom: 5px; border-bottom: 1px solid #eef2eb; padding-bottom: 4px; }
+        .summary-center { margin-top: 2rem; background: var(--card-bg); transition: background 0.3s; }
+        .system-log-box { font-family: monospace; font-size: 0.9rem; line-height: 1.6; color: var(--text); padding: 1rem; border-radius: 8px; background: var(--input-bg); border: 1px solid var(--border-color); max-height: 250px; overflow-y: auto; transition: 0.3s; }
+        .log-entry { margin-bottom: 5px; border-bottom: 1px solid var(--border-color); padding-bottom: 4px; }
 
-        .table-container { width: 100%; overflow-x: auto; background: #fff; border-radius: 12px; margin-bottom: 1.5rem; border: 1px solid var(--glass-border); box-shadow: 0 2px 10px rgba(0,0,0,0.02); }
+        .table-container { width: 100%; overflow-x: auto; background: var(--card-bg); border-radius: 12px; margin-bottom: 1.5rem; border: 1px solid var(--glass-border); box-shadow: 0 2px 10px rgba(0,0,0,0.02); transition: background 0.3s, border-color 0.3s; }
         .cyber-table { width: 100%; border-collapse: collapse; min-width: 600px; }
-        .cyber-table th { background: #f4f7f4; padding: 14px 12px; text-align: left; font-weight: 600; font-size: 0.9rem; text-transform: uppercase; color: #555; border-bottom: 2px solid var(--cyan); }
-        .cyber-table td { padding: 14px 12px; border-bottom: 1px solid #eef2eb; font-size: 0.95rem; vertical-align: middle; }
+        .cyber-table th { background: var(--table-header); padding: 14px 12px; text-align: left; font-weight: 600; font-size: 0.9rem; text-transform: uppercase; color: var(--text-muted); border-bottom: 2px solid var(--cyan); transition: 0.3s; }
+        .cyber-table td { padding: 14px 12px; border-bottom: 1px solid var(--border-color); font-size: 0.95rem; vertical-align: middle; transition: 0.3s; }
         
         .border-purple .cyber-table th { border-bottom-color: var(--purple); }
         .border-orange .cyber-table th { border-bottom-color: var(--orange); }
         .border-red .cyber-table th { border-bottom-color: var(--red); }
         .border-green .cyber-table th { border-bottom-color: var(--green); }
         .border-cyan .cyber-table th { border-bottom-color: var(--cyan); }
-        .cyber-table tr:hover { background: #fafcfa; }
+        .cyber-table tr:hover { background: var(--table-hover); }
         
         .calculator-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 2rem; }
         
-        .cash-row { display: flex; align-items: center; justify-content: space-between; background: #fff; border: 1px solid var(--glass-border); padding: 12px 20px; border-radius: 8px; margin-bottom: 12px; transition: all 0.2s ease-out; box-shadow: 0 2px 5px rgba(0,0,0,0.02); }
-        .cash-row:hover { background: #f8faf8; transform: translateY(-2px); box-shadow: 0 6px 15px rgba(46, 139, 87, 0.08); }
+        .cash-row { display: flex; align-items: center; justify-content: space-between; background: var(--card-bg); border: 1px solid var(--glass-border); padding: 12px 20px; border-radius: 8px; margin-bottom: 12px; transition: all 0.2s ease-out; box-shadow: 0 2px 5px rgba(0,0,0,0.02); }
+        .cash-row:hover { background: var(--table-hover); transform: translateY(-2px); box-shadow: 0 6px 15px rgba(46, 139, 87, 0.08); }
         .cash-label { font-size: 1.2rem; font-weight: 700; width: 110px; color: var(--green); }
         .cash-controls { display: flex; align-items: center; gap: 10px; }
-        .cash-btn { background: #f0f5f0; border: 1px solid var(--green); color: var(--green); width: 35px; height: 35px; border-radius: 6px; font-size: 1rem; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.2s; }
+        .cash-btn { background: var(--input-bg); border: 1px solid var(--green); color: var(--green); width: 35px; height: 35px; border-radius: 6px; font-size: 1rem; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.2s; }
         .cash-btn:hover { background: var(--green); color: #fff; }
-        .cash-input { width: 90px; text-align: center; background: #fff; border: 1px solid #ccc; color: var(--text); padding: 8px; font-size: 1.1rem; border-radius: 6px; outline: none; font-weight: 600; transition: border-color 0.2s;}
+        .cash-input { width: 90px; text-align: center; background: var(--input-bg); border: 1px solid var(--border-color); color: var(--text); padding: 8px; font-size: 1.1rem; border-radius: 6px; outline: none; font-weight: 600; transition: border-color 0.2s, background 0.3s;}
         .cash-input:focus { border-color: var(--green); box-shadow: 0 0 0 3px rgba(34, 139, 34, 0.15); }
         .cash-input::-webkit-outer-spin-button, .cash-input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
         .cash-input[type=number] { -moz-appearance: textfield; }
-        .cash-row-total { font-size: 1.1rem; color: #666; width: 150px; text-align: right; font-weight: 500; }
+        .cash-row-total { font-size: 1.1rem; color: var(--text-muted); width: 150px; text-align: right; font-weight: 500; transition: color 0.3s; }
         
         .huge-total { font-size: 2.5rem; font-weight: 700; margin-top: 10px; word-break: break-all; transition: transform 0.15s ease-out; color: var(--green); }
 
-        .report-filter-bar { display: flex; flex-wrap: wrap; gap: 15px; align-items: flex-end; background: #fff; padding: 1.5rem; border-radius: 12px; margin-bottom: 2rem; border: 1px solid var(--glass-border); box-shadow: 0 2px 10px rgba(0,0,0,0.02); }
+        .report-filter-bar { display: flex; flex-wrap: wrap; gap: 15px; align-items: flex-end; background: var(--card-bg); padding: 1.5rem; border-radius: 12px; margin-bottom: 2rem; border: 1px solid var(--glass-border); box-shadow: 0 2px 10px rgba(0,0,0,0.02); transition: background 0.3s; }
 
         #toast-container { position: fixed; bottom: 20px; right: 20px; z-index: 10000; display: flex; flex-direction: column; gap: 10px; }
-        .toast { background: #fff; border-left: 5px solid var(--cyan); padding: 15px 20px; border-radius: 8px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); color: var(--text); animation: slideIn 0.3s ease; display: flex; align-items: center; gap: 12px; font-weight: 500; font-size: 0.95rem; }
+        .toast { background: var(--card-bg); border-left: 5px solid var(--cyan); padding: 15px 20px; border-radius: 8px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); color: var(--text); animation: slideIn 0.3s ease; display: flex; align-items: center; gap: 12px; font-weight: 500; font-size: 0.95rem; }
         @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
 
-        .modal-overlay { position: fixed; inset: 0; background: rgba(244, 247, 244, 0.7); backdrop-filter: blur(5px); -webkit-backdrop-filter: blur(5px); z-index: 9500; display: flex; justify-content: center; align-items: center; opacity: 0; pointer-events: none; transition: opacity 0.3s ease; }
+        .modal-overlay { position: fixed; inset: 0; background: var(--overlay-bg); backdrop-filter: blur(5px); -webkit-backdrop-filter: blur(5px); z-index: 9500; display: flex; justify-content: center; align-items: center; opacity: 0; pointer-events: none; transition: opacity 0.3s ease, background 0.3s; }
         .modal-overlay.active { opacity: 1; pointer-events: auto; }
-        .cyber-modal { width: 100%; max-width: 550px; max-height: 90vh; overflow-y: auto; position: relative; background: #fff; border-radius: 16px; box-shadow: 0 10px 40px rgba(0,0,0,0.1); border: none; }
-        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; padding-bottom: 1rem; border-bottom: 1px solid #eef2eb; }
+        .cyber-modal { width: 100%; max-width: 550px; max-height: 90vh; overflow-y: auto; position: relative; background: var(--card-bg); border-radius: 16px; box-shadow: 0 10px 40px rgba(0,0,0,0.1); border: none; transition: background 0.3s; }
+        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; padding-bottom: 1rem; border-bottom: 1px solid var(--border-color); transition: border-color 0.3s; }
         .modal-header h3 { font-size: 1.2rem; }
-        .modal-close { background: none; border: none; color: #888; font-size: 1.5rem; cursor: pointer; transition: 0.3s; }
+        .modal-close { background: none; border: none; color: var(--text-muted); font-size: 1.5rem; cursor: pointer; transition: 0.3s; }
         .modal-close:hover { color: var(--red); }
         .form-group { margin-bottom: 1.25rem; }
-        .form-group label { display: block; margin-bottom: 0.5rem; font-size: 0.95rem; font-weight: 500; color: #555; }
-        .form-group input, .form-group select { width: 100%; padding: 12px; background: #fff; border: 1px solid #d1d9d1; border-radius: 8px; color: var(--text); font-size: 1rem; outline: none; transition: 0.2s; }
+        .form-group label { display: block; margin-bottom: 0.5rem; font-size: 0.95rem; font-weight: 500; color: var(--text-muted); transition: color 0.3s; }
+        .form-group input, .form-group select { width: 100%; padding: 12px; background: var(--input-bg); border: 1px solid var(--border-color); border-radius: 8px; color: var(--text); font-size: 1rem; outline: none; transition: 0.2s; }
         .form-group input:focus, .form-group select:focus { border-color: var(--cyan); box-shadow: 0 0 0 3px rgba(46, 139, 87, 0.15); }
         .modal-footer-btns { display: flex; justify-content: flex-end; gap: 10px; margin-top: 1.5rem; }
 
-        .cyber-footer { background: #fff; text-align: center; padding: 12px; font-size: 0.85rem; color: #888; border-top: 1px solid var(--glass-border); width: 100%; z-index: 10; position: fixed; bottom: 0; left: 0; }
+        .cyber-footer { background: var(--card-bg); text-align: center; padding: 12px; font-size: 0.85rem; color: var(--text-muted); border-top: 1px solid var(--glass-border); width: 100%; z-index: 10; position: fixed; bottom: 0; left: 0; transition: background 0.3s; }
         .cyber-footer span { color: var(--cyan); font-weight: 600; }
 
         @media (max-width: 1024px) { .calculator-grid { grid-template-columns: 1fr; } }
@@ -311,6 +358,9 @@
                 <h2 class="shop-name">SAMARATHUNGA STORES</h2>
             </div>
             <div class="nav-right">
+                <button id="theme-toggle" class="icon-btn" onclick="toggleTheme()" title="Toggle Dark Mode" style="margin-right: 15px; font-size: 1.3rem;">
+                    <i class="fas fa-moon"></i>
+                </button>
                 <div style="display:flex; align-items:center; gap:8px;">
                     <span style="font-size:0.9rem; color:var(--cyan); font-weight:600;"><i class="fas fa-history"></i> SHIFT DATE:</span>
                     <input type="date" id="system-date-picker" class="ledger-date-picker" onchange="changeActiveDateWithAuth()">
@@ -324,7 +374,7 @@
             <nav id="sidebar">
                 <div class="brand">
                     <i class="fas fa-leaf"></i>
-                    <h3>SM_Ledger_v4.1</h3>
+                    <h3>SM_Ledger_v4.2</h3>
                 </div>
                 <ul class="nav-links">
                     <li class="active" onclick="switchTab('dashboard')"><i class="fas fa-chart-line"></i> Dashboard</li>
@@ -395,7 +445,7 @@
                         <div class="glass-card stat-card dashboard-card border-purple" style="grid-column: span 2;">
                             <div class="stat-header">System Balance Check (Formula) <i class="fas fa-sync neon-text-purple" style="margin-left:auto;"></i></div>
                             <div class="stat-value neon-text-purple skeleton-loading" id="stat-formula-result">LKR 0.00</div>
-                            <small id="formula-status-message" style="color: #888; margin-top: 8px; display: inline-block;">Target: 0.00 | Includes Bank Transfers</small>
+                            <small id="formula-status-message" style="color: var(--text-muted); margin-top: 8px; display: inline-block;">Target: 0.00 | Includes Bank Transfers</small>
                         </div>
                     </div>
 
@@ -425,8 +475,8 @@
                         <h2 class="neon-text-green"><i class="fas fa-calculator"></i> Cash Note Denomination Matrix</h2>
                         <div class="calculator-grid mt-2">
                             <div id="note-inputs"></div>
-                            <div class="total-panel p-2 glass-card dashboard-card" style="background:#fff;">
-                                <h3 style="color:#555;">TOTAL CASH BALANCE</h3>
+                            <div class="total-panel p-2 glass-card dashboard-card" style="background:var(--card-bg);">
+                                <h3 style="color:var(--text-muted);">TOTAL CASH BALANCE</h3>
                                 <div class="huge-total" id="grand-total-notes">LKR 0.00</div>
                                 <button class="cyber-btn mt-2" onclick="saveCashData()">
                                     <span>COMMIT BALANCES</span>
@@ -568,7 +618,7 @@
                 <div id="tab-collections" class="tab-content">
                     <div class="glass-card border-green">
                         <h2 class="neon-text-green"><i class="fas fa-coins"></i> Credit Bill Settlement Clearing Hub</h2>
-                        <p style="color:#666; margin-bottom:5px;">Process partial or absolute invoice balance collections below:</p>
+                        <p style="color:var(--text-muted); margin-bottom:5px;">Process partial or absolute invoice balance collections below:</p>
                         
                         <h3 class="neon-text-cyan" style="font-size:1.1rem; margin-top:1.5rem;"><i class="fas fa-calendar-day"></i> Today's Processed Collections</h3>
                         <div class="table-container mt-1 border-cyan">
@@ -637,12 +687,12 @@
                         </div>
 
                         <div class="grid-cards">
-                            <div class="glass-card dashboard-card border-cyan"><h4 style="color:#666; font-weight:500; font-size:0.9rem;">Total Computed Gross Sales</h4><p style="font-size:1.8rem; font-weight:bold;" class="neon-text-cyan" id="rep-sales">LKR 0.00</p></div>
-                            <div class="glass-card dashboard-card border-orange"><h4 style="color:#666; font-weight:500; font-size:0.9rem;">Total Account Credit Extensions</h4><p style="font-size:1.8rem; font-weight:bold;" class="neon-text-orange" id="rep-credits">LKR 0.00</p></div>
-                            <div class="glass-card dashboard-card border-green"><h4 style="color:#666; font-weight:500; font-size:0.9rem;">Total Credit Cash Collections</h4><p style="font-size:1.8rem; font-weight:bold;" class="neon-text-green" id="rep-collections">LKR 0.00</p></div>
-                            <div class="glass-card dashboard-card border-red"><h4 style="color:#666; font-weight:500; font-size:0.9rem;">Total System Store Expenses</h4><p style="font-size:1.8rem; font-weight:bold;" class="neon-text-red" id="rep-expenses">LKR 0.00</p></div>
-                            <div class="glass-card dashboard-card border-orange"><h4 style="color:#666; font-weight:500; font-size:0.9rem;">Total Cash Debits</h4><p style="font-size:1.8rem; font-weight:bold;" class="neon-text-orange" id="rep-debits">LKR 0.00</p></div>
-                            <div class="glass-card dashboard-card border-purple"><h4 style="color:#666; font-weight:500; font-size:0.9rem;">Total Staff Salary Advances</h4><p style="font-size:1.8rem; font-weight:bold;" class="neon-text-purple" id="rep-staff">LKR 0.00</p></div>
+                            <div class="glass-card dashboard-card border-cyan"><h4 style="color:var(--text-muted); font-weight:500; font-size:0.9rem;">Total Computed Gross Sales</h4><p style="font-size:1.8rem; font-weight:bold;" class="neon-text-cyan" id="rep-sales">LKR 0.00</p></div>
+                            <div class="glass-card dashboard-card border-orange"><h4 style="color:var(--text-muted); font-weight:500; font-size:0.9rem;">Total Account Credit Extensions</h4><p style="font-size:1.8rem; font-weight:bold;" class="neon-text-orange" id="rep-credits">LKR 0.00</p></div>
+                            <div class="glass-card dashboard-card border-green"><h4 style="color:var(--text-muted); font-weight:500; font-size:0.9rem;">Total Credit Cash Collections</h4><p style="font-size:1.8rem; font-weight:bold;" class="neon-text-green" id="rep-collections">LKR 0.00</p></div>
+                            <div class="glass-card dashboard-card border-red"><h4 style="color:var(--text-muted); font-weight:500; font-size:0.9rem;">Total System Store Expenses</h4><p style="font-size:1.8rem; font-weight:bold;" class="neon-text-red" id="rep-expenses">LKR 0.00</p></div>
+                            <div class="glass-card dashboard-card border-orange"><h4 style="color:var(--text-muted); font-weight:500; font-size:0.9rem;">Total Cash Debits</h4><p style="font-size:1.8rem; font-weight:bold;" class="neon-text-orange" id="rep-debits">LKR 0.00</p></div>
+                            <div class="glass-card dashboard-card border-purple"><h4 style="color:var(--text-muted); font-weight:500; font-size:0.9rem;">Total Staff Salary Advances</h4><p style="font-size:1.8rem; font-weight:bold;" class="neon-text-purple" id="rep-staff">LKR 0.00</p></div>
                         </div>
 
                         <h3 class="neon-text-purple mt-2" style="font-size:1.2rem; margin-top: 2rem;"><i class="fas fa-list-alt"></i> Detailed Transaction Breakdown</h3>
@@ -650,7 +700,7 @@
                             <table class="cyber-table">
                                 <thead><tr><th>Date</th><th>Transaction Type</th><th>Reference / Entity</th><th>Amount (LKR)</th></tr></thead>
                                 <tbody id="detailed-report-tbody">
-                                    <tr><td colspan="4" style="text-align:center; color:#888;">Generate an inquiry to view detailed breakdown.</td></tr>
+                                    <tr><td colspan="4" style="text-align:center; color:var(--text-muted);">Generate an inquiry to view detailed breakdown.</td></tr>
                                 </tbody>
                             </table>
                         </div>
@@ -661,7 +711,7 @@
                     <div class="glass-card border-cyan">
                         <h2 class="neon-text-cyan"><i class="fas fa-cog"></i> Master System Adjustments</h2>
                         <div class="settings-grid mt-2" style="display:grid; grid-template-columns:1fr 1fr; gap:20px;">
-                            <div class="glass-card dashboard-card" style="background:#fff;">
+                            <div class="glass-card dashboard-card" style="background:var(--card-bg);">
                                 <h3>Botanical Themes</h3>
                                 <div style="display:flex; gap:10px; margin-top:10px;">
                                     <div style="width:30px; height:30px; background:#2e8b57; border-radius:50%; cursor:pointer; box-shadow:0 2px 5px rgba(0,0,0,0.2);" onclick="changeAccent('#2e8b57')"></div>
@@ -669,13 +719,13 @@
                                     <div style="width:30px; height:30px; background:#8fbc8f; border-radius:50%; cursor:pointer; box-shadow:0 2px 5px rgba(0,0,0,0.2);" onclick="changeAccent('#8fbc8f')"></div>
                                 </div>
                             </div>
-                            <div class="glass-card dashboard-card" style="background:#fff;">
+                            <div class="glass-card dashboard-card" style="background:var(--card-bg);">
                                 <h3>System Data Backup</h3>
                                 <button class="cyber-btn-small" style="width:100%; margin-top:10px; background:var(--green);" onclick="downloadBackup()">DOWNLOAD FULL BACKUP</button>
                             </div>
                         </div>
 
-                        <div class="glass-card summary-center border-purple mt-2" style="background:#fff;">
+                        <div class="glass-card summary-center border-purple mt-2" style="background:var(--card-bg);">
                             <h3 class="neon-text-purple" style="margin-bottom: 1rem;"><i class="fas fa-terminal"></i> Global Operational Log Engine</h3>
                             <div class="system-log-box" id="system-log-terminal-settings"></div>
                         </div>
@@ -694,7 +744,8 @@
     <div id="modal-company" class="modal-overlay"><div class="glass-card cyber-modal border-purple"><div class="modal-header"><h3 class="neon-text-purple"><i class="fas fa-industry"></i> Add/Edit Vendor Company</h3><button class="modal-close" onclick="closeModal('modal-company')">&times;</button></div><div class="form-group"><label>Company Name</label><input type="text" id="form-cmp-name" placeholder="Vendor Co..."></div><div class="form-group"><label>Sales Person</label><input type="text" id="form-cmp-salesperson" placeholder="Representative Name..."></div><div class="form-group"><label>Contact Number</label><input type="text" id="form-cmp-contact" placeholder="07..."></div><div class="modal-footer-btns"><button class="cyber-btn-small" style="background:var(--purple);" onclick="submitCompanyForm()">SAVE VENDOR</button></div></div></div>
     <div id="modal-customer" class="modal-overlay"><div class="glass-card cyber-modal border-orange"><div class="modal-header"><h3 class="neon-text-orange"><i class="fas fa-address-book"></i> Add/Edit Customer Profile</h3><button class="modal-close" onclick="closeModal('modal-customer')">&times;</button></div><div class="form-group"><label>Customer Name</label><input type="text" id="form-cus-name" placeholder="Client Name..."></div><div class="form-group"><label>Address</label><input type="text" id="form-cus-address" placeholder="Client Address..."></div><div class="form-group"><label>Contact No</label><input type="text" id="form-cus-contact" placeholder="07..."></div><div class="form-group"><label>WhatsApp No</label><input type="text" id="form-cus-wa" placeholder="07..."></div><div class="modal-footer-btns"><button class="cyber-btn-small" style="background:var(--orange);" onclick="submitCustomerForm()">SAVE CUSTOMER</button></div></div></div>
     <div id="modal-customer-invoices" class="modal-overlay"><div class="glass-card cyber-modal border-cyan" style="max-width: 650px;"><div class="modal-header"><h3 class="neon-text-cyan"><i class="fas fa-file-invoice"></i> Invoices: <span id="view-inv-customer-name"></span></h3><button class="modal-close" onclick="closeModal('modal-customer-invoices')">&times;</button></div><div class="table-container mt-1" style="box-shadow:none;"><table class="cyber-table"><thead><tr><th>Date</th><th>Inv No</th><th>Total (LKR)</th><th>Paid (LKR)</th><th>Status</th></tr></thead><tbody id="customer-invoices-tbody"></tbody></table></div></div></div>
-    <div id="modal-customer-payment" class="modal-overlay"><div class="glass-card cyber-modal border-green"><div class="modal-header"><h3 class="neon-text-green"><i class="fas fa-money-bill-wave"></i> Process Global Customer Payment</h3><button class="modal-close" onclick="closeModal('modal-customer-payment')">&times;</button></div><input type="hidden" id="form-cus-pay-name"><p style="color:var(--orange); margin-bottom:15px; font-weight:bold;">Paying for: <span id="cus-pay-target-label"></span></p><div class="form-group"><label>Payment Mode</label><select id="form-cus-pay-type"><option value="cash">Cash</option><option value="cheq">Cheque</option></select></div><div class="form-group"><label>Total Paying Amount (LKR)</label><input type="number" id="form-cus-pay-amount" placeholder="0.00"></div><div class="form-group"><label>Payment Received Date</label><input type="date" id="form-cus-pay-date"></div><p style="color:#888; font-size:0.9rem;">System will automatically clear the oldest invoices first until funds are exhausted.</p><div class="modal-footer-btns"><button class="cyber-btn-small" style="background:var(--green);" onclick="submitCustomerAutoPay()">PROCESS & CLEAR BILLS</button></div></div></div>
+    
+    <div id="modal-customer-payment" class="modal-overlay"><div class="glass-card cyber-modal border-green"><div class="modal-header"><h3 class="neon-text-green"><i class="fas fa-money-bill-wave"></i> Process Global Customer Payment</h3><button class="modal-close" onclick="closeModal('modal-customer-payment')">&times;</button></div><input type="hidden" id="form-cus-pay-name"><p style="color:var(--orange); margin-bottom:15px; font-weight:bold;">Paying for: <span id="cus-pay-target-label"></span></p><div class="form-group"><label>Payment Mode</label><select id="form-cus-pay-type"><option value="cash">Cash</option><option value="cheq">Cheque</option></select></div><div class="form-group"><label style="display:flex; justify-content:space-between; align-items:center;">Total Paying Amount (LKR)<button type="button" class="cyber-btn-small" style="padding: 4px 8px; font-size: 0.8rem; background: var(--green); margin-top: 0;" onclick="setFullCustomerPaymentAmount()">FULL AMOUNT</button></label><input type="number" id="form-cus-pay-amount" placeholder="0.00"></div><div class="form-group"><label>Payment Received Date</label><input type="date" id="form-cus-pay-date"></div><p style="color:var(--text-muted); font-size:0.9rem;">System will automatically clear the oldest invoices first until funds are exhausted.</p><div class="modal-footer-btns"><button class="cyber-btn-small" style="background:var(--green);" onclick="submitCustomerAutoPay()">PROCESS & CLEAR BILLS</button></div></div></div>
 
     <div id="modal-customer-payment-history" class="modal-overlay">
         <div class="glass-card cyber-modal border-purple" style="max-width: 650px;">
@@ -738,6 +789,32 @@
 
     <script>
         /* =========================================
+           THEME ENGINE (DARK/LIGHT)
+           ========================================= */
+        function initTheme() {
+            const savedTheme = localStorage.getItem('theme');
+            const icon = document.querySelector('#theme-toggle i');
+            if (savedTheme === 'dark') {
+                document.documentElement.setAttribute('data-theme', 'dark');
+                if(icon) icon.className = 'fas fa-sun';
+            }
+        }
+
+        function toggleTheme() {
+            const root = document.documentElement;
+            const icon = document.querySelector('#theme-toggle i');
+            if (root.getAttribute('data-theme') === 'dark') {
+                root.removeAttribute('data-theme');
+                localStorage.setItem('theme', 'light');
+                icon.className = 'fas fa-moon';
+            } else {
+                root.setAttribute('data-theme', 'dark');
+                localStorage.setItem('theme', 'dark');
+                icon.className = 'fas fa-sun';
+            }
+        }
+
+        /* =========================================
            FIREBASE INFRASTRUCTURE INITIALIZATION
            ========================================= */
         const firebaseConfig = {
@@ -775,6 +852,7 @@
         let currentCustomerHistoryRecords = [];
 
         document.addEventListener("DOMContentLoaded", () => {
+            initTheme(); // Initialize theme preference immediately
             document.getElementById('system-date-picker').value = activeDate;
             setupClock();
             checkLoginState();
@@ -1368,7 +1446,7 @@
             });
 
             if(tbody.innerHTML === '') {
-                tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; color:#888; padding:20px;">No historical invoices found.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; color:var(--text-muted); padding:20px;">No historical invoices found.</td></tr>`;
             }
             openModal('modal-customer-invoices');
         }
@@ -1438,7 +1516,7 @@
 
             // 3. Render Table
             if(displayRecords.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; color:#888; padding:20px;">No matching payment history found.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; color:var(--text-muted); padding:20px;">No matching payment history found.</td></tr>`;
             } else {
                 displayRecords.forEach(record => {
                     tbody.innerHTML += `<tr>
@@ -1473,6 +1551,14 @@
             document.getElementById('form-cus-pay-amount').value = '';
             document.getElementById('form-cus-pay-date').value = todayActualISO;
             openModal('modal-customer-payment');
+        }
+
+        function setFullCustomerPaymentAmount() {
+            const customerName = document.getElementById('form-cus-pay-name').value;
+            if (customerName) {
+                const totalOut = calculateCustomerOutstanding(customerName);
+                document.getElementById('form-cus-pay-amount').value = totalOut;
+            }
         }
 
         function submitCustomerAutoPay() {
@@ -1847,7 +1933,7 @@
                                 <td>${bill.billNo}</td>
                                 <td class="neon-text-red" style="font-weight:600;">
                                     ${fmtLKR(outstandingDue)} 
-                                    <div style="font-size:0.8rem; color:#888; margin-top:4px; font-weight:normal;">Total: ${fmtLKR(totalAmount)}</div>
+                                    <div style="font-size:0.8rem; color:var(--text-muted); margin-top:4px; font-weight:normal;">Total: ${fmtLKR(totalAmount)}</div>
                                 </td>
                                 <td><span class="badge ${statusBadgeClass}">${bill.status}</span></td>
                                 <td style="color:var(--green); font-weight:bold;">${settledDateStr}</td>
@@ -1872,7 +1958,7 @@
             }).filter(cust => cust.outstanding > 0).sort((a, b) => a.outstanding - b.outstanding);
 
             if (sortedCustomers.length === 0) {
-                allBody.innerHTML = `<tr><td colspan="4" style="text-align:center; color:#888; padding: 20px;">No outstanding credit balances found.</td></tr>`;
+                allBody.innerHTML = `<tr><td colspan="4" style="text-align:center; color:var(--text-muted); padding: 20px;">No outstanding credit balances found.</td></tr>`;
             } else {
                 sortedCustomers.forEach(cust => {
                     totalAllOutstanding += cust.outstanding;
@@ -1944,7 +2030,7 @@
             });
 
             if(!hasTodayCollections) {
-                todayBody.innerHTML = `<tr><td colspan="5" style="text-align:center; color:#888; padding:20px;">No credit collections recorded for today's shift yet.</td></tr>`;
+                todayBody.innerHTML = `<tr><td colspan="5" style="text-align:center; color:var(--text-muted); padding:20px;">No credit collections recorded for today's shift yet.</td></tr>`;
             }
         }
 
@@ -2360,7 +2446,7 @@
             detailedLogs.sort((a,b) => a.date.localeCompare(b.date));
             
             if(detailedLogs.length === 0) {
-                detailedBody.innerHTML = `<tr><td colspan="4" style="text-align:center; color:#888;">No transactions found for this date range.</td></tr>`;
+                detailedBody.innerHTML = `<tr><td colspan="4" style="text-align:center; color:var(--text-muted);">No transactions found for this date range.</td></tr>`;
             } else {
                 detailedLogs.forEach(log => {
                     detailedBody.innerHTML += `<tr>
