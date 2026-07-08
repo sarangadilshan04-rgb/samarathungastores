@@ -11,6 +11,25 @@
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 
+    <script>
+        // Disable Right-Click context menu
+        document.addEventListener('contextmenu', event => event.preventDefault());
+
+        // Disable common developer tool keyboard shortcuts
+        document.addEventListener('keydown', function(e) {
+            if (
+                e.key === 'F12' || 
+                (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'i')) || // Ctrl+Shift+I
+                (e.ctrlKey && e.shiftKey && (e.key === 'J' || e.key === 'j')) || // Ctrl+Shift+J
+                (e.ctrlKey && (e.key === 'U' || e.key === 'u')) ||               // Ctrl+U (View Source)
+                (e.ctrlKey && e.shiftKey && (e.key === 'C' || e.key === 'c'))    // Ctrl+Shift+C
+            ) {
+                e.preventDefault();
+                return false;
+            }
+        });
+    </script>
+
     <style>
         /* =========================================
            CLEAN BOTANICAL UI & COLOR SYSTEM
