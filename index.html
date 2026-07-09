@@ -11,6 +11,8 @@
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
     <script>
         // Disable Right-Click context menu
         document.addEventListener('contextmenu', event => event.preventDefault());
@@ -414,6 +416,7 @@
 
             <main id="content">
                 <div id="tab-dashboard" class="tab-content active">
+                    
                     <div class="grid-cards">
                         <div class="glass-card stat-card dashboard-card border-cyan">
                             <div class="stat-header">Gross Daily Sales <i class="fas fa-edit neon-text-cyan" style="margin-left:auto; cursor:pointer;" onclick="openSalesModal()"></i></div>
@@ -430,6 +433,13 @@
                         <div class="glass-card stat-card dashboard-card border-red">
                             <div class="stat-header">Store Expenses</div>
                             <div class="stat-value neon-text-red skeleton-loading" id="stat-expenses">LKR 0.00</div>
+                        </div>
+                    </div>
+
+                    <div class="glass-card dashboard-card border-cyan mt-2" style="padding: 1.5rem; background: var(--card-bg);">
+                        <h3 class="neon-text-cyan" style="margin-bottom: 1rem;"><i class="fas fa-chart-area"></i> 7-Day Performance Analytics</h3>
+                        <div style="height: 300px; width: 100%;">
+                            <canvas id="dashboardChart"></canvas>
                         </div>
                     </div>
 
@@ -623,8 +633,7 @@
                                     <tr>
                                         <th>Customer Name</th>
                                         <th>Total Outstanding</th>
-                                        <th>View Invoices</th>
-                                        <th>Action</th>
+                                        <th>Ledger Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody id="credit-all-tbody"></tbody>
@@ -762,12 +771,13 @@
     <div id="modal-sales" class="modal-overlay"><div class="glass-card cyber-modal border-cyan"><div class="modal-header"><h3 class="neon-text-cyan"><i class="fas fa-edit"></i> Edit Shift Gross Sales</h3><button class="modal-close" onclick="closeModal('modal-sales')">&times;</button></div><div class="form-group"><label>Daily Cash / Gross Sales Value (LKR)</label><input type="number" id="input-sales-value"></div><div class="modal-footer-btns"><button class="cyber-btn-small" onclick="submitDailySale()">UPDATE STATE</button></div></div></div>
     <div id="modal-company" class="modal-overlay"><div class="glass-card cyber-modal border-purple"><div class="modal-header"><h3 class="neon-text-purple"><i class="fas fa-industry"></i> Add/Edit Vendor Company</h3><button class="modal-close" onclick="closeModal('modal-company')">&times;</button></div><div class="form-group"><label>Company Name</label><input type="text" id="form-cmp-name" placeholder="Vendor Co..."></div><div class="form-group"><label>Sales Person</label><input type="text" id="form-cmp-salesperson" placeholder="Representative Name..."></div><div class="form-group"><label>Contact Number</label><input type="text" id="form-cmp-contact" placeholder="07..."></div><div class="modal-footer-btns"><button class="cyber-btn-small" style="background:var(--purple);" onclick="submitCompanyForm()">SAVE VENDOR</button></div></div></div>
     <div id="modal-customer" class="modal-overlay"><div class="glass-card cyber-modal border-orange"><div class="modal-header"><h3 class="neon-text-orange"><i class="fas fa-address-book"></i> Add/Edit Customer Profile</h3><button class="modal-close" onclick="closeModal('modal-customer')">&times;</button></div><div class="form-group"><label>Customer Name</label><input type="text" id="form-cus-name" placeholder="Client Name..."></div><div class="form-group"><label>Address</label><input type="text" id="form-cus-address" placeholder="Client Address..."></div><div class="form-group"><label>Contact No</label><input type="text" id="form-cus-contact" placeholder="07..."></div><div class="form-group"><label>WhatsApp No</label><input type="text" id="form-cus-wa" placeholder="07..."></div><div class="modal-footer-btns"><button class="cyber-btn-small" style="background:var(--orange);" onclick="submitCustomerForm()">SAVE CUSTOMER</button></div></div></div>
-    <div id="modal-customer-invoices" class="modal-overlay"><div class="glass-card cyber-modal border-cyan" style="max-width: 650px;"><div class="modal-header"><h3 class="neon-text-cyan"><i class="fas fa-file-invoice"></i> Invoices: <span id="view-inv-customer-name"></span></h3><button class="modal-close" onclick="closeModal('modal-customer-invoices')">&times;</button></div><div class="table-container mt-1" style="box-shadow:none;"><table class="cyber-table"><thead><tr><th>Date</th><th>Inv No</th><th>Total (LKR)</th><th>Paid (LKR)</th><th>Status</th></tr></thead><tbody id="customer-invoices-tbody"></tbody></table></div></div></div>
+    
+    <div id="modal-customer-invoices" class="modal-overlay"><div class="glass-card cyber-modal border-cyan" style="max-width: 850px;"><div class="modal-header"><h3 class="neon-text-cyan"><i class="fas fa-file-invoice"></i> Invoices: <span id="view-inv-customer-name"></span></h3><button class="modal-close" onclick="closeModal('modal-customer-invoices')">&times;</button></div><div class="table-container mt-1" style="box-shadow:none;"><table class="cyber-table"><thead><tr><th>Date</th><th>Inv No</th><th>Total (LKR)</th><th>Paid (LKR)</th><th>Status</th></tr></thead><tbody id="customer-invoices-tbody"></tbody></table></div></div></div>
     
     <div id="modal-customer-payment" class="modal-overlay"><div class="glass-card cyber-modal border-green"><div class="modal-header"><h3 class="neon-text-green"><i class="fas fa-money-bill-wave"></i> Process Global Customer Payment</h3><button class="modal-close" onclick="closeModal('modal-customer-payment')">&times;</button></div><input type="hidden" id="form-cus-pay-name"><p style="color:var(--orange); margin-bottom:15px; font-weight:bold;">Paying for: <span id="cus-pay-target-label"></span></p><div class="form-group"><label>Payment Mode</label><select id="form-cus-pay-type"><option value="cash">Cash</option><option value="cheq">Cheque</option></select></div><div class="form-group"><label style="display:flex; justify-content:space-between; align-items:center;">Total Paying Amount (LKR)<button type="button" class="cyber-btn-small" style="padding: 4px 8px; font-size: 0.8rem; background: var(--green); margin-top: 0;" onclick="setFullCustomerPaymentAmount()">FULL AMOUNT</button></label><input type="number" id="form-cus-pay-amount" placeholder="0.00"></div><div class="form-group"><label>Payment Received Date</label><input type="date" id="form-cus-pay-date"></div><p style="color:var(--text-muted); font-size:0.9rem;">System will automatically clear the oldest invoices first until funds are exhausted.</p><div class="modal-footer-btns"><button class="cyber-btn-small" style="background:var(--green);" onclick="submitCustomerAutoPay()">PROCESS & CLEAR BILLS</button></div></div></div>
 
     <div id="modal-customer-payment-history" class="modal-overlay">
-        <div class="glass-card cyber-modal border-purple" style="max-width: 650px;">
+        <div class="glass-card cyber-modal border-purple" style="max-width: 850px;">
             <div class="modal-header">
                 <h3 class="neon-text-purple"><i class="fas fa-history"></i> Ledger History: <span id="view-hist-customer-name"></span></h3>
                 <button class="modal-close" onclick="closeModal('modal-customer-payment-history')">&times;</button>
@@ -840,6 +850,8 @@
                 localStorage.setItem('theme', 'dark');
                 icon.className = 'fas fa-sun';
             }
+            // Optional chart re-render
+            setTimeout(renderDashboardChart, 350); 
         }
 
         /* =========================================
@@ -864,6 +876,7 @@
         
         let masterTimeline = {};
         let appData = {};
+        let dashChartInstance = null; // Chart.js global instance
 
         // Edit Tracking Variables
         let editCompanyIdx = -1;
@@ -1076,9 +1089,18 @@
         const fmtLKR = val => new Intl.NumberFormat('en-LK', { style: 'currency', currency: 'LKR' }).format(val || 0);
 
         /* =========================================
-           DASHBOARD REALTIME CALCULATORS
+           DASHBOARD REALTIME CALCULATORS & CHARTS
            ========================================= */
         function calculateOperationalDashboardAggregates() {
+            // Calculate Global Outstanding across all customers
+            let globalOutstanding = 0;
+            const reg = masterTimeline["GLOBAL_REGISTRY"];
+            if (reg && reg.customers) {
+                reg.customers.forEach(c => {
+                    globalOutstanding += calculateCustomerOutstanding(c.name);
+                });
+            }
+
             let physicalCash = parseFloat(appData.dashboard.cash || 0);
             let grossSales = parseFloat(appData.dashboard.sales || 0);
 
@@ -1174,6 +1196,97 @@
                 formulaEl.style.color = "var(--green)";
                 if (formulaMsg) formulaMsg.innerHTML = 'Target: 0.00 | Includes Bank Transfers';
             }
+
+            // Draw Analytics Graph
+            renderDashboardChart();
+        }
+
+        function renderDashboardChart() {
+            if (typeof Chart === 'undefined') return;
+
+            let dates = [];
+            let targetDate = new Date(activeDate);
+            // Get past 7 days up to activeDate
+            for(let i=6; i>=0; i--) {
+                let d = new Date(targetDate);
+                d.setDate(d.getDate() - i);
+                dates.push(d.toISOString().split('T')[0]);
+            }
+
+            let sysSalesData = [];
+            let cashSalesData = [];
+            let creditSalesData = [];
+            let collectionData = [];
+
+            dates.forEach(dKey => {
+                let dayData = masterTimeline[dKey] || {};
+                let sysSale = parseFloat(dayData.dashboard?.sales || 0);
+                
+                let credSale = 0;
+                if(dayData.creditBills) {
+                    dayData.creditBills.forEach(b => credSale += parseFloat(b.amount || 0));
+                }
+
+                let collection = 0;
+                // Scan all dates to see if any payment happened ON `dKey`
+                Object.keys(masterTimeline).forEach(anyDate => {
+                    if(anyDate === "GLOBAL_REGISTRY") return;
+                    let node = masterTimeline[anyDate];
+                    if(node.creditBills) {
+                        node.creditBills.forEach(bill => {
+                            if (bill.paymentHistory) {
+                                bill.paymentHistory.forEach(pay => {
+                                    if(pay.date === dKey) collection += parseFloat(pay.amount || 0);
+                                });
+                            } else if (bill.clearedOnDate === dKey && bill.status === 'cleared') {
+                                collection += parseFloat(bill.amount || 0);
+                            }
+                        });
+                    }
+                });
+
+                // Compute Cash Sale portion
+                let cashSale = sysSale - credSale;
+                if(cashSale < 0) cashSale = 0;
+
+                sysSalesData.push(sysSale);
+                creditSalesData.push(credSale);
+                collectionData.push(collection);
+                cashSalesData.push(cashSale);
+            });
+
+            const ctx = document.getElementById('dashboardChart');
+            if(!ctx) return;
+
+            if(dashChartInstance) dashChartInstance.destroy();
+
+            const textColor = getComputedStyle(document.documentElement).getPropertyValue('--text-muted').trim() || '#666';
+            const gridColor = getComputedStyle(document.documentElement).getPropertyValue('--border-color').trim() || '#ddd';
+
+            dashChartInstance = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: dates,
+                    datasets: [
+                        { label: 'System Sales', data: sysSalesData, borderColor: '#2e8b57', backgroundColor: 'rgba(46,139,87,0.1)', fill: true, tension: 0.3 },
+                        { label: 'Cash Sales', data: cashSalesData, borderColor: '#22c55e', backgroundColor: 'transparent', borderDash: [5, 5], tension: 0.3 },
+                        { label: 'Credit Sales', data: creditSalesData, borderColor: '#d84315', backgroundColor: 'transparent', tension: 0.3 },
+                        { label: 'Collections', data: collectionData, borderColor: '#3b82f6', backgroundColor: 'transparent', tension: 0.3 }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: { mode: 'index', intersect: false },
+                    plugins: {
+                        legend: { labels: { color: textColor, font: { family: 'Poppins' } } }
+                    },
+                    scales: {
+                        x: { ticks: { color: textColor }, grid: { color: gridColor } },
+                        y: { ticks: { color: textColor }, grid: { color: gridColor }, beginAtZero: true }
+                    }
+                }
+            });
         }
 
         function openSalesModal() {
@@ -1480,7 +1593,7 @@
             openModal('modal-customer-invoices');
         }
 
-        // MODIFIED: Aggregates ledger history so it shows one total for Credits and one for Collections per day
+        // AGGREGATES LEDGER HISTORY
         function viewCustomerPaymentHistory(customerName) {
             document.getElementById('view-hist-customer-name').innerText = customerName;
             let tempRecords = [];
@@ -1565,7 +1678,7 @@
             openModal('modal-customer-payment-history');
         }
 
-        // MODIFIED: Renders the aggregated grouped ledger history
+        // RENDERS AGGREGATED LEDGER HISTORY
         function renderHistoryTable() {
             const tbody = document.getElementById('customer-history-tbody');
             tbody.innerHTML = '';
@@ -1578,7 +1691,6 @@
             if (sortBy === 'date-desc') {
                 currentDisplayRecords.sort((a, b) => b.date.localeCompare(a.date));
             } 
-            // date-asc is already the default from the calculation stage
 
             // Render Table
             if(currentDisplayRecords.length === 0) {
@@ -1605,7 +1717,6 @@
             }
         }
 
-        // NEW: Sub-modal trigger to see specific invoices making up the daily total
         function viewDayDetails(index) {
             const record = currentDisplayRecords[index];
             document.getElementById('view-day-details-title').innerText = `${record.date} - ${record.type}s`;
@@ -2047,7 +2158,7 @@
                 }
             });
 
-            // 4. RENDER NEW CUSTOMER-WISE OUTSTANDING TABLE
+            // 4. RENDER NEW CUSTOMER-WISE OUTSTANDING TABLE WITH HISTORY BUTTON
             let totalAllOutstanding = 0;
 
             // Convert aggregated map to array, filter out zero balances, and sort ascending by amount
@@ -2056,7 +2167,7 @@
             }).filter(cust => cust.outstanding > 0).sort((a, b) => a.outstanding - b.outstanding);
 
             if (sortedCustomers.length === 0) {
-                allBody.innerHTML = `<tr><td colspan="4" style="text-align:center; color:var(--text-muted); padding: 20px;">No outstanding credit balances found.</td></tr>`;
+                allBody.innerHTML = `<tr><td colspan="3" style="text-align:center; color:var(--text-muted); padding: 20px;">No outstanding credit balances found.</td></tr>`;
             } else {
                 sortedCustomers.forEach(cust => {
                     totalAllOutstanding += cust.outstanding;
@@ -2065,10 +2176,9 @@
                             <td><strong class="neon-text-orange">${cust.name}</strong></td>
                             <td class="neon-text-red" style="font-weight:bold; font-size: 1.05rem;">${fmtLKR(cust.outstanding)}</td>
                             <td>
-                                <button class="cyber-btn-small" style="padding:6px 12px; background:var(--cyan); margin-top:0;" onclick="viewCustomerInvoices('${cust.name}')"><i class="fas fa-eye"></i> VIEW BILLS</button>
-                            </td>
-                            <td>
-                                <button class="cyber-btn-small" style="padding:6px 12px; background:var(--green); margin-top:0;" onclick="openCustomerPayment('${cust.name}')"><i class="fas fa-money-bill-wave"></i> PROCESS PAY</button>
+                                <button class="cyber-btn-small" style="padding:6px 12px; background:var(--cyan); margin-top:0; margin-right:5px;" onclick="viewCustomerInvoices('${cust.name}')"><i class="fas fa-eye"></i> BILLS</button>
+                                <button class="cyber-btn-small" style="padding:6px 12px; background:var(--purple); margin-top:0; margin-right:5px;" onclick="viewCustomerPaymentHistory('${cust.name}')"><i class="fas fa-history"></i> HISTORY</button>
+                                <button class="cyber-btn-small" style="padding:6px 12px; background:var(--green); margin-top:0;" onclick="openCustomerPayment('${cust.name}')"><i class="fas fa-money-bill-wave"></i> PAY</button>
                             </td>
                         </tr>`;
                 });
@@ -2079,7 +2189,7 @@
                 allFoot.innerHTML = `
                     <tr style="background: rgba(216, 67, 21, 0.05); border-top: 2px solid var(--orange);">
                         <td style="text-align:right; font-weight:bold; font-size:1.1rem; padding: 15px;">TOTAL SYSTEM OUTSTANDING:</td>
-                        <td class="neon-text-red" style="font-weight:bold; font-size:1.2rem; padding: 15px;" colspan="3">${fmtLKR(totalAllOutstanding)}</td>
+                        <td class="neon-text-red" style="font-weight:bold; font-size:1.2rem; padding: 15px;" colspan="2">${fmtLKR(totalAllOutstanding)}</td>
                     </tr>
                 `;
             }
@@ -2587,6 +2697,11 @@
                 input.value = '';
                 input.dispatchEvent(new Event('keyup'));
             });
+            
+            // Specific re-renders for layout bugs hidden in CSS display:none
+            if(tabId === 'dashboard' && window.dashChartInstance) {
+                window.dashChartInstance.resize();
+            }
         }
 
         document.getElementById('menu-toggle').addEventListener('click', () => { document.getElementById('sidebar').classList.toggle('open'); });
