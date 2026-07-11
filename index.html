@@ -61,6 +61,9 @@
             --orange: #d84315; 
             --red: #c62828; 
             --whatsapp: #25D366;
+            --wa-bg: #efeae2;
+            --wa-msg-out: #d9fdd3;
+            --wa-msg-in: #ffffff;
             
             --text: #2c3e2e; 
             --text-muted: #666666;
@@ -93,6 +96,10 @@
             --orange: #f97316;
             --red: #ef4444;
 
+            --wa-bg: #0b141a;
+            --wa-msg-out: #005c4b;
+            --wa-msg-in: #202c33;
+
             --text: #e0e0e0;
             --text-muted: #a0a0a0;
         }
@@ -120,6 +127,7 @@
         .neon-text-green { color: var(--green); font-weight: 600; }
         .neon-text-orange { color: var(--orange); font-weight: 600; }
         .neon-text-red { color: var(--red); font-weight: 600; }
+        .neon-text-wa { color: var(--whatsapp); font-weight: 600; }
 
         .border-cyan { border-top: 4px solid var(--cyan); }
         .border-green { border-top: 4px solid var(--green); }
@@ -200,6 +208,33 @@
             border: 1px solid #3b82f6 !important; 
             animation: soft-pulse-blue 2s infinite;
         }
+
+        /* WHATSAPP UI CSS */
+        .wa-container { display: flex; height: calc(100vh - 220px); margin-bottom: 20px; border-radius: 12px; overflow: hidden; border: 1px solid var(--border-color); background: var(--card-bg); box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+        .wa-sidebar { width: 350px; border-right: 1px solid var(--border-color); display: flex; flex-direction: column; background: var(--table-header); }
+        .wa-sidebar-header { padding: 15px; background: var(--card-bg); border-bottom: 1px solid var(--border-color); font-weight: 600; color: var(--text); display: flex; justify-content: space-between; align-items: center; }
+        .wa-search { padding: 10px 15px; background: var(--table-header); }
+        .wa-search input { width: 100%; padding: 8px 15px; border-radius: 20px; border: 1px solid var(--border-color); background: var(--card-bg); color: var(--text); outline: none; font-size: 0.9rem; }
+        .wa-chat-list { flex: 1; overflow-y: auto; }
+        .wa-chat-item { padding: 15px; border-bottom: 1px solid var(--border-color); cursor: pointer; display: flex; align-items: center; gap: 15px; transition: background 0.2s; }
+        .wa-chat-item:hover { background: rgba(0,0,0,0.02); }
+        .wa-chat-item.active { background: rgba(37, 211, 102, 0.1); }
+        .wa-avatar { width: 45px; height: 45px; border-radius: 50%; background: var(--cyan); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; }
+        .wa-chat-info { flex: 1; overflow: hidden; }
+        .wa-chat-name { font-weight: 600; color: var(--text); margin-bottom: 3px; font-size: 0.95rem; }
+        .wa-chat-preview { font-size: 0.85rem; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        
+        .wa-main { flex: 1; display: flex; flex-direction: column; background: var(--wa-bg); }
+        .wa-main-header { padding: 15px 20px; background: var(--card-bg); border-bottom: 1px solid var(--border-color); display: flex; align-items: center; gap: 15px; }
+        .wa-messages { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; }
+        .wa-bubble { max-width: 65%; padding: 10px 15px; border-radius: 8px; font-size: 0.95rem; line-height: 1.4; position: relative; }
+        .wa-bubble-out { background: var(--wa-msg-out); color: var(--text); align-self: flex-end; border-top-right-radius: 0; box-shadow: 0 1px 2px rgba(0,0,0,0.1); }
+        .wa-bubble-in { background: var(--wa-msg-in); color: var(--text); align-self: flex-start; border-top-left-radius: 0; box-shadow: 0 1px 2px rgba(0,0,0,0.1); }
+        .wa-bubble-time { font-size: 0.7rem; color: var(--text-muted); text-align: right; margin-top: 5px; display: block; }
+        .wa-input-area { padding: 15px 20px; background: var(--card-bg); display: flex; gap: 15px; align-items: center; border-top: 1px solid var(--border-color); }
+        .wa-input-area textarea { flex: 1; padding: 12px 15px; border-radius: 20px; border: 1px solid var(--border-color); background: var(--input-bg); color: var(--text); outline: none; resize: none; height: 45px; font-family: var(--font-main); }
+        .wa-send-btn { width: 45px; height: 45px; border-radius: 50%; background: var(--whatsapp); color: #fff; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; transition: transform 0.2s; }
+        .wa-send-btn:hover { transform: scale(1.05); }
 
         /* ========================================= */
 
@@ -399,6 +434,7 @@
                 </div>
                 <ul class="nav-links">
                     <li class="active" onclick="switchTab('dashboard')"><i class="fas fa-chart-line"></i> Dashboard</li>
+                    <li onclick="switchTab('whatsapp')"><i class="fab fa-whatsapp" style="color:var(--whatsapp)"></i> WhatsApp Hub</li>
                     <li onclick="switchTab('cash')"><i class="fas fa-wallet"></i> Cash Calculator</li>
                     <li onclick="switchTab('expenses')"><i class="fas fa-file-invoice-dollar"></i> Expenses</li>
                     <li onclick="switchTab('debits')"><i class="fas fa-hand-holding-usd"></i> Cash Debits</li>
@@ -481,6 +517,50 @@
                     <div class="glass-card summary-center border-purple">
                         <h3 class="neon-text-purple" style="margin-bottom: 1rem;"><i class="fas fa-terminal"></i> Global Operational Log Engine</h3>
                         <div class="system-log-box" id="system-log-terminal"></div>
+                    </div>
+                </div>
+
+                <div id="tab-whatsapp" class="tab-content" style="padding: 1.5rem; height: 100%;">
+                    <div class="flex-between" style="margin-bottom: 1rem;">
+                        <h2 class="neon-text-wa"><i class="fab fa-whatsapp"></i> WhatsApp Management Hub</h2>
+                        <div>
+                            <button class="cyber-btn-small" style="background:var(--whatsapp);" onclick="startBulkWA()"><i class="fas fa-users"></i> NEW BULK MESSAGE</button>
+                        </div>
+                    </div>
+                    
+                    <div class="wa-container">
+                        <div class="wa-sidebar">
+                            <div class="wa-sidebar-header">
+                                <span>Categories / Logs</span>
+                                <i class="fas fa-ellipsis-v" style="color:var(--text-muted); cursor:pointer;"></i>
+                            </div>
+                            <div class="wa-search">
+                                <input type="text" id="wa-search-input" placeholder="Search logs or customers..." onkeyup="filterWaLogs()">
+                            </div>
+                            <div class="wa-chat-list" id="wa-log-list">
+                                </div>
+                        </div>
+                        
+                        <div class="wa-main">
+                            <div class="wa-main-header">
+                                <div class="wa-avatar" id="wa-current-avatar"><i class="fas fa-user"></i></div>
+                                <div>
+                                    <h3 class="wa-chat-name" id="wa-current-target">Select a log or create new</h3>
+                                    <p style="font-size: 0.8rem; color:var(--text-muted);" id="wa-current-status">System integrated</p>
+                                </div>
+                            </div>
+                            
+                            <div class="wa-messages" id="wa-message-container">
+                                <div class="wa-bubble wa-bubble-in">
+                                    Welcome to the WhatsApp Hub. Select a recipient from the left or generate a new message to send. Notifications for Credit Bills and Payments will appear here.
+                                </div>
+                            </div>
+                            
+                            <div class="wa-input-area">
+                                <textarea id="wa-message-input" placeholder="Type a message..."></textarea>
+                                <button class="wa-send-btn" onclick="sendCustomWA()"><i class="fas fa-paper-plane"></i></button>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
@@ -800,12 +880,12 @@
     </div>
 
     <div id="modal-day-details" class="modal-overlay">
-        <div class="glass-card cyber-modal border-cyan" style="max-width: 850px;">
+        <div class="glass-card cyber-modal border-cyan" style="max-width: 500px;">
             <div class="modal-header">
                 <h3 class="neon-text-cyan"><i class="fas fa-list"></i> Details: <span id="view-day-details-title"></span></h3>
                 <button class="modal-close" onclick="closeModal('modal-day-details')">&times;</button>
             </div>
-            <div class="table-container mt-1" style="box-shadow:none; max-height: 600px; overflow-y: auto;">
+            <div class="table-container mt-1" style="box-shadow:none; max-height: 300px; overflow-y: auto;">
                 <table class="cyber-table">
                     <thead><tr><th>Reference</th><th>Amount (LKR)</th></tr></thead>
                     <tbody id="day-details-tbody"></tbody>
@@ -822,6 +902,46 @@
     <div id="modal-cheque" class="modal-overlay"><div class="glass-card cyber-modal border-cyan"><div class="modal-header"><h3 class="neon-text-cyan"><i class="fas fa-money-check"></i> Log Cheque Transaction</h3><button class="modal-close" onclick="closeModal('modal-cheque')">&times;</button></div><div class="form-group"><label>Client Account Entity Name</label><input type="text" id="form-chq-customer" placeholder="Customer reference..."></div><div class="form-group"><label>Invoice Reference No</label><input type="text" id="form-chq-invoice" placeholder="Invoice trace value..."></div><div class="form-group"><label>Cheque Asset ID Number</label><input type="text" id="form-chq-no" placeholder="Bank serial token ID..."></div><div class="form-group"><label>Face Value Amount (LKR)</label><input type="number" id="form-chq-amount" placeholder="0.00"></div><div class="modal-footer-btns"><button class="cyber-btn-small" onclick="submitChequeForm()">SAVE ASSET LOG</button></div></div></div>
     <div id="modal-settlement" class="modal-overlay"><div class="glass-card cyber-modal border-green"><div class="modal-header"><h3 class="neon-text-green"><i class="fas fa-coins"></i> Process Invoice Settlement</h3><button class="modal-close" onclick="closeModal('modal-settlement')">&times;</button></div><input type="hidden" id="form-set-datekey"><input type="hidden" id="form-set-index"><div class="form-group"><label>Transaction Settlement Mode</label><select id="form-set-type"><option value="cash">Cash Settlement</option><option value="cheq">Cheque Asset Clearing</option></select></div><div class="form-group"><label style="display:flex; justify-content:space-between; align-items:center;">Paying Amount (LKR)<button type="button" class="cyber-btn-small" style="padding: 4px 8px; font-size: 0.8rem; background: var(--green); margin-top: 0;" onclick="setFullSettlementAmount()">FULL AMOUNT</button></label><input type="number" id="form-set-pay-amount" placeholder="0.00"><small id="form-set-balance-preview" style="color: var(--orange); display: block; margin-top: 8px; font-weight: bold; letter-spacing: 0.5px;">Outstanding Balance: LKR 0.00</small></div><div class="form-group"><label>Settlement Recognition Date</label><input type="date" id="form-set-date"></div><div class="modal-footer-btns"><button class="cyber-btn-small" style="background:var(--green);" onclick="submitSettlementPipeline()">PROCESS PAYMENT</button></div></div></div>
     <div id="modal-staff" class="modal-overlay"><div class="glass-card cyber-modal border-cyan"><div class="modal-header"><h3 class="neon-text-cyan"><i class="fas fa-users"></i> Staff Advance Tracker</h3><button class="modal-close" onclick="closeModal('modal-staff')">&times;</button></div><div class="form-group"><label>Employee Reference ID/Name</label><input type="text" id="form-stf-name" placeholder="Staff member name..."></div><div class="form-group"><label>Advance Disbursed Amount (LKR)</label><input type="number" id="form-stf-amount" placeholder="0.00"></div><div class="form-group"><label>Compliance / Tracking Note</label><input type="text" id="form-stf-remark" placeholder="Shift comments or adjustment parameters..."></div><div class="modal-footer-btns"><button class="cyber-btn-small" onclick="submitStaffForm()">DISBURSE ADVANCE</button></div></div></div>
+
+    <div id="modal-bulk-wa" class="modal-overlay">
+        <div class="glass-card cyber-modal border-cyan">
+            <div class="modal-header">
+                <h3 class="neon-text-wa"><i class="fas fa-users"></i> Send Bulk WhatsApp</h3>
+                <button class="modal-close" onclick="closeModal('modal-bulk-wa')">&times;</button>
+            </div>
+            <div class="form-group">
+                <label>Select Customers (Hold Ctrl to multi-select)</label>
+                <select id="wa-bulk-customers" multiple style="height: 120px; width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--input-bg); color: var(--text);">
+                    </select>
+            </div>
+            <div class="form-group">
+                <label>Message Content</label>
+                <textarea id="wa-bulk-msg" style="width: 100%; height: 80px; padding: 10px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--input-bg); color: var(--text);" placeholder="Type message to all selected..."></textarea>
+            </div>
+            <div class="modal-footer-btns">
+                <button class="cyber-btn-small" style="background:var(--whatsapp);" onclick="executeBulkWA()">SEND TO ALL</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="modal-edit-wa-hook" class="modal-overlay">
+        <div class="glass-card cyber-modal border-cyan">
+            <div class="modal-header">
+                <h3 class="neon-text-wa"><i class="fab fa-whatsapp"></i> Edit Auto-Message</h3>
+                <button class="modal-close" onclick="closeModal('modal-edit-wa-hook')">&times;</button>
+            </div>
+            <p style="color:var(--text-muted); margin-bottom: 10px;">Review and edit the message before sending to <span id="wa-hook-target" style="font-weight:bold;"></span>.</p>
+            <input type="hidden" id="wa-hook-phone">
+            <input type="hidden" id="wa-hook-type">
+            <div class="form-group">
+                <textarea id="wa-hook-msg" style="width: 100%; height: 120px; padding: 10px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--input-bg); color: var(--text);"></textarea>
+            </div>
+            <div class="modal-footer-btns">
+                <button class="cyber-btn-small" style="background:var(--text-muted);" onclick="closeModal('modal-edit-wa-hook')">SKIP MESSAGE</button>
+                <button class="cyber-btn-small" style="background:var(--whatsapp);" onclick="confirmSendWaHook()">CONFIRM & SEND</button>
+            </div>
+        </div>
+    </div>
 
     <div id="toast-container"></div>
 
@@ -954,8 +1074,11 @@
         }
 
         /* =========================================
-           WHATSAPP SEMI-AUTOMATION ENGINE
+           WHATSAPP HUB CORE ENGINE
            ========================================= */
+        let currentWaTarget = null;
+        let currentWaPhone = null;
+
         function formatPhoneForWA(phone) {
             if(!phone) return "";
             let p = phone.replace(/\D/g, '');
@@ -966,30 +1089,185 @@
             return p;
         }
 
-        function sendWhatsAppMessage(phoneRaw, text) {
-            const phone = formatPhoneForWA(phoneRaw);
-            if(!phone) {
-                showToast("No valid WhatsApp number found for this customer.", "red", "fa-exclamation-triangle");
-                return;
-            }
-            const url = `https://wa.me/${phone}?text=${encodeURIComponent(text)}`;
-            window.open(url, '_blank');
-        }
-
         function getCustomerData(name) {
-            const customers = masterTimeline["GLOBAL_REGISTRY"]?.customers || [];
+            const customers = (masterTimeline["GLOBAL_REGISTRY"] && masterTimeline["GLOBAL_REGISTRY"].customers) || [];
             return customers.find(c => c.name === name);
         }
 
-        function sendCustomerReminder(name) {
-            let cusData = getCustomerData(name);
-            let out = calculateCustomerOutstanding(name);
-            if(cusData && cusData.wa) {
-                let msg = `Hello ${name},\nThis is a friendly reminder from Samarathunga Stores.\nYour current total outstanding balance is ${fmtLKR(out)}.\nPlease make the payment at your earliest convenience.\nThank you!`;
-                sendWhatsAppMessage(cusData.wa, msg);
-            } else {
-                showToast("No WhatsApp number saved for this customer.", "red", "fa-exclamation");
+        function logWaMessage(target, phone, text, type) {
+            if(!masterTimeline["GLOBAL_REGISTRY"].waLogs) masterTimeline["GLOBAL_REGISTRY"].waLogs = [];
+            masterTimeline["GLOBAL_REGISTRY"].waLogs.push({
+                target: target,
+                phone: phone,
+                text: text,
+                type: type,
+                date: new Date().toISOString()
+            });
+            db.ref("timeline_ledger").set(masterTimeline);
+            
+            if(document.getElementById('tab-whatsapp').classList.contains('active')) {
+                renderWaHub();
             }
+        }
+
+        function renderWaHub() {
+            const logs = masterTimeline["GLOBAL_REGISTRY"].waLogs || [];
+            const listEl = document.getElementById('wa-log-list');
+            listEl.innerHTML = '';
+            
+            // Group by target to show recent chats
+            let chatGroups = {};
+            logs.forEach(l => {
+                if(!chatGroups[l.target]) chatGroups[l.target] = [];
+                chatGroups[l.target].push(l);
+            });
+
+            // If empty, show placeholder
+            if(Object.keys(chatGroups).length === 0) {
+                listEl.innerHTML = `<div style="padding:15px; color:var(--text-muted); text-align:center; font-size:0.9rem;">No WhatsApp logs yet.</div>`;
+            }
+
+            Object.keys(chatGroups).forEach(target => {
+                const group = chatGroups[target];
+                const lastMsg = group[group.length - 1];
+                const init = target.substring(0,1).toUpperCase();
+                
+                listEl.innerHTML += `
+                    <div class="wa-chat-item" onclick="openWaChat('${target}', '${lastMsg.phone}')">
+                        <div class="wa-avatar">${init}</div>
+                        <div class="wa-chat-info">
+                            <div class="wa-chat-name">${target}</div>
+                            <div class="wa-chat-preview">${lastMsg.type.toUpperCase()}: ${lastMsg.text}</div>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        function filterWaLogs() {
+            const q = document.getElementById('wa-search-input').value.toLowerCase();
+            const items = document.querySelectorAll('.wa-chat-item');
+            items.forEach(item => {
+                const name = item.querySelector('.wa-chat-name').innerText.toLowerCase();
+                item.style.display = name.includes(q) ? 'flex' : 'none';
+            });
+        }
+
+        function openWaChat(target, phone) {
+            currentWaTarget = target;
+            currentWaPhone = phone;
+            document.getElementById('wa-current-target').innerText = target;
+            document.getElementById('wa-current-status').innerText = `Phone: ${phone}`;
+            document.getElementById('wa-current-avatar').innerText = target.substring(0,1).toUpperCase();
+            
+            const logs = masterTimeline["GLOBAL_REGISTRY"].waLogs || [];
+            const container = document.getElementById('wa-message-container');
+            container.innerHTML = '';
+            
+            const relevantLogs = logs.filter(l => l.target === target);
+            relevantLogs.forEach(l => {
+                const time = new Date(l.date).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+                container.innerHTML += `
+                    <div class="wa-bubble wa-bubble-out">
+                        <strong style="display:block; font-size:0.75rem; opacity:0.8; margin-bottom:3px;">${l.type.toUpperCase()}</strong>
+                        ${l.text}
+                        <span class="wa-bubble-time">${time} <i class="fas fa-check-double" style="color:#53bdeb; margin-left:3px;"></i></span>
+                    </div>
+                `;
+            });
+            
+            // Scroll to bottom
+            container.scrollTop = container.scrollHeight;
+        }
+
+        function sendCustomWA() {
+            const text = document.getElementById('wa-message-input').value;
+            if(!text.trim() || !currentWaTarget) return;
+            
+            logWaMessage(currentWaTarget, currentWaPhone, text, 'custom');
+            
+            const url = `https://wa.me/${currentWaPhone}?text=${encodeURIComponent(text)}`;
+            window.open(url, '_blank');
+            
+            document.getElementById('wa-message-input').value = '';
+            
+            // Re-render chat locally to show new message
+            setTimeout(() => {
+                openWaChat(currentWaTarget, currentWaPhone);
+            }, 300);
+        }
+
+        // Hook Interceptor for Credit Bills & Payments
+        function promptWhatsAppMessage(customerName, amount, type) {
+            const cus = getCustomerData(customerName);
+            if(!cus || !cus.wa) return showToast("No WA number for this customer. Log saved without WA notification.", "orange", "fa-info");
+            
+            const phone = formatPhoneForWA(cus.wa);
+            document.getElementById('wa-hook-target').innerText = customerName;
+            document.getElementById('wa-hook-phone').value = phone;
+            document.getElementById('wa-hook-type').value = type;
+            
+            let defaultMsg = "";
+            let totalOut = calculateCustomerOutstanding(customerName);
+
+            if(type === 'credit') {
+                defaultMsg = `Hello ${customerName},\nYour new credit invoice of ${fmtLKR(amount)} has been successfully logged at Samarathunga Stores.\nYour total outstanding balance is ${fmtLKR(totalOut)}.\nThank you for your business!`;
+            } else if(type === 'payment') {
+                defaultMsg = `Hello ${customerName},\nWe have received your payment of ${fmtLKR(amount)}.\nYour new outstanding balance is ${fmtLKR(totalOut)}.\nThank you!\n- Samarathunga Stores`;
+            }
+            
+            document.getElementById('wa-hook-msg').value = defaultMsg;
+            openModal('modal-edit-wa-hook');
+        }
+
+        function confirmSendWaHook() {
+            const target = document.getElementById('wa-hook-target').innerText;
+            const phone = document.getElementById('wa-hook-phone').value;
+            const type = document.getElementById('wa-hook-type').value;
+            const text = document.getElementById('wa-hook-msg').value;
+            
+            logWaMessage(target, phone, text, type);
+            
+            const url = `https://wa.me/${phone}?text=${encodeURIComponent(text)}`;
+            window.open(url, '_blank');
+            closeModal('modal-edit-wa-hook');
+        }
+
+        // Bulk Actions
+        function startBulkWA() {
+            const sel = document.getElementById('wa-bulk-customers');
+            sel.innerHTML = '';
+            const customers = masterTimeline["GLOBAL_REGISTRY"].customers || [];
+            customers.forEach(c => {
+                if(c.wa) {
+                    sel.innerHTML += `<option value="${c.wa}|${c.name}">${c.name} (${c.wa})</option>`;
+                }
+            });
+            document.getElementById('wa-bulk-msg').value = "Greetings from Samarathunga Stores!\n\n";
+            openModal('modal-bulk-wa');
+        }
+
+        function executeBulkWA() {
+            const sel = document.getElementById('wa-bulk-customers');
+            const msg = document.getElementById('wa-bulk-msg').value;
+            const selectedOptions = Array.from(sel.selectedOptions);
+            
+            if(selectedOptions.length === 0) return showToast("Select at least one customer.", "red", "fa-exclamation");
+            if(!msg.trim()) return showToast("Message cannot be empty.", "red", "fa-exclamation");
+            
+            selectedOptions.forEach((opt, index) => {
+                const [waRaw, name] = opt.value.split('|');
+                const phone = formatPhoneForWA(waRaw);
+                logWaMessage(name, phone, msg, 'bulk');
+                
+                // Open new tabs staggered to prevent browser popup block
+                setTimeout(() => {
+                    window.open(`https://wa.me/${phone}?text=${encodeURIComponent(msg)}`, '_blank');
+                }, index * 1000);
+            });
+            
+            closeModal('modal-bulk-wa');
+            showToast("Bulk messages initiated.", "green", "fa-check");
         }
 
         /* =========================================
@@ -1030,7 +1308,7 @@
                 masterTimeline = snapshot.val() || {};
                 
                 if (!masterTimeline["GLOBAL_REGISTRY"]) {
-                    masterTimeline["GLOBAL_REGISTRY"] = { companies: [], customers: [] };
+                    masterTimeline["GLOBAL_REGISTRY"] = { companies: [], customers: [], waLogs: [] };
                 }
 
                 parseCurrentDateState();
@@ -1502,7 +1780,6 @@
                             <td>${c.wa}</td>
                             <td class="${outColor}" style="font-weight:bold;">${fmtLKR(outstanding)}</td>
                             <td>
-                                <button class="cyber-btn-small" style="padding:6px 10px; margin-right:5px; background:var(--whatsapp); color:#fff;" onclick="sendCustomerReminder('${c.name}')"><i class="fab fa-whatsapp"></i> REMIND</button>
                                 <button class="cyber-btn-small" style="padding:6px 10px; margin-right:5px; background:var(--cyan);" onclick="viewCustomerInvoices('${c.name}')"><i class="fas fa-eye"></i> BILLS</button>
                                 <button class="cyber-btn-small" style="padding:6px 10px; margin-right:5px; background:var(--purple);" onclick="viewCustomerPaymentHistory('${c.name}')"><i class="fas fa-history"></i> HISTORY</button>
                                 <button class="cyber-btn-small" style="padding:6px 10px; margin-right:5px; background:var(--green);" onclick="openCustomerPayment('${c.name}')"><i class="fas fa-money-bill-wave"></i> PAY</button>
@@ -1775,6 +2052,7 @@
             const paymentMethod = document.getElementById('form-cus-pay-type').value;
             const paymentDate = document.getElementById('form-cus-pay-date').value;
             let paymentAmount = parseFloat(document.getElementById('form-cus-pay-amount').value || 0);
+            const originalPaymentAmount = paymentAmount; // Keep track for WhatsApp msg
 
             if(!paymentDate) return showToast("Pick a settlement date.", "red", "fa-exclamation");
             if(paymentAmount <= 0) return showToast("Enter a valid amount.", "red", "fa-exclamation");
@@ -1802,32 +2080,31 @@
                 
                 let bill = item.bill;
                 let due = parseFloat(bill.amount || 0) - parseFloat(bill.paidAmount || 0);
-                let clearingNow = Math.min(due, paymentAmount);
                 
-                if (!bill.paymentHistory) bill.paymentHistory = [];
+                let clearingNow = Math.min(paymentAmount, due);
+                
+                bill.paidAmount = (parseFloat(bill.paidAmount || 0) + clearingNow).toFixed(2);
+                paymentAmount -= clearingNow;
+                
+                if(!bill.paymentHistory) bill.paymentHistory = [];
                 bill.paymentHistory.push({ date: paymentDate, amount: clearingNow, method: paymentMethod });
                 
-                bill.paidAmount = (parseFloat(bill.paidAmount) || 0) + clearingNow;
-                bill.clearedOnDate = paymentDate;
-                
-                if (bill.paidAmount >= parseFloat(bill.amount)) bill.status = "cleared";
-                else bill.status = "partial";
-                
-                paymentAmount -= clearingNow;
+                if(parseFloat(bill.paidAmount) >= parseFloat(bill.amount)) {
+                    bill.status = 'cleared';
+                    bill.clearedOnDate = paymentDate;
+                } else {
+                    bill.status = 'partial';
+                }
             });
+            
+            // Trigger WhatsApp Message Hook
+            setTimeout(() => {
+                promptWhatsAppMessage(customerName, originalPaymentAmount, 'payment');
+            }, 500);
 
-            db.ref("timeline_ledger").set(masterTimeline);
+            pushDataStateToCloud();
             closeModal('modal-customer-payment');
-            showToast(`Auto-cleared bills for ${customerName}`, "green", "fa-check-double");
-
-            // Whatsapp Semi-Automation Hook
-            let updatedOutstanding = calculateCustomerOutstanding(customerName);
-            let cusData = getCustomerData(customerName);
-            if(cusData && cusData.wa && confirm("Payment processed successfully. Do you want to send a WhatsApp receipt to the customer?")) {
-                let initialPaidAmount = parseFloat(document.getElementById('form-cus-pay-amount').value || 0);
-                let msg = `Hello ${customerName},\nWe received your payment of ${fmtLKR(initialPaidAmount)} on ${paymentDate}.\nYour new outstanding balance is ${fmtLKR(updatedOutstanding)}.\nThank you!\n- Samarathunga Stores`;
-                sendWhatsAppMessage(cusData.wa, msg);
-            }
+            showToast("Customer auto-payment allocated successfully.", "green", "fa-check-circle");
         }
 
         // EXPENSES
@@ -2176,9 +2453,9 @@
                             <td><strong class="neon-text-orange">${cust.name}</strong></td>
                             <td class="neon-text-red" style="font-weight:bold; font-size: 1.05rem;">${fmtLKR(cust.outstanding)}</td>
                             <td>
-                                <button class="cyber-btn-small" style="padding:6px 12px; background:var(--cyan); margin-top:0; margin-right:5px;" onclick="viewCustomerInvoices('${cust.name}')"><i class="fas fa-eye"></i> VIEW BILLS</button>
-                                <button class="cyber-btn-small" style="padding:6px 12px; background:var(--purple); margin-top:0; margin-right:5px;" onclick="viewCustomerPaymentHistory('${cust.name}')"><i class="fas fa-history"></i> LEDGER HISTORY</button>
-                                <button class="cyber-btn-small" style="padding:6px 12px; background:var(--green); margin-top:0;" onclick="openCustomerPayment('${cust.name}')"><i class="fas fa-money-bill-wave"></i> PROCESS PAY</button>
+                                <button class="cyber-btn-small" style="padding:6px 12px; background:var(--cyan); margin-top:0; margin-right:5px;" onclick="viewCustomerInvoices('${cust.name}')"><i class="fas fa-eye"></i> BILLS</button>
+                                <button class="cyber-btn-small" style="padding:6px 12px; background:var(--purple); margin-top:0; margin-right:5px;" onclick="viewCustomerPaymentHistory('${cust.name}')"><i class="fas fa-history"></i> HISTORY</button>
+                                <button class="cyber-btn-small" style="padding:6px 12px; background:var(--green); margin-top:0;" onclick="openCustomerPayment('${cust.name}')"><i class="fas fa-money-bill-wave"></i> PAY</button>
                             </td>
                         </tr>`;
                 });
@@ -2284,14 +2561,11 @@
             }
 
             closeModal('modal-credit-bill');
-
-            // Whatsapp Semi-Automation Hook
-            let totalOut = calculateCustomerOutstanding(customer);
-            let cusData = getCustomerData(customer);
-            if(cusData && cusData.wa && confirm("Invoice generated. Do you want to send a WhatsApp notification to the customer?")) {
-                let msg = `Hello ${customer},\nA new credit invoice (${billNo}) for ${fmtLKR(amount)} has been added to your account.\nYour total outstanding balance is ${fmtLKR(totalOut)}.\n- Samarathunga Stores`;
-                sendWhatsAppMessage(cusData.wa, msg);
-            }
+            
+            // Trigger WhatsApp Message Hook
+            setTimeout(() => {
+                promptWhatsAppMessage(customer, amount, 'credit');
+            }, 500);
         }
         
         let currentSettlementBalance = 0;
@@ -2341,6 +2615,7 @@
             if(payingAmount > currentSettlementBalance) return showToast("Cannot pay more than outstanding balance.", "red", "fa-exclamation");
 
             let bill = masterTimeline[dateKey].creditBills[itemIndex];
+            const customerName = bill.customer;
             
             if (!bill.paymentHistory) bill.paymentHistory = [];
             bill.paymentHistory.push({ date: clearingDate, amount: payingAmount, method: mechanism });
@@ -2359,6 +2634,11 @@
             db.ref("timeline_ledger").set(masterTimeline);
             closeModal('modal-settlement');
             showToast(`Payment of ${fmtLKR(payingAmount)} Processed`, "green", "fa-check");
+
+            // Trigger WhatsApp Message Hook
+            setTimeout(() => {
+                promptWhatsAppMessage(customerName, payingAmount, 'payment');
+            }, 500);
         }
 
         // REDO / REVERSE CREDIT PAYMENT WITH SECURE PIN
@@ -2698,9 +2978,12 @@
                 input.dispatchEvent(new Event('keyup'));
             });
             
-            // Specific re-renders for layout bugs hidden in CSS display:none
             if(tabId === 'dashboard' && window.dashChartInstance) {
                 window.dashChartInstance.resize();
+            }
+
+            if(tabId === 'whatsapp') {
+                renderWaHub();
             }
         }
 
