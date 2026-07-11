@@ -1211,7 +1211,7 @@
             let totalOut = calculateCustomerOutstanding(customerName);
 
             if(type === 'credit') {
-                defaultMsg = `Hello ${customerName},\nYour new credit invoice(${billNo}) of ${fmtLKR(amount)} has been successfully logged at Samarathunga Stores.\nYour total outstanding balance is ${fmtLKR(totalOut)}.\nThank you for your business!`;
+                defaultMsg = `Hello ${customerName},\nYour new credit invoice (${billNo}) of ${fmtLKR(amount)} has been successfully logged at Samarathunga Stores.\nYour total outstanding balance is ${fmtLKR(totalOut)}.\nThank you for your business!`;
             } else if(type === 'payment') {
                 defaultMsg = `Hello ${customerName},\nWe have received your payment of ${fmtLKR(amount)}.\nYour new outstanding balance is ${fmtLKR(totalOut)}.\nThank you!\n- Samarathunga Stores`;
             }
